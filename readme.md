@@ -21,7 +21,7 @@ El proyecto diseña, justifica y construye la arquitectura de Solventa de extrem
 | Rol | Integrante |
 |---|---|
 | Gerente del proyecto | Jazmin Natalia Cordoba Puerto |
-| Integrante | Juan Esteban Mejia Izasa |
+| Integrante | Juan Esteban Mejia Isaza |
 | Integrante | Miguel Alejandro Gomez Alarcon |
 | Integrante | Angie Natalia Arandio |
 

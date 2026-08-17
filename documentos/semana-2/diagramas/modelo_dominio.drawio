@@ -1,0 +1,106 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Dominio" id="domain-001">
+    <mxGraphModel dx="1837" dy="874" grid="0" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" value="&lt;b&gt;Modelo de Dominio — Solventa&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="500" x="400" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Cliente&lt;/b&gt;&lt;hr/&gt;- id&lt;br/&gt;- nombre&lt;br/&gt;- documento&lt;br/&gt;- canal: web | móvil" vertex="1">
+          <mxGeometry height="110" width="170" x="100" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Consentimiento&lt;/b&gt;&lt;hr/&gt;- tipo: OpenFinance|OpenData&lt;br/&gt;- estado: activo|revocado&lt;br/&gt;- fechaOtorgamiento&lt;br/&gt;- fechaRevocacion" vertex="1">
+          <mxGeometry height="120" width="200" x="80" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Perfil de Riesgo&lt;/b&gt;&lt;hr/&gt;- score&lt;br/&gt;- fuentesUsadas&lt;br/&gt;- fechaCalculo&lt;br/&gt;- version" vertex="1">
+          <mxGeometry height="110" width="160" x="330" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Cotización&lt;/b&gt;&lt;hr/&gt;- id&lt;br/&gt;- prima&lt;br/&gt;- vigencia&lt;br/&gt;- estado: pendiente|aceptada|expirada" vertex="1">
+          <mxGeometry height="120" width="200" x="560" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Ramo&lt;/b&gt;&lt;hr/&gt;- codigo&lt;br/&gt;- nombre&lt;br/&gt;- tipo: vida|daños|paramétrico" vertex="1">
+          <mxGeometry height="110" width="200" x="560" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Suscripción&lt;/b&gt;&lt;hr/&gt;- decision: aprobada|rechazada|ajustada&lt;br/&gt;- justificacion&lt;br/&gt;- trazabilidad (100%)" vertex="1">
+          <mxGeometry height="110" width="200" x="860" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Póliza&lt;/b&gt;&lt;hr/&gt;- numero&lt;br/&gt;- estado: activa|cancelada|renovada&lt;br/&gt;- fechaInicio / fechaFin&lt;br/&gt;- cobertura&lt;br/&gt;- prima" vertex="1">
+          <mxGeometry height="130" width="200" x="830" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Siniestro&lt;/b&gt;&lt;hr/&gt;- id&lt;br/&gt;- tipo: asistido|paramétrico&lt;br/&gt;- estado: reportado|evaluado|aprobado|pagado&lt;br/&gt;- evidencias" vertex="1">
+          <mxGeometry height="120" width="210" x="1160" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Pago&lt;/b&gt;&lt;hr/&gt;- id&lt;br/&gt;- tipo: prima|indemnizacion&lt;br/&gt;- monto&lt;br/&gt;- estado: pendiente|confirmado|fallido&lt;br/&gt;- idempotencyKey" vertex="1">
+          <mxGeometry height="130" width="210" x="1170" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Socio&lt;/b&gt;&lt;hr/&gt;- id&lt;br/&gt;- nombre&lt;br/&gt;- apiKey&lt;br/&gt;- cuota (rate limit)" vertex="1">
+          <mxGeometry height="110" width="180" x="360" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="28" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;verticalAlign=top;" value="&lt;b&gt;Prima&lt;/b&gt;&lt;hr/&gt;- monto&lt;br/&gt;- periodicidad&lt;br/&gt;- fechaVencimiento" vertex="1">
+          <mxGeometry height="100" width="180" x="670" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="40" edge="1" parent="1" source="10" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="11" value="1 otorga 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="41" edge="1" parent="1" source="10" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="12" value="1 tiene 1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="270" y="290" />
+              <mxPoint x="420" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="42" edge="1" parent="1" source="10" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="13" value="1 solicita 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="43" edge="1" parent="1" source="13" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="14" value="cubre 1">
+          <mxGeometry relative="1" x="-0.0521" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="660" y="270" />
+              <mxPoint x="660" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="44" edge="1" parent="1" source="12" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="13" value="informa">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="250" />
+              <mxPoint x="600" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="45" edge="1" parent="1" source="13" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="15" value="deriva en 0..1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="46" edge="1" parent="1" source="15" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="16" value="genera 0..1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="47" edge="1" parent="1" source="16" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="17" value="origina 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="48" edge="1" parent="1" source="16" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" target="18" value="genera 0..*&lt;br/&gt;(primas)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="49" edge="1" parent="1" source="17" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.541;exitY=0.992;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitPerimeter=0;" target="18" value="resulta en 0..1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1245" y="240" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="50" edge="1" parent="1" source="19" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" target="13" value="solicita vía API">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="460" />
+              <mxPoint x="660" y="460" />
+            </Array>
+            <mxPoint x="540" y="555" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="51" edge="1" parent="1" source="13" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="28" value="calcula 1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

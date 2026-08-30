@@ -295,15 +295,15 @@ La incertidumbre se calificó con tres criterios: si el equipo ha implementado a
 | HU-ARQ-08 | ASR-1.2 | La calibración del umbral y la ventana del interruptor de circuito, y el reparto del presupuesto de latencia entre tiempos de espera | **Alta** | Sí — EXP-02 |
 | HU-ARQ-06 | ASR-3.1 | Que la ruta de respaldo hacia PostgreSQL absorba el tráfico del caché caído sin propagar la saturación a otros servicios | **Alta** | Sí — EXP-03 |
 | HU-ARQ-03 | ASR-4.1 | Que la tokenización centralizada no introduzca latencia inaceptable en el camino crítico ni deje rutas por donde el dato original se filtre | **Alta** | Sí — EXP-04 |
-| HU-ARQ-02 | ASR-2.1 | Que la definición del puerto de pagos sea lo bastante general para absorber una pasarela con contrato distinto sin fugas de abstracción | Media | Sí — EXP-05, prioridad menor |
-| HU-ARQ-10 | ASR-3.3 | El protocolo de sincronización y la resolución de conflictos entre el almacenamiento local y el servidor | Media | Sí — EXP-06, prioridad menor |
+| HU-ARQ-02 | ASR-2.1 | Que la definición del puerto de pagos sea lo bastante general para absorber una pasarela con contrato distinto sin fugas de abstracción | Media | Se difiere al Proyecto Final 2 |
+| HU-ARQ-10 | ASR-3.3 | El protocolo de sincronización y la resolución de conflictos entre el almacenamiento local y el servidor | Media | Se difiere al Proyecto Final 2 |
 | HU-ARQ-01 | ASR-2.2 | Que el motor de rating sea genuinamente agnóstico al ramo | Media | Se difiere al Proyecto Final 2 |
 | HU-ARQ-11 | ASR-4.2 | El bloqueo de escritura del almacenamiento de objetos | **Baja** | **No.** Es una capacidad documentada y garantizada por la plataforma, no una decisión de diseño incierta. Se verifica con una prueba de configuración, no con un experimento |
 | HU-ARQ-09 | ASR-3.2 | El comportamiento activo-activo multi-zona y la promoción automática de la réplica | Media | Se difiere al Proyecto Final 2 por dependencia de infraestructura con costo |
 
 > **Sobre HU-ARQ-11.** Se decidió deliberadamente no diseñar un experimento para el bloqueo de escritura del almacenamiento de objetos. El mecanismo es una garantía de la plataforma con comportamiento especificado por el proveedor; el equipo no tiene incertidumbre sobre si funciona, sino sobre si lo configuró bien. Esa es una pregunta de verificación de configuración, y su lugar es la suite de pruebas de seguridad, no el programa de experimentación. Aplicar aquí el criterio del profesor —no experimentar lo que no genera incertidumbre— libera 8 horas que se reasignan a los experimentos de latencia, donde la incertidumbre sí es alta.
 
-**Sprint 1 de diseño.** Los cuatro experimentos de incertidumbre alta conforman el Sprint 1 de diseño y se ejecutan en las semanas 5 y 6. Los de incertidumbre media se ejecutan si hay holgura.
+**Sprint 1 de diseño.** El programa de experimentación se limita deliberadamente a los cuatro puntos de sensibilidad de incertidumbre alta, que conforman el Sprint 1 de diseño y se ejecutan en las semanas 5 y 6. Los cinco puntos de sensibilidad restantes se difieren al Proyecto Final 2: concentrar las 42 horas disponibles en los cuatro experimentos que realmente reducen incertidumbre produce más información que repartirlas entre nueve.
 
 ### 5.3 EXP-01 — Viabilidad del presupuesto de latencia del motor de scoring
 
@@ -547,26 +547,7 @@ Si aparece una fuga por el bus de eventos, se adopta la publicación de eventos 
 
 **Esfuerzo:** 12 horas-hombre · **Prioridad:** Alta · **Sprint 1 de diseño, semana 6**
 
-### 5.7 Experimentos de incertidumbre media
-
-Los dos experimentos siguientes se ejecutan si el Sprint 1 de diseño deja holgura. Su incertidumbre es menor porque un resultado adverso obligaría a ajustar una abstracción, no a rehacer la estructura.
-
-| | EXP-05 | EXP-06 |
-|---|---|---|
-| **Historia** | HU-ARQ-02 (SOL-20) | HU-ARQ-10 (SOL-44) |
-| **ASR** | ASR-2.1 | ASR-3.3 |
-| **Punto de sensibilidad** | Generalidad de la definición del puerto de pagos | Protocolo de sincronización y resolución de conflictos |
-| **Propósito** | Medir empíricamente el costo de integrar una pasarela con contrato distinto, en vez de afirmarlo | Verificar que la billetera funciona sin red y que la sincronización cumple el objetivo de tiempo |
-| **Patrón / táctica** | P5 · Inversión de dependencias, encapsular la variabilidad | P7, P11 · Mantener copia local, sincronización diferida |
-| **Microservicios** | Pagos y Recaudo · adaptador de pasarela nuevo | BFF Móvil · Pólizas |
-| **Conectores** | Puerto de dominio hacia el adaptador; adaptador hacia el simulador de pasarela | Protocolo de sincronización entre app y BFF; almacenamiento local cifrado |
-| **Resultado esperado** | < 4 horas-hombre · cero archivos del núcleo modificados | 100% de consultas sin red · sincronización ≤ 10 s |
-| **Refutación** | Cualquier archivo del núcleo modificado indica fuga de abstracción en el puerto | Cualquier consulta que requiera red; sincronización por encima de 10 s |
-| **Decisión alternativa** | Redefinir el puerto en términos de intención de negocio y no de operaciones de pasarela | Sincronización incremental por diferencias en lugar de por instantánea completa |
-| **Tecnología** | Registro de cambios por archivo · simulador de pasarela · cronometraje | Emulador Android · Espresso · control de conectividad · inspección del almacenamiento local |
-| **Esfuerzo** | 6 horas-hombre | 10 horas-hombre |
-
-### 5.8 Ficha consolidada de tecnología
+### 5.7 Ficha consolidada de tecnología
 
 Esta es la tecnología completa requerida para ejecutar el Sprint 1 de diseño. La columna de familiaridad importa: donde el equipo no domina la herramienta, el esfuerzo estimado incluye el tiempo de aprendizaje.
 
@@ -589,7 +570,7 @@ Esta es la tecnología completa requerida para ejecutar el Sprint 1 de diseño. 
 | Inspección de datos | Consultas de verificación · consumidor de inspección de temas | Búsqueda de datos cebo en EXP-04 | Alta |
 | Cifrado y llaves | Servicio de gestión de llaves | Cifrado del dato custodiado en EXP-04 | Baja — se reserva tiempo de aprendizaje |
 
-### 5.9 Distribución de actividades por integrante
+### 5.8 Distribución de actividades por integrante
 
 Las 42 horas del Sprint 1 de diseño se reparten de forma equitativa entre los cuatro integrantes, asignando a cada uno las actividades más cercanas a su rol pero sin dejar a nadie fuera de la construcción.
 
@@ -603,7 +584,7 @@ Las 42 horas del Sprint 1 de diseño se reparten de forma equitativa entre los c
 
 > El reparto asigna a cada integrante al menos dos experimentos y combina construcción con medición, de modo que nadie quede solo construyendo ni solo midiendo. La redacción del informe se asigna explícitamente porque un experimento cuyo resultado no se documenta no reduce la incertidumbre del equipo, solo la de quien lo ejecutó.
 
-### 5.10 Resumen de esfuerzo del programa
+### 5.9 Resumen de esfuerzo del programa
 
 | Experimento | Historia | ASR | Incertidumbre | Esfuerzo | Cuándo |
 |---|---|---|---|---|---|
@@ -611,14 +592,11 @@ Las 42 horas del Sprint 1 de diseño se reparten de forma equitativa entre los c
 | EXP-02 Degradación elegante | HU-ARQ-08 | ASR-1.2 | Alta | 12 h | Semana 5 |
 | EXP-03 Caída del caché | HU-ARQ-06 | ASR-3.1 | Alta | 8 h | Semana 6 |
 | EXP-04 Tokenización | HU-ARQ-03 | ASR-4.1 | Alta | 12 h | Semana 6 |
-| **Sprint 1 de diseño** | | | | **42 h** | **Semanas 5–6** |
-| EXP-05 Pasarela nueva | HU-ARQ-02 | ASR-2.1 | Media | 6 h | Semana 7 si hay holgura |
-| EXP-06 Continuidad offline | HU-ARQ-10 | ASR-3.3 | Media | 10 h | Semana 7 si hay holgura |
-| **Total del programa** | | | | **58 h** | |
+| **Total del Sprint 1 de diseño** | | | | **42 h** | **Semanas 5–6** |
 
 Las 42 horas del Sprint 1 equivalen a 21 puntos de historia con la convención del equipo de 1 punto igual a 2 horas, y están contenidas dentro de los 42 puntos asignados a las historias de arquitectura en el alcance del Proyecto Final 1: construir el mecanismo y ejecutar el experimento que lo valida son parte de la misma historia.
 
-Se descartaron tres experimentos que sí aparecían en versiones anteriores de esta propuesta: el de integridad de pólizas, porque su punto de sensibilidad no genera incertidumbre; y los de ramo nuevo y pérdida de zona, porque su incertidumbre es media y su ejecución depende de infraestructura con costo, por lo que se difieren al Proyecto Final 2.
+La propuesta se limita a cuatro experimentos por decisión explícita. Se descartó el de integridad de pólizas porque su punto de sensibilidad, el bloqueo de escritura del almacenamiento, es una garantía de plataforma y no genera incertidumbre. Los cuatro restantes —pasarela de pagos, continuidad offline, ramo nuevo por configuración y pérdida de zona— corresponden a puntos de sensibilidad de incertidumbre media cuyo resultado adverso obligaría a ajustar una abstracción y no a rehacer estructura; se difieren al Proyecto Final 2. Experimentar los nueve habría repartido las mismas 42 horas entre el doble de frentes, produciendo mediciones superficiales en todos en lugar de conclusiones firmes en los críticos.
 
 ---
 

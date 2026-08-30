@@ -89,7 +89,7 @@ Documentamos también lo que descartamos y por qué. Un monolito modular nos hab
 
 [Pantalla: sección 5.1, marco de experimentación]
 
-Diseñamos nueve experimentos, uno por cada escenario de calidad. Partimos de una distinción: una prueba verifica que el sistema hace lo especificado; un experimento verifica que una decisión de diseño produce la propiedad que le atribuimos.
+Diseñamos cuatro experimentos. Y quiero detenerme en por qué son cuatro y no nueve, porque esa fue la decisión más importante de esta sección. Partimos de una distinción: una prueba verifica que el sistema hace lo especificado; un experimento verifica que una decisión de diseño produce la propiedad que le atribuimos.
 
 Por eso cada experimento está formulado como una hipótesis falsable, y cada uno tiene un criterio de refutación explícito. Definimos de antemano qué resultado nos obligaría a cambiar el diseño, porque un experimento que no puede fracasar no aporta información.
 
@@ -101,7 +101,7 @@ Y el criterio de refutación: si perdemos peticiones por agotamiento del depósi
 
 [Pantalla: sección 5.11, resumen de esfuerzo]
 
-Estimamos el esfuerzo de los nueve: ochenta y seis horas en total. Cuarenta y dos las comprometemos en el Proyecto Final 1, que son los cuatro experimentos de prioridad alta. Esas cuarenta y dos horas equivalen a veintiún puntos de historia, y están contenidas dentro de los cuarenta y dos puntos que asignamos a las historias de arquitectura, porque construir el mecanismo y ejecutar el experimento que lo valida son la misma historia.
+Evaluamos la incertidumbre de los once puntos de sensibilidad del diseño y solo cuatro resultaron de incertidumbre alta. El resto los diferimos. Un caso concreto: la integridad de las pólizas no la experimentamos, porque el bloqueo de escritura del almacenamiento es una garantía de la plataforma. Ahí no tenemos incertidumbre sobre si funciona, sino sobre si lo configuramos bien, y eso es una prueba de configuración, no un experimento. Las cuarenta y dos horas del Sprint 1 se reparten equitativamente entre los cuatro: once, once, diez y diez horas por integrante.
 
 [Pantalla: sección 6, refinamiento de estrategia de pruebas]
 

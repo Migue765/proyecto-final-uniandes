@@ -30,7 +30,7 @@ Esta entrega tiene dos partes. La primera es el entregable propio de la semana 4
 
 | # | Documento | Contenido | Enlace |
 |---|---|---|---|
-| 1 | hoja_trabajo_semana4.docx | Vista funcional, de despliegue y de información · 12 patrones con su razonamiento frente a cada ASR · 8 decisiones de arquitectura con alternativas descartadas · 6 experimentos con punto de sensibilidad, tácticas, microservicios, conectores y esfuerzo · refinamiento de la estrategia de pruebas · plan por sprint | *(pegar enlace)* |
+| 1 | hoja_trabajo_semana4.docx | Vista funcional, de despliegue y de información · 12 patrones con su razonamiento frente a cada ASR · 8 decisiones de arquitectura con alternativas descartadas · 4 experimentos con punto de sensibilidad, tácticas, microservicios, conectores y esfuerzo · refinamiento de la estrategia de pruebas · plan por sprint | *(pegar enlace)* |
 | 2 | historias_de_usuario_v2.docx | Backlog completo de 62 historias con criterios de aceptación · cálculo de capacidad del equipo paso a paso · priorización y corte de alcance entre Proyecto Final 1 y 2 · trazabilidad entre ASR e historias | *(pegar enlace)* |
 
 Ambos documentos están además versionados en el repositorio, en `documentos/semana-4/`, junto con las fuentes de los diagramas en formato `.dot`, que se regeneran con un solo comando.

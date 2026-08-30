@@ -29,7 +29,7 @@ Esta versión responde a la retroalimentación recibida sobre la entrega de la s
 
 | # | Observación recibida | Corrección aplicada | Sección |
 |---|---|---|---|
-| 1 | *"Se esperaba la lista completa de historias de usuario del proyecto, no solo 20"* | El backlog se descompuso de 20 a **62 historias**. Las 9 features funcionales originales eran, en realidad, features de alto nivel; cada una se partió en historias de usuario verificables de forma independiente. Se identificó además una funcionalidad ausente del backlog (autenticación web) y se agregó como épica propia. | §3, §4 |
+| 1 | *"Se esperaba la lista completa de historias de usuario del proyecto, no solo 20"* | El backlog se descompuso de 20 a **62 historias**. Al revisar el tablero se confirmó el origen del problema: ocho de las veinte estaban tipadas en Jira como **Función**, no como Historia, y ninguna tenía historias hijas. Es decir, el backlog v1.1 tenía en realidad 12 historias y 8 funciones sin descomponer. Cada función se partió en historias verificables de forma independiente. Se identificó además una funcionalidad ausente del backlog —la autenticación web— y se agregó como épica y función propias. | §3, §4 |
 | 2 | *"No se encontró la evidencia de cálculo de la capacidad del equipo"* | Se incorpora el cálculo completo de capacidad **dentro de este documento**, con la aritmética paso a paso. En la versión 1.1 el cálculo existía en un archivo auxiliar del repositorio (`documentos/semana-3/README.md`) pero no en el entregable. | §2 |
 | 3 | *"Esto se refleja cuando se muestra un backlog de 152 puntos de historia con sólo 20 HUs"* | El promedio pasó de **7,6 SP/historia** a **3,7 SP/historia**. Ninguna historia supera 8 SP; ninguna historia funcional supera 5 SP. Se re-estimó de abajo hacia arriba: el backlog total subió de 152 SP a **229 SP**, lo que refleja alcance que antes estaba oculto dentro de historias demasiado gruesas. | §3, §4 |
 | 4 | *(Detectado por el equipo)* Las historias no eran legibles sin abrir Jira | Cada historia se presenta ahora completa en este documento: enunciado *Como / Quiero / Para*, criterios de aceptación, estimación, prioridad, canal y ASR relacionado. | §4 |
@@ -116,21 +116,31 @@ El backlog completo del producto **triplica** la capacidad disponible del equipo
 
 ## 3. Estructura del backlog
 
-### 3.1 Épicas
+### 3.1 Estructura jerárquica del backlog
 
-| Épica | Nombre | Canal | Historias | SP |
-|---|---|---|---|---|
-| EP-01 | Venta asistida (cotización, suscripción y emisión) | Web | 12 | 31 |
-| EP-02 | Administración y operación de pólizas | Web | 10 | 28 |
-| EP-03 | Acceso y autenticación web | Web | 4 | 9 |
-| EP-04 | Identidad y acceso móvil (KYC biométrico) | Móvil | 6 | 19 |
-| EP-05 | Autogestión móvil | Móvil | 14 | 34 |
-| EP-06 | Portal de socios distribuidores (embedded) | Web / API | 5 | 16 |
-| EP-ARQ-01 | Modificabilidad y parametrización | Transversal | 2 | 16 |
-| EP-ARQ-02 | Cumplimiento regulatorio y privacidad | Transversal | 3 | 21 |
-| EP-ARQ-03 | Contenedores y plataforma de datos | Transversal | 3 | 21 |
-| EP-ARQ-04 | Escalabilidad y desempeño | Transversal | 3 | 34 |
-| **Total** | | | **62** | **229** |
+El tablero del proyecto usa cuatro niveles de jerarquía: **Épica → Función → Historia → Subtarea**. La revisión del tablero durante esta corrección reveló el origen preciso del hallazgo: las ocho funcionalidades web y móvil que se presentaron como historias de usuario en la semana 3 están tipadas en Jira como **Función**, no como Historia, y ninguna tenía historias hijas. El backlog v1.1 contenía en realidad 12 historias y 8 funciones sin descomponer.
+
+La corrección consiste en poblar el nivel que faltaba: 51 historias nuevas bajo las funciones existentes.
+
+| Épica | Función | Historias | SP |
+|---|---|---|---|
+| **EP-01** Gestión de seguros Web (SOL-1) | FE-01 Cotización de seguros (SOL-3) | FE-01.1 a FE-01.6 | 15 |
+| | FE-02 Suscripción y emisión (SOL-4) | FE-02.1 a FE-02.6 | 16 |
+| | FE-03 Administración de pólizas (SOL-5) | FE-03.1 a FE-03.5 | 13 |
+| **EP-02** Gestión de siniestros Web (SOL-2) | FE-04 Gestión y seguimiento de siniestros (SOL-6) | FE-04.1 a FE-04.5 | 15 |
+| **EP-03** Acceso y gestión de pólizas Móvil (SOL-7) | FE-05 Autenticación biométrica y KYC (SOL-10) | FE-05.1 a FE-05.6 | 19 |
+| | FE-06 Billetera de pólizas (SOL-11) | FE-06.1 a FE-06.5 | 12 |
+| **EP-04** Siniestros y asistencia Móvil (SOL-8) | FE-07 Notificaciones y asistencia (SOL-13) | FE-07.1 a FE-07.4 | 10 |
+| | FE-08 Reporte de siniestros con evidencia (SOL-12) | FE-08.1 a FE-08.5 | 12 |
+| **EP-05** Portal de Socios y Distribución (SOL-30) | FE-09 Portal de socios distribuidores (SOL-31) | FE-09.1 a FE-09.5 | 16 |
+| **EP-06** Acceso y autenticación Web *(nueva)* | FE-10 Autenticación web *(nueva)* | FE-10.1 a FE-10.4 | 9 |
+| **EP-ARQ-01** Multi-región e internacionalización (SOL-15) | — | HU-ARQ-01, HU-ARQ-02 | 16 |
+| **EP-ARQ-02** Cumplimiento regulatorio y privacidad (SOL-16) | — | HU-ARQ-03, HU-ARQ-04, HU-ARQ-11 | 21 |
+| **EP-ARQ-03** Contenedores y plataforma de datos (SOL-25) | — | HU-ARQ-05, HU-ARQ-08, HU-ARQ-10 | 21 |
+| **EP-ARQ-04** Escalabilidad y desempeño (SOL-27) | — | HU-ARQ-06, HU-ARQ-07, HU-ARQ-09 | 34 |
+| **Total** | **10 funciones** | **62 historias** | **229** |
+
+Las historias de arquitectura cuelgan directamente de su épica sin nivel de función intermedio, porque no representan funcionalidad de cara al usuario sino propiedades transversales del sistema.
 
 ### 3.2 Comparación con la versión anterior
 
@@ -166,7 +176,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 
 ---
 
-### EP-01 — Venta asistida (Web) · 12 historias · 31 SP
+### EP-01 · Gestión de seguros Web (SOL-1) — Funciones FE-01, FE-02 y FE-03 · 17 historias · 44 SP
 
 *Deriva de la historia original SOL-3 (Cotización de seguros en tiempo real, 8 SP) y SOL-4 (Suscripción y emisión de póliza, 8 SP).*
 
@@ -182,7 +192,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - La cotización se puede iniciar sin sesión iniciada; los datos se asocian a la sesión anónima.
 - Si un ramo está desactivado en configuración, no aparece en el selector.
 
-**SP:** 2 · **Prioridad:** Alta · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-3
+**SP:** 2 · **Prioridad:** Alta · **Canal:** Web · **ASR:** — · **Función padre:** SOL-3
 
 ---
 
@@ -198,7 +208,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El consentimiento otorgado queda registrado con fecha, hora, alcance y versión del texto legal aceptado.
 - El cliente puede revocar el consentimiento en cualquier momento y la revocación surte efecto en menos de 5 minutos.
 
-**SP:** 3 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-4.1 · **Jira origen:** SOL-3
+**SP:** 3 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-4.1 · **Función padre:** SOL-3
 
 ---
 
@@ -214,7 +224,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Los datos ingresados se guardan de forma incremental: si el cliente abandona y regresa, no pierde lo escrito.
 - Los campos de información personal se tokenizan antes de persistirse.
 
-**SP:** 2 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-4.1 · **Jira origen:** SOL-3
+**SP:** 2 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-4.1 · **Función padre:** SOL-3
 
 ---
 
@@ -230,7 +240,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Si el motor de perfilamiento no responde dentro del tiempo límite, se muestra una prima basada en el perfil cacheado con una nota indicando que es una estimación preliminar.
 - La prima calculada queda asociada a la cotización con marca de tiempo y vigencia.
 
-**SP:** 3 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-1.1, ASR-1.2 · **Jira origen:** SOL-3
+**SP:** 3 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-1.1, ASR-1.2 · **Función padre:** SOL-3
 
 ---
 
@@ -246,7 +256,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Al cambiar de plan, la prima se recalcula sin recargar la página completa.
 - La selección de plan queda registrada en la cotización.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-3
+**SP:** 3 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Función padre:** SOL-3
 
 ---
 
@@ -262,7 +272,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Recuperar una cotización vigente restaura todos los datos ingresados y la prima calculada.
 - Una cotización vencida conserva sus datos para recotización, pero recalcula la prima con las tarifas actuales.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-3
+**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Función padre:** SOL-3
 
 ---
 
@@ -278,7 +288,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Se pueden agregar múltiples asegurados cuando el ramo lo permite.
 - Todos los campos de información personal se tokenizan antes de persistirse.
 
-**SP:** 2 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-4.1 · **Jira origen:** SOL-4
+**SP:** 2 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-4.1 · **Función padre:** SOL-4
 
 ---
 
@@ -294,7 +304,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Cada documento cargado se almacena cifrado y queda asociado a la solicitud.
 - Si un documento es ilegible o no corresponde al tipo esperado, el sistema lo marca y solicita reemplazo.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-4
+**SP:** 3 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Función padre:** SOL-4
 
 ---
 
@@ -310,7 +320,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El documento firmado queda con sello de tiempo y hash verificable.
 - El cliente recibe copia del documento firmado en su correo.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Web · **ASR:** ASR-4.2 · **Jira origen:** SOL-4
+**SP:** 3 · **Prioridad:** Media · **Canal:** Web · **ASR:** ASR-4.2 · **Función padre:** SOL-4
 
 ---
 
@@ -326,7 +336,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Si el pago es rechazado, se informa el motivo y se permite reintentar con otro medio sin perder la solicitud.
 - Al confirmarse el pago, se dispara automáticamente la emisión de la póliza.
 
-**SP:** 3 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-2.1 · **Jira origen:** SOL-4
+**SP:** 3 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-2.1 · **Función padre:** SOL-4
 
 ---
 
@@ -342,7 +352,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El certificado se firma digitalmente y se almacena con verificación de integridad.
 - La emisión publica un evento de dominio que consumen los servicios de notificación y de administración de pólizas.
 
-**SP:** 3 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-4.2 · **Jira origen:** SOL-4
+**SP:** 3 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-4.2 · **Función padre:** SOL-4
 
 ---
 
@@ -358,11 +368,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Si el envío del correo falla, el sistema reintenta y registra el fallo para seguimiento.
 - La descarga desde el portal verifica la firma digital del documento antes de entregarlo.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** ASR-4.2 · **Jira origen:** SOL-4
+**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** ASR-4.2 · **Función padre:** SOL-4
 
 ---
 
-### EP-02 — Administración y operación de pólizas (Web) · 10 historias · 28 SP
+### EP-02 · Gestión de siniestros Web (SOL-2) — Función FE-04 · 5 historias · 15 SP
 
 *Deriva de las historias originales SOL-5 (Administración de pólizas, 5 SP) y SOL-6 (Gestión y seguimiento de siniestros, 8 SP).*
 
@@ -378,7 +388,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El listado se pagina cuando supera veinte registros.
 - Un cliente solo puede ver sus propias pólizas; el acceso se valida en el servidor contra la identidad de la sesión.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-5
+**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Función padre:** SOL-5
 
 ---
 
@@ -394,7 +404,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Se puede descargar el certificado vigente desde esta vista.
 - El acceso a una póliza que no pertenece al cliente autenticado se rechaza.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-5
+**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Función padre:** SOL-5
 
 ---
 
@@ -410,7 +420,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Al confirmar y pagar, se emite la póliza renovada sin corte de cobertura.
 - Si el cliente no renueva, la póliza pasa a estado vencido en la fecha correspondiente.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-5
+**SP:** 3 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Función padre:** SOL-5
 
 ---
 
@@ -426,7 +436,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Cada endoso genera un documento nuevo, firmado, que no reemplaza sino que complementa el original.
 - Toda modificación queda registrada en el histórico con autor, fecha y valores anterior y nuevo.
 
-**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** ASR-4.2 · **Jira origen:** SOL-5
+**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** ASR-4.2 · **Función padre:** SOL-5
 
 ---
 
@@ -442,7 +452,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - La cancelación requiere confirmación explícita y queda registrada con fecha y motivo.
 - La devolución se procesa por el mismo medio de pago usado originalmente.
 
-**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-5
+**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** — · **Función padre:** SOL-5
 
 ---
 
@@ -458,7 +468,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El sistema valida que la fecha del evento esté dentro de la vigencia de la póliza y rechaza el aviso si no lo está.
 - Al registrarse, se genera un número de siniestro y se notifica al cliente.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-6
+**SP:** 3 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Función padre:** SOL-6
 
 ---
 
@@ -474,7 +484,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Cada documento queda asociado al siniestro, cifrado y con registro de quién lo cargó y cuándo.
 - El cliente ve cuáles documentos faltan por entregar.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-6
+**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Función padre:** SOL-6
 
 ---
 
@@ -490,7 +500,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El cliente recibe notificación ante cada cambio de estado.
 - Se muestra el tiempo estimado de resolución según el tipo de siniestro.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-6
+**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** — · **Función padre:** SOL-6
 
 ---
 
@@ -506,7 +516,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El perito carga su informe con conclusión y valor estimado del daño.
 - El siniestro no puede pasar a liquidación sin informe de perito cuando el ramo lo exige.
 
-**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-6
+**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** — · **Función padre:** SOL-6
 
 ---
 
@@ -522,15 +532,15 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Aprobada la liquidación, se dispara la orden de pago al cliente por el medio registrado.
 - Toda decisión queda registrada de forma inmutable con el usuario que la tomó y su justificación.
 
-**SP:** 5 · **Prioridad:** Baja · **Canal:** Web · **ASR:** ASR-4.2 · **Jira origen:** SOL-6
+**SP:** 5 · **Prioridad:** Baja · **Canal:** Web · **ASR:** ASR-4.2 · **Función padre:** SOL-6
 
 ---
 
-### EP-03 — Acceso y autenticación web · 4 historias · 9 SP
+### EP-06 · Acceso y autenticación Web (nueva) — Función FE-10 (nueva) · 4 historias · 9 SP
 
 > **Épica nueva.** La autenticación web aparecía como recorrido crítico en la definición de alcance del proyecto pero no tenía ninguna historia asociada en el backlog v1.1. Se agrega aquí para cerrar esa brecha.
 
-#### FE-05.1 — Registrarse en el portal con verificación de correo
+#### FE-10.1 — Registrarse en el portal con verificación de correo
 
 **Como** cliente nuevo de Solventa,
 **quiero** crear una cuenta en el portal,
@@ -542,11 +552,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - La cuenta permanece inactiva hasta que el cliente confirma su correo mediante un enlace con vencimiento.
 - La contraseña se almacena con función de derivación de clave resistente a fuerza bruta, nunca en texto plano ni con hash simple.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** ASR-4.1 · **Jira origen:** *(nueva)*
+**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** ASR-4.1 · **Función padre:** *(nueva)*
 
 ---
 
-#### FE-05.2 — Iniciar sesión con segundo factor
+#### FE-10.2 — Iniciar sesión con segundo factor
 
 **Como** cliente registrado,
 **quiero** iniciar sesión de forma segura en el portal,
@@ -558,11 +568,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El mensaje de error no revela si el fallo fue por usuario inexistente o contraseña incorrecta.
 - La sesión se establece con un token de vigencia limitada, transmitido y almacenado de forma segura.
 
-**SP:** 3 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-4.1 · **Jira origen:** *(nueva)*
+**SP:** 3 · **Prioridad:** Alta · **Canal:** Web · **ASR:** ASR-4.1 · **Función padre:** *(nueva)*
 
 ---
 
-#### FE-05.3 — Recuperar el acceso a la cuenta
+#### FE-10.3 — Recuperar el acceso a la cuenta
 
 **Como** cliente registrado que olvidó su contraseña,
 **quiero** restablecerla,
@@ -574,11 +584,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Al restablecer la contraseña se invalidan todas las sesiones activas de esa cuenta.
 - El cliente recibe notificación del cambio de contraseña en su correo.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** ASR-4.1 · **Jira origen:** *(nueva)*
+**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** ASR-4.1 · **Función padre:** *(nueva)*
 
 ---
 
-#### FE-05.4 — Cerrar sesión y expirar por inactividad
+#### FE-10.4 — Cerrar sesión y expirar por inactividad
 
 **Como** cliente que usa el portal desde un equipo compartido,
 **quiero** que mi sesión se cierre al salir o tras un periodo de inactividad,
@@ -590,15 +600,15 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Se avisa al cliente antes de expirar la sesión y se le ofrece extenderla.
 - El cliente puede ver sus sesiones activas y cerrarlas remotamente.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** ASR-4.1 · **Jira origen:** *(nueva)*
+**SP:** 2 · **Prioridad:** Media · **Canal:** Web · **ASR:** ASR-4.1 · **Función padre:** *(nueva)*
 
 ---
 
-### EP-04 — Identidad y acceso móvil (Móvil) · 6 historias · 19 SP
+### EP-03 · Acceso y gestión de pólizas Móvil (SOL-7) — Funciones FE-05 y FE-06 · 11 historias · 31 SP
 
 *Deriva de la historia original SOL-10 (Autenticación biométrica y KYC/AML, 8 SP).*
 
-#### FE-06.1 — Capturar el documento de identidad
+#### FE-05.1 — Capturar el documento de identidad
 
 **Como** cliente nuevo que se registra desde la app móvil,
 **quiero** fotografiar mi documento de identidad y que los datos se extraigan solos,
@@ -610,11 +620,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Si la imagen no permite extraer los datos, se solicita repetir la captura indicando el motivo.
 - Las imágenes del documento se transmiten cifradas y no quedan almacenadas en la galería del dispositivo.
 
-**SP:** 3 · **Prioridad:** Alta · **Canal:** Móvil · **ASR:** ASR-4.1 · **Jira origen:** SOL-10
+**SP:** 3 · **Prioridad:** Alta · **Canal:** Móvil · **ASR:** ASR-4.1 · **Función padre:** SOL-10
 
 ---
 
-#### FE-06.2 — Verificar la identidad con prueba de vida
+#### FE-05.2 — Verificar la identidad con prueba de vida
 
 **Como** cliente nuevo en proceso de onboarding,
 **quiero** verificar que soy yo mediante una prueba de vida,
@@ -626,11 +636,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Si el nivel de confianza está por debajo del umbral, el caso se deriva a revisión manual en lugar de rechazarse automáticamente.
 - Los datos biométricos se procesan y descartan; no se persisten en el dispositivo ni en el backend.
 
-**SP:** 5 · **Prioridad:** Alta · **Canal:** Móvil · **ASR:** ASR-4.1 · **Jira origen:** SOL-10
+**SP:** 5 · **Prioridad:** Alta · **Canal:** Móvil · **ASR:** ASR-4.1 · **Función padre:** SOL-10
 
 ---
 
-#### FE-06.3 — Validar contra listas restrictivas
+#### FE-05.3 — Validar contra listas restrictivas
 
 **Como** oficial de cumplimiento de Solventa,
 **quiero** que todo cliente nuevo se valide contra listas restrictivas y de personas expuestas políticamente,
@@ -642,11 +652,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El resultado de la consulta queda registrado con fecha, fuente consultada y resultado.
 - La consulta se reintenta con degradación controlada si el proveedor externo no responde, sin dejar pasar al cliente sin validar.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-1.2 · **Jira origen:** SOL-10
+**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-1.2 · **Función padre:** SOL-10
 
 ---
 
-#### FE-06.4 — Otorgar consentimiento Open Finance desde el móvil
+#### FE-05.4 — Otorgar consentimiento Open Finance desde el móvil
 
 **Como** cliente que completó su onboarding en la app,
 **quiero** autorizar la consulta de mi información financiera desde el móvil,
@@ -658,11 +668,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El cliente puede consultar y revocar sus consentimientos activos desde la app.
 - La revocación surte efecto en menos de 5 minutos en todos los canales.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-4.1 · **Jira origen:** SOL-10
+**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-4.1 · **Función padre:** SOL-10
 
 ---
 
-#### FE-06.5 — Iniciar sesión con la biometría del dispositivo
+#### FE-05.5 — Iniciar sesión con la biometría del dispositivo
 
 **Como** cliente con onboarding completado,
 **quiero** entrar a la app con mi huella o rostro,
@@ -674,11 +684,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - La credencial que habilita el ingreso biométrico se almacena en el almacén seguro del dispositivo.
 - Al cambiar la biometría registrada en el dispositivo, se invalida la credencial y se exige reautenticación completa.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-4.1 · **Jira origen:** SOL-10
+**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-4.1 · **Función padre:** SOL-10
 
 ---
 
-#### FE-06.6 — Reintentar el onboarding tras un rechazo
+#### FE-05.6 — Reintentar el onboarding tras un rechazo
 
 **Como** cliente cuyo onboarding fue rechazado,
 **quiero** entender por qué y poder intentarlo de nuevo,
@@ -690,15 +700,15 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Se limita el número de reintentos en una ventana de tiempo y se registra cada intento.
 - Superado el límite, el caso se deriva a atención humana.
 
-**SP:** 2 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Jira origen:** SOL-10
+**SP:** 2 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Función padre:** SOL-10
 
 ---
 
-### EP-05 — Autogestión móvil · 14 historias · 34 SP
+### EP-04 · Siniestros y asistencia Móvil (SOL-8) — Funciones FE-07 y FE-08 · 9 historias · 22 SP
 
 *Deriva de las historias originales SOL-11 (Billetera de pólizas, 5 SP), SOL-12 (Reporte de siniestros con evidencia, 5 SP) y SOL-13 (Notificaciones y asistencia geolocalizada, 5 SP).*
 
-#### FE-07.1 — Ver las pólizas activas en la billetera
+#### FE-06.1 — Ver las pólizas activas en la billetera
 
 **Como** cliente asegurado con la app instalada,
 **quiero** ver mis pólizas activas en la billetera,
@@ -710,11 +720,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - La billetera se actualiza automáticamente cuando se emite o modifica una póliza.
 - Solo se muestran las pólizas del cliente autenticado en la sesión.
 
-**SP:** 2 · **Prioridad:** Alta · **Canal:** Móvil · **ASR:** ASR-3.3 · **Jira origen:** SOL-11
+**SP:** 2 · **Prioridad:** Alta · **Canal:** Móvil · **ASR:** ASR-3.3 · **Función padre:** SOL-11
 
 ---
 
-#### FE-07.2 — Consultar las pólizas sin conexión
+#### FE-06.2 — Consultar las pólizas sin conexión
 
 **Como** cliente asegurado sin señal de datos,
 **quiero** consultar mis pólizas de todos modos,
@@ -726,11 +736,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Se muestra número, vigencia y coberturas sin requerir conexión.
 - El almacenamiento local no conserva más información personal de la estrictamente necesaria para mostrar la póliza.
 
-**SP:** 3 · **Prioridad:** Alta · **Canal:** Móvil · **ASR:** ASR-3.3 · **Jira origen:** SOL-11
+**SP:** 3 · **Prioridad:** Alta · **Canal:** Móvil · **ASR:** ASR-3.3 · **Función padre:** SOL-11
 
 ---
 
-#### FE-07.3 — Descargar el certificado al dispositivo
+#### FE-06.3 — Descargar el certificado al dispositivo
 
 **Como** cliente asegurado,
 **quiero** guardar el certificado de mi póliza en el dispositivo,
@@ -742,11 +752,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - La descarga funciona sin conexión si el certificado ya fue sincronizado.
 - El certificado descargado conserva la firma digital verificable por terceros.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-4.2 · **Jira origen:** SOL-11
+**SP:** 2 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-4.2 · **Función padre:** SOL-11
 
 ---
 
-#### FE-07.4 — Sincronizar al recuperar conectividad
+#### FE-06.4 — Sincronizar al recuperar conectividad
 
 **Como** cliente que recupera la señal después de estar sin conexión,
 **quiero** que mis datos se actualicen solos,
@@ -758,11 +768,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Las acciones realizadas sin conexión se envían al servidor en el orden en que se ejecutaron.
 - Si un dato cambió en el servidor y en el dispositivo, prevalece el del servidor y se informa al cliente.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-3.3 · **Jira origen:** SOL-11
+**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-3.3 · **Función padre:** SOL-11
 
 ---
 
-#### FE-07.5 — Ver alerta de datos desactualizados
+#### FE-06.5 — Ver alerta de datos desactualizados
 
 **Como** cliente que lleva mucho tiempo sin conexión,
 **quiero** saber si la información que veo puede estar desactualizada,
@@ -774,7 +784,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El aviso no bloquea la consulta: el cliente sigue viendo su póliza.
 - Al sincronizar, el aviso desaparece y se actualiza la marca de tiempo.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-3.3 · **Jira origen:** SOL-11
+**SP:** 2 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-3.3 · **Función padre:** SOL-11
 
 ---
 
@@ -790,7 +800,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Las imágenes se transmiten cifradas y quedan asociadas al siniestro.
 - Se muestra el progreso de carga y se puede continuar el reporte mientras las imágenes suben.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** — · **Jira origen:** SOL-12
+**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** — · **Función padre:** SOL-12
 
 ---
 
@@ -806,7 +816,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - El cliente puede corregir manualmente la ubicación si la detectada no es correcta.
 - La ubicación queda asociada al siniestro y es visible para el analista.
 
-**SP:** 2 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Jira origen:** SOL-12
+**SP:** 2 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Función padre:** SOL-12
 
 ---
 
@@ -822,7 +832,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Tanto el audio como la transcripción quedan asociados al siniestro.
 - Existe un límite de duración de la grabación, comunicado al cliente antes de grabar.
 
-**SP:** 2 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Jira origen:** SOL-12
+**SP:** 2 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Función padre:** SOL-12
 
 ---
 
@@ -838,7 +848,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Al recuperar conectividad, el reporte se envía automáticamente y el cliente recibe confirmación.
 - Si el envío falla, se reintenta con espera creciente y se informa al cliente el estado.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-3.3 · **Jira origen:** SOL-12
+**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-3.3 · **Función padre:** SOL-12
 
 ---
 
@@ -854,11 +864,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Cada cambio de estado genera una notificación al dispositivo.
 - El estado se consulta desde caché cuando no hay conexión, con marca de última actualización.
 
-**SP:** 2 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-3.3 · **Jira origen:** SOL-12
+**SP:** 2 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** ASR-3.3 · **Función padre:** SOL-12
 
 ---
 
-#### FE-09.1 — Recibir notificaciones de póliza y siniestro
+#### FE-07.1 — Recibir notificaciones de póliza y siniestro
 
 **Como** cliente asegurado,
 **quiero** recibir avisos de lo que pasa con mis pólizas y siniestros,
@@ -870,11 +880,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Al tocar la notificación, la app abre directamente en la pantalla correspondiente.
 - Si el envío falla, el aviso queda igualmente disponible en el centro de notificaciones dentro de la app.
 
-**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** — · **Jira origen:** SOL-13
+**SP:** 3 · **Prioridad:** Media · **Canal:** Móvil · **ASR:** — · **Función padre:** SOL-13
 
 ---
 
-#### FE-09.2 — Configurar las preferencias de notificación
+#### FE-07.2 — Configurar las preferencias de notificación
 
 **Como** cliente que no quiere recibir todos los avisos,
 **quiero** elegir qué notificaciones recibir,
@@ -886,11 +896,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Las preferencias se sincronizan con el servidor y aplican a todos los dispositivos del cliente.
 - El cambio de preferencias tiene efecto inmediato.
 
-**SP:** 2 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Jira origen:** SOL-13
+**SP:** 2 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Función padre:** SOL-13
 
 ---
 
-#### FE-09.3 — Solicitar asistencia geolocalizada
+#### FE-07.3 — Solicitar asistencia geolocalizada
 
 **Como** cliente que necesita ayuda en el lugar de un siniestro,
 **quiero** solicitar asistencia y que sepan dónde estoy,
@@ -902,11 +912,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Se muestra al cliente el tiempo estimado de llegada y el estado de la solicitud.
 - La solicitud queda asociada a la póliza y al siniestro si existe uno abierto.
 
-**SP:** 3 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Jira origen:** SOL-13
+**SP:** 3 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Función padre:** SOL-13
 
 ---
 
-#### FE-09.4 — Contactar a un asesor desde la app
+#### FE-07.4 — Contactar a un asesor desde la app
 
 **Como** cliente con una duda sobre mi póliza,
 **quiero** comunicarme con un asesor desde la app,
@@ -918,15 +928,15 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Se indica el horario de atención y, fuera de él, se ofrece dejar el mensaje para respuesta posterior.
 - El histórico de conversaciones queda disponible para el cliente.
 
-**SP:** 2 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Jira origen:** SOL-13
+**SP:** 2 · **Prioridad:** Baja · **Canal:** Móvil · **ASR:** — · **Función padre:** SOL-13
 
 ---
 
-### EP-06 — Portal de socios distribuidores · 5 historias · 16 SP
+### EP-05 · Portal de Socios y Distribución (SOL-30) — Función FE-09 · 5 historias · 16 SP
 
 *Deriva de la historia original SOL-31 (Portal de socios distribuidores API B2B, 8 SP).*
 
-#### FE-10.1 — Registrar un socio distribuidor
+#### FE-09.1 — Registrar un socio distribuidor
 
 **Como** empresa interesada en distribuir seguros de Solventa,
 **quiero** registrarme como socio,
@@ -938,11 +948,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Al aprobarse, se notifica al socio y se habilita el acceso al portal.
 - Los datos del socio quedan asociados a un identificador único usado en toda la integración.
 
-**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-31
+**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** — · **Función padre:** SOL-31
 
 ---
 
-#### FE-10.2 — Generar y rotar las llaves de API
+#### FE-09.2 — Generar y rotar las llaves de API
 
 **Como** socio distribuidor aprobado,
 **quiero** obtener y poder rotar mis llaves de acceso a la API,
@@ -954,11 +964,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - La rotación genera una llave nueva y mantiene la anterior válida durante un periodo de gracia configurable.
 - Cada llave tiene registro de fecha de creación, último uso y estado.
 
-**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** ASR-4.1 · **Jira origen:** SOL-31
+**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** ASR-4.1 · **Función padre:** SOL-31
 
 ---
 
-#### FE-10.3 — Consultar el catálogo de ramos por API
+#### FE-09.3 — Consultar el catálogo de ramos por API
 
 **Como** sistema del socio distribuidor,
 **quiero** consultar qué productos puedo ofrecer y con qué parámetros,
@@ -970,11 +980,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - La respuesta se entrega en el idioma y con la moneda del país del socio.
 - Las llamadas sin llave válida se rechazan sin revelar información del catálogo.
 
-**SP:** 2 · **Prioridad:** Baja · **Canal:** API · **ASR:** ASR-2.2 · **Jira origen:** SOL-31
+**SP:** 2 · **Prioridad:** Baja · **Canal:** API · **ASR:** ASR-2.2 · **Función padre:** SOL-31
 
 ---
 
-#### FE-10.4 — Monitorear el consumo y la cuota de API
+#### FE-09.4 — Monitorear el consumo y la cuota de API
 
 **Como** socio distribuidor con una integración activa,
 **quiero** ver cuántas llamadas he consumido y cuánta cuota me queda,
@@ -986,11 +996,11 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Al superar la cuota, las llamadas se rechazan con un código y mensaje que lo explican claramente.
 - El histórico de consumo está disponible por al menos los últimos doce meses.
 
-**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** — · **Jira origen:** SOL-31
+**SP:** 3 · **Prioridad:** Baja · **Canal:** Web · **ASR:** — · **Función padre:** SOL-31
 
 ---
 
-#### FE-10.5 — Cotizar y emitir de forma embebida por API
+#### FE-09.5 — Cotizar y emitir de forma embebida por API
 
 **Como** sistema del socio distribuidor,
 **quiero** cotizar y emitir pólizas directamente por API,
@@ -1002,7 +1012,7 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 - Cada operación queda trazada con el identificador del socio que la originó.
 - Los tiempos de respuesta de la API cumplen el mismo objetivo de latencia que el canal propio.
 
-**SP:** 5 · **Prioridad:** Baja · **Canal:** API · **ASR:** ASR-1.1 · **Jira origen:** SOL-31
+**SP:** 5 · **Prioridad:** Baja · **Canal:** API · **ASR:** ASR-1.1 · **Función padre:** SOL-31
 
 ---
 
@@ -1056,7 +1066,7 @@ Las historias que no cumplen ninguno de los tres criterios se difieren al Proyec
 
 | Orden | Historia | Canal | SP | Justificación |
 |---|---|---|---|---|
-| 6 | FE-05.2 Iniciar sesión con segundo factor | Web | 3 | Puerta de entrada de todo el recorrido web |
+| 6 | FE-10.2 Iniciar sesión con segundo factor | Web | 3 | Puerta de entrada de todo el recorrido web |
 | 7 | FE-01.1 Iniciar cotización seleccionando ramo | Web | 2 | Inicio del recorrido crítico |
 | 8 | FE-01.2 Autorizar consulta Open Finance | Web | 3 | Diferenciador del producto; habilita ASR-4.1 |
 | 9 | FE-01.3 Ingresar datos del bien a asegurar | Web | 2 | Prerrequisito del cálculo de prima |
@@ -1064,10 +1074,10 @@ Las historias que no cumplen ninguno de los tres criterios se difieren al Proyec
 | 11 | FE-02.1 Completar datos del tomador | Web | 2 | Prerrequisito de la emisión |
 | 12 | FE-02.4 Pagar la primera prima | Web | 3 | Cierra el recorrido de venta |
 | 13 | FE-02.5 Emitir la póliza y generar certificado | Web | 3 | Resultado observable del recorrido web |
-| 14 | FE-06.1 Capturar el documento de identidad | Móvil | 3 | Inicio del recorrido móvil |
-| 15 | FE-06.2 Verificar identidad con prueba de vida | Móvil | 5 | Núcleo del onboarding móvil |
-| 16 | FE-07.1 Ver pólizas activas en la billetera | Móvil | 2 | Resultado observable del recorrido móvil |
-| 17 | FE-07.2 Consultar las pólizas sin conexión | Móvil | 3 | Donde se observa ASR-3.3 |
+| 14 | FE-05.1 Capturar el documento de identidad | Móvil | 3 | Inicio del recorrido móvil |
+| 15 | FE-05.2 Verificar identidad con prueba de vida | Móvil | 5 | Núcleo del onboarding móvil |
+| 16 | FE-06.1 Ver pólizas activas en la billetera | Móvil | 2 | Resultado observable del recorrido móvil |
+| 17 | FE-06.2 Consultar las pólizas sin conexión | Móvil | 3 | Donde se observa ASR-3.3 |
 | | **Subtotal** | | **34** | |
 
 | | SP |
@@ -1098,10 +1108,10 @@ Las historias que no cumplen ninguno de los tres criterios se difieren al Proyec
 
 | Semana | Historias comprometidas | SP |
 |---|---|---|
-| Semana 5 (31 ago – 6 sep) | HU-ARQ-05, HU-ARQ-07, FE-05.2, FE-01.1 | 18 |
+| Semana 5 (31 ago – 6 sep) | HU-ARQ-05, HU-ARQ-07, FE-10.2, FE-01.1 | 18 |
 | Semana 6 (7 – 13 sep) | HU-ARQ-06, FE-01.2, FE-01.3 | 18 |
 | Semana 7 (14 – 20 sep) | HU-ARQ-03, HU-ARQ-08, FE-01.4 | 19 |
-| Semana 8 (21 – 27 sep) | FE-02.1, FE-02.4, FE-02.5, FE-06.1, FE-06.2, FE-07.1, FE-07.2 | 21 |
+| Semana 8 (21 – 27 sep) | FE-02.1, FE-02.4, FE-02.5, FE-05.1, FE-05.2, FE-06.1, FE-06.2 | 21 |
 | **Total** | **17 historias** | **76** |
 
 ---
@@ -1115,32 +1125,34 @@ Cada uno de los nueve escenarios de calidad definidos en la semana 3 se valida a
 | ASR-1.1 | Latencia | HU-ARQ-07 (SOL-28) | FE-01.4 Ver prima calculada | Sí |
 | ASR-1.2 | Latencia bajo degradación | HU-ARQ-08 (SOL-37) | FE-01.4 Ver prima calculada | Sí |
 | ASR-2.1 | Modificabilidad | HU-ARQ-02 (SOL-20) | FE-02.4 Pagar la primera prima | No |
-| ASR-2.2 | Modificabilidad | HU-ARQ-01 (SOL-21) | FE-01.1 Iniciar cotización · FE-10.3 Catálogo API | No |
+| ASR-2.2 | Modificabilidad | HU-ARQ-01 (SOL-21) | FE-01.1 Iniciar cotización · FE-09.3 Catálogo API | No |
 | ASR-3.1 | Disponibilidad | HU-ARQ-06 (SOL-29) | FE-01.4 Ver prima calculada | Sí |
 | ASR-3.2 | Disponibilidad multi-AZ | HU-ARQ-09 (SOL-43) | Transversal a todo el sistema | No |
-| ASR-3.3 | Continuidad offline | HU-ARQ-10 (SOL-44) | FE-07.2 Consultar pólizas sin conexión | Parcial |
+| ASR-3.3 | Continuidad offline | HU-ARQ-10 (SOL-44) | FE-06.2 Consultar pólizas sin conexión | Parcial |
 | ASR-4.1 | Confidencialidad | HU-ARQ-03 (SOL-23) | FE-01.2 Autorizar Open Finance | Sí |
 | ASR-4.2 | Integridad | HU-ARQ-11 (SOL-45) | FE-02.5 Emitir póliza y certificado | No |
 
-> ASR-3.3 se marca como parcial: la historia funcional que lo evidencia (FE-07.2) entra en el Proyecto Final 1, pero la historia de arquitectura que lo implementa por completo (HU-ARQ-10) se difiere. En el Proyecto Final 1 se demuestra la consulta sin conexión; la sincronización bidireccional completa queda para el Proyecto Final 2.
+> ASR-3.3 se marca como parcial: la historia funcional que lo evidencia (FE-06.2) entra en el Proyecto Final 1, pero la historia de arquitectura que lo implementa por completo (HU-ARQ-10) se difiere. En el Proyecto Final 1 se demuestra la consulta sin conexión; la sincronización bidireccional completa queda para el Proyecto Final 2.
 
 ---
 
 ## 7. Anexo — Mapeo entre el backlog anterior y el actual
 
-| Historia v1.1 | SP v1.1 | Se descompone en | Historias v2.0 | SP v2.0 |
-|---|---|---|---|---|
-| SOL-3 Cotización de seguros en tiempo real | 8 | FE-01.1 a FE-01.6 | 6 | 15 |
-| SOL-4 Suscripción y emisión de póliza | 8 | FE-02.1 a FE-02.6 | 6 | 16 |
-| SOL-5 Administración de pólizas | 5 | FE-03.1 a FE-03.5 | 5 | 13 |
-| SOL-6 Gestión y seguimiento de siniestros | 8 | FE-04.1 a FE-04.5 | 5 | 15 |
-| *(ausente en v1.1)* | — | FE-05.1 a FE-05.4 | 4 | 9 |
-| SOL-10 Autenticación biométrica y KYC/AML | 8 | FE-06.1 a FE-06.6 | 6 | 19 |
-| SOL-11 Billetera de pólizas móvil | 5 | FE-07.1 a FE-07.5 | 5 | 12 |
-| SOL-12 Reporte de siniestros con evidencia | 5 | FE-08.1 a FE-08.5 | 5 | 12 |
-| SOL-13 Notificaciones y asistencia | 5 | FE-09.1 a FE-09.4 | 4 | 10 |
-| SOL-31 Portal de socios distribuidores | 8 | FE-10.1 a FE-10.5 | 5 | 16 |
-| HU-ARQ-01 a HU-ARQ-11 | 92 | *(sin cambio)* | 11 | 92 |
-| **Total** | **152** | | **62** | **229** |
+| Función en Jira | Tipo en Jira | SP v1.1 | Se descompone en | Historias | SP v2.0 |
+|---|---|---|---|---|---|
+| SOL-3 Cotización de seguros | Función | 8 | FE-01.1 a FE-01.6 | 6 | 15 |
+| SOL-4 Suscripción y emisión de póliza | Función | 8 | FE-02.1 a FE-02.6 | 6 | 16 |
+| SOL-5 Administración de pólizas | Función | 5 | FE-03.1 a FE-03.5 | 5 | 13 |
+| SOL-6 Gestión y seguimiento de siniestros | Función | 8 | FE-04.1 a FE-04.5 | 5 | 15 |
+| SOL-10 Autenticación biométrica y KYC/AML | Función | 8 | FE-05.1 a FE-05.6 | 6 | 19 |
+| SOL-11 Billetera de pólizas móvil | Función | 5 | FE-06.1 a FE-06.5 | 5 | 12 |
+| SOL-13 Notificaciones y asistencia | Función | 5 | FE-07.1 a FE-07.4 | 4 | 10 |
+| SOL-12 Reporte de siniestros con evidencia | Función | 5 | FE-08.1 a FE-08.5 | 5 | 12 |
+| SOL-31 Portal de socios distribuidores | Historia ⚠ | 8 | FE-09.1 a FE-09.5 | 5 | 16 |
+| *(ausente en v1.1)* Autenticación web | — | — | FE-10.1 a FE-10.4 | 4 | 9 |
+| SOL-20 a SOL-45 · HU-ARQ-01 a HU-ARQ-11 | Historia | 92 | *(sin descomponer)* | 11 | 92 |
+| **Total** | | **152** | | **62** | **229** |
+
+> ⚠ **SOL-31 está tipada como Historia cuando debería ser Función**, igual que sus ocho hermanas FE-01 a FE-08. Es la única funcionalidad de cara al usuario que cuelga directamente de su épica sin nivel de función intermedio. Se corrige junto con la carga de las historias nuevas.
 
 **Tablero Jira del proyecto:** https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/boards

@@ -675,10 +675,10 @@ Con una velocidad efectiva de 19 puntos de historia por semana y 76 puntos dispo
 
 | Semana | Historias comprometidas | SP |
 |---|---|---|
-| 5 | HU-ARQ-05, HU-ARQ-07, FE-05.2, FE-01.1 | 18 |
+| 5 | HU-ARQ-05, HU-ARQ-07, FE-10.2, FE-01.1 | 18 |
 | 6 | HU-ARQ-06, FE-01.2, FE-01.3 | 18 |
 | 7 | HU-ARQ-03, HU-ARQ-08, FE-01.4 | 19 |
-| 8 | FE-02.1, FE-02.4, FE-02.5, FE-06.1, FE-06.2, FE-07.1, FE-07.2 | 21 |
+| 8 | FE-02.1, FE-02.4, FE-02.5, FE-05.1, FE-05.2, FE-06.1, FE-06.2 | 21 |
 | **Total** | **17 historias** | **76** |
 
 El detalle completo del backlog de 62 historias, el cálculo de la capacidad del equipo y el criterio de corte de alcance están en el documento de historias de usuario versión 2.0 que acompaña esta entrega.

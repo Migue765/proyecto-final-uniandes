@@ -1,0 +1,66 @@
+// Solventa - P5 Puertos y Adaptadores + P6 Strategy con configuracion externalizada
+// Lo relevante es la DIRECCION de las flechas: el nucleo no depende de nada externo.
+// Render:  dot -Tpng -Gdpi=150 patron_puertos_adaptadores.dot -o imagenes/patron_puertos_adaptadores.png
+digraph PatronPuertos {
+    rankdir=TB;
+    compound=true;
+    splines=polyline;
+    nodesep=0.35;
+    ranksep=0.60;
+    fontname="Helvetica";
+    node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=9 penwidth=0.8 margin="0.15,0.09"];
+    edge [fontname="Helvetica" fontsize=8 color="#5A6B7B" penwidth=1.0 arrowsize=0.7];
+
+    subgraph cluster_nucleo {
+        label="  Núcleo de negocio  ·  no conoce ninguna implementación concreta  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#4A7EB5"; style="rounded"; bgcolor="#EEF4FA";
+
+        pagos [label="Servicio de Pagos & Recaudo\nlógica de cobro" fillcolor="#C9DCF0" color="#4A7EB5"];
+        rating [label="Motor de Rating\nevalúa árbol de reglas" fillcolor="#C9DCF0" color="#4A7EB5"];
+
+        puerto [label="«puerto»  PasarelaDePago\n─────────────────────\nautorizar(cobro)\nconfirmar(cobro)\nreversar(cobro)"
+                shape=box style="filled" fillcolor="#FFFFFF" color="#4A7EB5" penwidth=1.6 fontsize=9];
+        strat  [label="«puerto»  ReglaDeRamo\n─────────────────────\nfactores()\ncoberturas()\nvalidar()"
+                shape=box style="filled" fillcolor="#FFFFFF" color="#4A7EB5" penwidth=1.6 fontsize=9];
+    }
+
+    subgraph cluster_adapt {
+        label="  Adaptadores  ·  dependen del núcleo, no al revés  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#B5654A"; style="rounded"; bgcolor="#FCF2EF";
+        adCO [label="AdaptadorPSE\n(Colombia)" fillcolor="#F5D5C9" color="#B5654A"];
+        adMX [label="AdaptadorSPEI\n(México)  ← nuevo" fillcolor="#F8DDD2" color="#B5654A" penwidth=1.6];
+        adCL [label="AdaptadorWebpay\n(Chile)" fillcolor="#F5D5C9" color="#B5654A"];
+    }
+
+    subgraph cluster_config {
+        label="  Configuración versionada  ·  no es código  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#7C9E5B"; style="rounded"; bgcolor="#F5FAF0";
+        cfgV [label="ramo-vida.json" fillcolor="#DCEFC8" color="#7C9E5B"];
+        cfgD [label="ramo-dispositivos.json" fillcolor="#DCEFC8" color="#7C9E5B"];
+        cfgM [label="ramo-mascota.json  ← nuevo" fillcolor="#E5F3D5" color="#7C9E5B" penwidth=1.6];
+    }
+
+    ext [label="APIs de las pasarelas  ·  contratos distintos entre sí"
+         shape=box style="rounded,filled,dashed" fillcolor="#F7F8F9" color="#7F8C99" fontsize=9];
+
+    // el nucleo solo depende de sus propios puertos
+    pagos  -> puerto [label=" usa "];
+    rating -> strat  [label=" usa "];
+
+    // los adaptadores implementan el puerto: la flecha apunta HACIA el nucleo
+    adCO -> puerto [label=" implementa " style=dashed arrowhead=empty color="#B5654A"];
+    adMX -> puerto [label=" implementa " style=dashed arrowhead=empty color="#B5654A" penwidth=1.6];
+    adCL -> puerto [style=dashed arrowhead=empty color="#B5654A"];
+
+    cfgV -> strat [label=" se carga como " style=dashed arrowhead=empty color="#7C9E5B"];
+    cfgM -> strat [style=dashed arrowhead=empty color="#7C9E5B" penwidth=1.6];
+    cfgD -> strat [style=dashed arrowhead=empty color="#7C9E5B"];
+
+    adCO -> ext;
+    adMX -> ext;
+    adCL -> ext;
+
+    nota [label="Integrar una pasarela nueva = escribir una clase + una línea de configuración.\nCero archivos del núcleo modificados. No es una promesa: es una propiedad\ndel grafo de dependencias, porque ninguna flecha sale del núcleo hacia afuera."
+          shape=note fillcolor="#FFFDF0" color="#C79A3C" fontsize=9 margin="0.20,0.12"];
+    ext -> nota [style=invis];
+}

@@ -1,0 +1,54 @@
+// Solventa - P9 Tokenizacion de datos sensibles con custodia unica
+// Render:  dot -Tpng -Gdpi=150 patron_tokenizacion.dot -o imagenes/patron_tokenizacion.png
+digraph PatronTokenizacion {
+    rankdir=LR;
+    compound=true;
+    splines=polyline;
+    nodesep=0.32;
+    ranksep=0.65;
+    fontname="Helvetica";
+    node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=9 penwidth=0.8 margin="0.14,0.08"];
+    edge [fontname="Helvetica" fontsize=8 color="#5A6B7B" penwidth=1.0 arrowsize=0.7];
+
+    of [label="Proveedor\nOpen Finance" shape=box3d fillcolor="#F5D5C9" color="#B5654A"];
+
+    subgraph cluster_frontera {
+        label="  Frontera de custodia  ·  único lugar donde existe el dato original  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#B5654A"; style="rounded"; bgcolor="#FCF2EF";
+        adapt [label="Adaptador\nOpen Finance" fillcolor="#F5D5C9" color="#B5654A"];
+        tok   [label="Servicio de Tokenización\ncifra y custodia el original" fillcolor="#F3C9BA" color="#B5654A" penwidth=1.6];
+        kms   [label="Gestión de llaves\ncustodia la llave · rota" fillcolor="#F3C9BA" color="#B5654A"];
+        bov   [label="Bóveda\noriginal cifrado" shape=cylinder fillcolor="#F3C9BA" color="#B5654A"];
+    }
+
+    subgraph cluster_interior {
+        label="  Aguas adentro  ·  solo circulan tokens sin valor  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#4A7EB5"; style="rounded"; bgcolor="#EEF4FA";
+        perf [label="Perfilamiento\nopera sobre el perfil derivado" fillcolor="#C9DCF0" color="#4A7EB5"];
+        cot  [label="Cotización\n& Rating" fillcolor="#C9DCF0" color="#4A7EB5"];
+        pol  [label="Pólizas" fillcolor="#C9DCF0" color="#4A7EB5"];
+        bus  [label="Event Bus\neventos con token" shape=box3d fillcolor="#C9DCF0" color="#4A7EB5"];
+        pg   [label="PostgreSQL\ncolumnas con token" shape=cylinder fillcolor="#C9DCF0" color="#4A7EB5"];
+    }
+
+    cons [label="Consentimientos\nrevocar invalida la\ndestokenización" fillcolor="#DCEFC8" color="#7C9E5B"];
+    aud  [label="Auditoría\nuna entrada por\ncada destokenización" shape=cylinder fillcolor="#DCEFC8" color="#7C9E5B"];
+
+    of    -> adapt [label=" TLS 1.3 \n dato original "];
+    adapt -> tok   [label=" tokeniza "];
+    tok   -> kms   [label=" cifra con \n llave gestionada " style=dashed];
+    tok   -> bov;
+    tok   -> perf  [label=" token " color="#2E7D32" fontcolor="#2E7D32" penwidth=1.4];
+
+    perf -> cot  [label=" perfil derivado " color="#2E7D32" fontcolor="#2E7D32"];
+    cot  -> pol  [label=" token " color="#2E7D32" fontcolor="#2E7D32"];
+    pol  -> pg   [label=" token " color="#2E7D32" fontcolor="#2E7D32"];
+    pol  -> bus  [label=" token " color="#2E7D32" fontcolor="#2E7D32"];
+
+    cons -> tok  [label=" autoriza o \n revoca " color="#7C9E5B" fontcolor="#7C9E5B"];
+    tok  -> aud  [label=" registra " style=dashed color="#7C9E5B"];
+
+    nota [label="Verificación del ASR-4.1: basta buscar los datos cebo en los volcados de\nPostgreSQL, en los mensajes del bus y en el tráfico capturado. Cualquier\ncoincidencia fuera de la frontera de custodia refuta el diseño y señala\nel punto exacto de fuga."
+          shape=note fillcolor="#FFFDF0" color="#C79A3C" fontsize=9 margin="0.20,0.12"];
+    pg -> nota [style=invis];
+}

@@ -20,10 +20,10 @@ Este documento contiene **la totalidad de los entregables de la semana 4**. Cada
 |---|---|---|---|
 | 1 | **Hoja de trabajo: modelos de arquitectura, patrones detallados y experimentos** | **70** | |
 | 1a | Modelos de arquitectura — vista funcional, de despliegue y de información | 20 | §2, con las tres figuras embebidas |
-| 1b | Diseño detallado con patrones y razonamiento, en relación con los ASR | 30 | §3 (doce patrones) y §4 (decisiones y alternativas descartadas) |
+| 1b | Diseño detallado con patrones y razonamiento, en relación con los ASR | 30 | §3: vista de asignación de patrones, matriz de trazabilidad patrón→táctica→componente→ASR, estructura de los patrones críticos y los doce patrones en detalle. §4: decisiones y alternativas descartadas |
 | 1c | Propuesta de experimentos — propósito, respuesta esperada, tecnologías y esfuerzo | 20 | §5 (ocho experimentos que cubren los nueve ASR) |
 | 2 | **Refinamiento de la estrategia de pruebas** | **10** | §6 |
-| 3 | **Actualización del plan de trabajo y tablero** | **10** | §7, con los enlaces al tablero y la guía de etiquetas |
+| 3 | **Actualización del plan de trabajo y tablero** | **10** | §7: qué es un punto de historia, cálculo de la capacidad del equipo paso a paso, distribución del esfuerzo por integrante, compromiso por sprint y estado del tablero |
 | 4 | **Video con evidencias** | **10** | §8, con el enlace y el guion completo por presentador |
 | — | *Corrección de la entrega de la semana 3* | *Reentrega* | §9, con remisión al documento de historias de usuario v2.0 |
 
@@ -136,7 +136,78 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 | P11 | Cliente con prioridad al modo desconectado | ASR-3.3 | App móvil · BFF Móvil |
 | P12 | Autoescalado con comprobaciones de salud | ASR-3.2 | EKS |
 
-### 3.2 P1 — Caché de perfiles con lectura anticipada
+### 3.2 Marco: patrón, táctica y su relación con el ASR
+
+Los tres conceptos operan en niveles distintos y conviene no confundirlos, porque el profesor evalúa la relación entre ellos:
+
+| Concepto | Qué es | Ejemplo en Solventa |
+|---|---|---|
+| **Atributo de calidad (ASR)** | La propiedad que el sistema debe exhibir, expresada como escenario medible | ASR-1.1: p95 < 200 ms con 500 req/min |
+| **Táctica** | Una decisión de diseño elemental que influye sobre un atributo de calidad. Es el «qué se hace» | Mantener múltiples copias de datos computados |
+| **Patrón** | Una composición de tácticas con una estructura conocida y contrapartidas documentadas. Es el «cómo se materializa» | Cache-Aside, que compone esa táctica con una política de vencimiento y una de escritura |
+
+La cadena de razonamiento que sigue este documento es siempre la misma: **un ASR exige una propiedad → esa propiedad se consigue con una o varias tácticas → esas tácticas se materializan en un patrón → ese patrón se asigna a componentes concretos → un experimento mide si funcionó.**
+
+### 3.3 Vista de asignación de patrones
+
+Esta vista muestra dónde vive cada patrón dentro de la arquitectura. Las anotaciones entre llaves indican el patrón que gobierna ese componente o esa capa.
+
+![Figura 4. Asignación de los doce patrones sobre los componentes de la arquitectura](diagramas/imagenes/vista_patrones.png)
+
+Tres observaciones sobre la asignación:
+
+1. **Los patrones de disponibilidad se concentran en la frontera con lo externo.** El interruptor de circuito, el tiempo de espera acotado y el adaptador viven todos en la capa de adaptadores, porque es ahí donde el sistema deja de controlar lo que ocurre. Ningún servicio del núcleo implementa resiliencia frente a terceros: la hereda de la frontera.
+2. **El mamparo es transversal al núcleo y no un componente.** No aparece como una caja porque no lo es: es la política de que cada servicio tenga depósitos de recursos separados por dependencia. Se representa como propiedad de la capa.
+3. **La tokenización es el único componente del núcleo dibujado en color de frontera.** Es deliberado: aunque se ejecuta dentro del núcleo, actúa como frontera de custodia, y esa dualidad es lo que hace verificable el ASR-4.1.
+
+### 3.4 Matriz de trazabilidad
+
+Cada fila se lee así: el patrón materializa esas tácticas, vive en esos componentes, existe para satisfacer ese ASR, y ese experimento comprueba si lo consigue.
+
+| Patrón | Tácticas que materializa | Componentes donde vive | ASR | Experimento |
+|---|---|---|---|---|
+| **P1** Cache-Aside | Mantener múltiples copias de datos computados · Reducir la demanda computacional en el camino crítico | Perfilamiento · Redis | ASR-1.1 · ASR-1.2 | EXP-01 |
+| **P2** Interruptor de circuito | Detectar fallas por tasa de respuesta · Degradación elegante | Adaptadores externos | ASR-1.2 · ASR-3.1 | EXP-02 · EXP-04 |
+| **P3** Tiempo de espera con reintento | Acotar el tiempo de espera · Reintento de operaciones idempotentes | Adaptadores externos | ASR-1.2 | EXP-02 |
+| **P4** Mamparo de aislamiento | Contener el fallo limitando recursos compartidos | Todo el núcleo (depósitos por dependencia) | ASR-3.1 | EXP-04 |
+| **P5** Puertos y adaptadores | Encapsular la variabilidad · Invertir dependencias · Diferir el enlace | Pagos & Recaudo · capa de adaptadores | ASR-2.1 | EXP-03 |
+| **P6** Strategy con configuración externalizada | Encapsular la variabilidad · Diferir el enlace al despliegue | Cotización & Rating · configuración de ramos | ASR-2.2 | EXP-03 |
+| **P7** Backend por canal | Aislar la variabilidad del canal · Reducir el acoplamiento entre canales | BFF Web · BFF Móvil | ASR-3.3 | EXP-06 |
+| **P8** Publicación y suscripción | Sacar del camino crítico lo no esencial · Desacoplar productor y consumidor | Event Bus · servicios del núcleo | ASR-1.2 · ASR-2.1 | EXP-02 |
+| **P9** Tokenización | Limitar el acceso por custodia centralizada · Cifrar en tránsito y reposo · Auditar cada acceso | Tokenización · Perfilamiento · Consentimientos | ASR-4.1 | EXP-07 |
+| **P10** Almacenamiento inmutable con firma | Verificar integridad · Registro no repudiable · Autorizar por token de servicio | Pólizas · Object Storage · Auditoría | ASR-4.2 | EXP-08 |
+| **P11** Cliente offline-first | Mantener copia local · Sincronización diferida · Acotar la vigencia del dato replicado | App móvil · BFF Móvil | ASR-3.3 | EXP-06 |
+| **P12** Multi-AZ con autoescalado | Redundancia activa · Replicación síncrona · Detección por comprobación de salud | EKS · RDS · MSK | ASR-3.2 | EXP-05 |
+
+**Cobertura.** Los nueve ASR quedan cubiertos por al menos un patrón, y los doce patrones tienen al menos un ASR que los justifica. No hay patrones huérfanos —adoptados sin un requisito que los exija— ni ASR sin mecanismo asignado.
+
+### 3.5 Estructura de los patrones críticos
+
+Los tres patrones siguientes se detallan estructuralmente porque son los que sostienen los ASR de mayor exigencia y los que más fácilmente se implementan mal.
+
+#### El camino de latencia: P1 + P2 + P3 + P4 operando juntos
+
+Los cuatro patrones del camino crítico no actúan por separado sino como una cadena de decisiones. Este diagrama muestra el recorrido completo de una solicitud de cotización y dónde interviene cada uno.
+
+![Figura 5. Composición de los patrones Cache-Aside, Interruptor de circuito, Timeout y Mamparo en el camino de cotización](diagramas/imagenes/patron_latencia.png)
+
+La lectura importante es que **hay tres salidas distintas hacia una respuesta válida** y ninguna es un error: acierto de caché en menos de 20 ms, respuesta del proveedor dentro del presupuesto de 150 ms, o prima preliminar en modo degradado. El sistema nunca se queda esperando, que es precisamente lo que exige la medida de «0% de solicitudes perdidas» del ASR-1.2.
+
+#### La modificabilidad: P5 + P6 y la dirección de las dependencias
+
+![Figura 6. Puertos, adaptadores y configuración externalizada: ninguna flecha sale del núcleo](diagramas/imagenes/patron_puertos_adaptadores.png)
+
+Lo relevante de este diagrama no son las cajas sino **el sentido de las flechas**. El núcleo define los puertos `PasarelaDePago` y `ReglaDeRamo` y no depende de nada externo; los adaptadores y los archivos de configuración apuntan *hacia* el núcleo. Por eso la afirmación del ASR-2.1 —«cero cambios en servicios del núcleo»— no es una promesa de disciplina del equipo sino una propiedad estructural: agregar `AdaptadorSPEI` no puede obligar a modificar el núcleo porque no existe ninguna arista que vaya en esa dirección.
+
+#### La confidencialidad: P9 y la frontera de custodia
+
+![Figura 7. Tokenización con custodia única: aguas adentro solo circulan tokens](diagramas/imagenes/patron_tokenizacion.png)
+
+El diagrama define una **frontera de custodia**. A su izquierda existe el dato original; a su derecha solo existen tokens, que no tienen valor si se filtran. Esa frontera es lo que convierte el ASR-4.1 en algo verificable: para comprobar que no hay datos personales en texto plano basta con inspeccionar todo lo que hay a la derecha y comprobar que solo aparecen tokens. Sin la frontera, la verificación tendría que ser exhaustiva sobre los siete servicios del núcleo.
+
+Además, **revocar un consentimiento se reduce a invalidar la capacidad de destokenizar**, lo que surte efecto de inmediato en todo el sistema. Con el dato replicado en cada servicio, cumplir el plazo regulatorio de 5 minutos exigiría borrarlo en siete bases de datos y demostrarlo.
+
+### 3.6 P1 — Caché de perfiles con lectura anticipada
 
 **Problema.** El cálculo del perfil de riesgo requiere consultar Open Finance y Open Data. Esas consultas tardan cientos de milisegundos en el mejor caso. Si la cotización espera esa consulta de forma sincrónica, el objetivo de 200 ms del ASR-1.1 es inalcanzable por construcción: ninguna optimización interna compensa una llamada de red externa a un tercero.
 
@@ -146,7 +217,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** Un perfil cacheado puede estar hasta 15 minutos desactualizado. Para un scoring de seguro esto es tolerable: la situación financiera de una persona no cambia de forma material en ese intervalo. No sería tolerable para un saldo de cuenta, y por eso el caché se aplica al perfil derivado y nunca al dato financiero crudo.
 
-### 3.3 P2 — Interruptor de circuito
+### 3.7 P2 — Interruptor de circuito
 
 **Problema.** Cuando un proveedor externo se degrada, el modo de falla más dañino no es que responda con error, sino que responda lento. Las peticiones se acumulan, los hilos del servicio se agotan esperando, y un problema de un proveedor se convierte en la caída completa de Solventa.
 
@@ -156,7 +227,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** Durante la apertura del interruptor, clientes cuyo perfil no está en caché reciben una cotización preliminar en lugar de una definitiva. Se prefiere una respuesta aproximada e inmediata sobre una respuesta exacta que no llega.
 
-### 3.4 P3 — Tiempo de espera acotado con reintento y espera creciente
+### 3.8 P3 — Tiempo de espera acotado con reintento y espera creciente
 
 **Problema.** Un tiempo de espera mal calibrado anula el interruptor de circuito. Si el tiempo de espera del cliente supera el del usuario, el usuario abandona antes de que el sistema decida.
 
@@ -166,7 +237,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** Tiempos de espera agresivos aumentan la proporción de respuestas degradadas cuando la red está lenta pero funcional. Se acepta porque el ASR prioriza responder a tiempo sobre responder con el dato más fresco.
 
-### 3.5 P4 — Mamparo de aislamiento
+### 3.9 P4 — Mamparo de aislamiento
 
 **Problema.** Servicios que comparten un mismo depósito de conexiones o de hilos se hunden juntos. Si Siniestros agota el depósito de conexiones a la base de datos, Cotización deja de responder aunque no tenga ningún problema propio.
 
@@ -176,7 +247,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** Se desperdicia capacidad: recursos reservados para una dependencia inactiva no se prestan a otra. Es el costo directo de que un fallo no se propague.
 
-### 3.6 P5 — Puertos y adaptadores
+### 3.10 P5 — Puertos y adaptadores
 
 **Problema.** El ASR-2.1 exige integrar una pasarela de pagos nueva en menos de 4 horas-hombre y sin modificar ningún servicio del núcleo. Si el servicio de Pagos conoce el formato de la pasarela, cada pasarela nueva obliga a modificarlo, probarlo y desplegarlo.
 
@@ -186,7 +257,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** Hay una capa de indirección adicional y un modelo de dominio que mantener en paralelo a los modelos de los proveedores. Para un sistema con un solo proveedor sería sobrecosto injustificado; con cinco categorías de proveedores externos y expansión a cuatro países, se paga solo.
 
-### 3.7 P6 — Estrategia con configuración externalizada
+### 3.11 P6 — Estrategia con configuración externalizada
 
 **Problema.** El ASR-2.2 exige lanzar un ramo nuevo en dos semanas sin tocar la lógica central del motor de rating. Un motor con las reglas de cada ramo escritas en código requiere modificar, probar y desplegar el motor por cada ramo.
 
@@ -196,7 +267,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** Una configuración mal formada puede romper el motor en ejecución, un error que un compilador habría detectado. Se mitiga validando la definición contra un esquema al cargarla y ejecutando un juego de casos de referencia antes de activarla.
 
-### 3.8 P7 — Backend por canal
+### 3.12 P7 — Backend por canal
 
 **Problema.** Web y móvil tienen necesidades opuestas. Web puede recibir cargas útiles grandes en una sola petición; móvil necesita cargas pequeñas, tolerancia a red intermitente y un protocolo de sincronización. Un backend único termina sirviendo mal a ambos.
 
@@ -206,7 +277,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** Hay lógica de composición duplicada entre los dos BFF. Se acepta porque la alternativa —un backend que sirve a ambos— acopla la evolución de los dos canales: cada cambio para móvil obliga a re-probar web.
 
-### 3.9 P8 — Publicación y suscripción de eventos de dominio
+### 3.13 P8 — Publicación y suscripción de eventos de dominio
 
 **Problema.** La emisión de una póliza dispara efectos en varios servicios: notificar al cliente, actualizar la administración de pólizas, registrar auditoría, alimentar tableros regulatorios. Si Emisión llama sincrónicamente a los cuatro, su latencia es la suma de las cuatro y su disponibilidad el producto de las cuatro.
 
@@ -216,7 +287,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** Consistencia eventual. Durante un intervalo breve la póliza existe pero el tablero aún no la refleja. Es aceptable para efectos secundarios; no lo sería para el cobro de la prima, que por eso permanece sincrónico dentro de la transacción de emisión.
 
-### 3.10 P9 — Tokenización de datos sensibles
+### 3.14 P9 — Tokenización de datos sensibles
 
 **Problema.** El ASR-4.1 exige cero datos personales en texto plano en tránsito, y la regulación exige poder revocar un consentimiento con efecto en menos de 5 minutos. Si el dato personal está copiado en las bases de siete servicios, revocar significa borrarlo en siete lugares y demostrarlo.
 
@@ -226,7 +297,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** El servicio de tokenización es un punto único de falla y un salto adicional de latencia en las operaciones que requieren el dato original. Se mitiga porque el camino crítico de cotización opera sobre el perfil derivado y no necesita destokenizar.
 
-### 3.11 P10 — Almacenamiento inmutable con firma digital
+### 3.15 P10 — Almacenamiento inmutable con firma digital
 
 **Problema.** El ASR-4.2 exige detectar en menos de 1 segundo cualquier alteración no autorizada de una póliza emitida, incluyendo alteraciones hechas con credenciales internas comprometidas. Un control basado en permisos no sirve: se asume que el atacante ya tiene los permisos.
 
@@ -236,7 +307,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** El periodo de retención inmutable implica costo de almacenamiento que no se puede liberar anticipadamente, y errores legítimos no se corrigen borrando sino emitiendo un documento compensatorio. Es exactamente el comportamiento que la regulación espera de una aseguradora.
 
-### 3.12 P11 — Cliente con prioridad al modo desconectado
+### 3.16 P11 — Cliente con prioridad al modo desconectado
 
 **Problema.** El ASR-3.3 exige que el 100% de las consultas de póliza estén disponibles sin conexión. Un cliente que consulta al servidor y muestra un error cuando no hay red no puede cumplirlo, por rápido que sea el servidor.
 
@@ -246,7 +317,7 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 
 **Contrapartida aceptada.** Datos potencialmente desactualizados, resolución de conflictos y datos sensibles en el dispositivo. Se mitiga con vigencia de 24 horas, aviso visible al vencerse, precedencia del servidor ante conflicto y cifrado del almacenamiento local limitado a lo mínimo necesario para mostrar la póliza.
 
-### 3.13 P12 — Autoescalado con comprobaciones de salud
+### 3.17 P12 — Autoescalado con comprobaciones de salud
 
 **Problema.** El ASR-3.2 exige RTO de 10 minutos ante la pérdida de una zona. Si la recuperación depende de arrancar instancias nuevas, el tiempo lo determina el arranque en frío.
 
@@ -966,9 +1037,167 @@ Los experimentos de la sección §5 no reemplazan a las pruebas: las anteceden. 
 
 ---
 
-## 7. Plan de trabajo y tablero
+## 7. Capacidad del equipo, esfuerzo y plan de trabajo
 
-### 7.1 Estado del proyecto
+### 7.1 Qué es un punto de historia
+
+Un **punto de historia** es una medida **relativa** del esfuerzo que cuesta completar una historia. No es una unidad de tiempo. Mide tamaño, considerando tres cosas a la vez: cuánto trabajo hay, cuánta complejidad tiene y cuánta incertidumbre queda.
+
+**Por qué el equipo no estima directamente en horas.** Una misma historia le toma tiempos distintos a personas distintas, de modo que una estimación en horas depende de quién la haga y deja de ser comparable. En cambio, el juicio de que «esta historia es del doble de tamaño que aquella» es estable entre personas. Por eso se estima el tamaño relativo y solo después se convierte a tiempo usando la velocidad observada del equipo.
+
+**Escala usada.** Se emplea la sucesión de Fibonacci —1, 2, 3, 5, 8, 13— porque los saltos crecientes reflejan que la incertidumbre aumenta con el tamaño: distinguir entre 1 y 2 puntos es razonable, pero pretender distinguir entre 20 y 21 es falsa precisión.
+
+| Puntos | Significado en este proyecto | Ejemplo del backlog |
+|---|---|---|
+| **1** | Cambio trivial, sin lógica nueva | — |
+| **2** | Una pantalla o un endpoint simple, sin integración externa | FE-01.1 Iniciar cotización seleccionando ramo |
+| **3** | Lógica propia o una integración conocida | FE-01.2 Autorizar consulta Open Finance |
+| **5** | Varios componentes o una integración con incertidumbre | FE-05.2 Verificar identidad con prueba de vida |
+| **8** | Mecanismo transversal que toca varios servicios | HU-ARQ-07 Optimización de latencia del scoring |
+| **13** | Mecanismo transversal con alta incertidumbre; candidato a dividirse | HU-ARQ-06 Tolerancia a fallos y failover |
+
+**Regla de tamaño.** Ninguna historia funcional del backlog supera 5 puntos. Las dos historias de 13 puntos son de arquitectura y se conservan sin dividir porque su validación es un experimento único e indivisible.
+
+**Conversión a horas.** Para poder contrastar el backlog contra un calendario fijo de ocho semanas, el equipo adoptó una equivalencia de referencia:
+
+```
+1 punto de historia  =  2 horas de trabajo efectivo
+```
+
+Esta equivalencia se fijó calibrando contra historias ya conocidas del proyecto y **se recalibrará al cerrar el primer sprint**, cuando exista velocidad medida en lugar de estimada. La conversión se usa solo para planear capacidad; la estimación de cada historia sigue siendo relativa.
+
+### 7.2 Cálculo de la capacidad del equipo
+
+**Paso 1 — Horas comprometidas por semana**
+
+Cada integrante se comprometió en el acta de constitución a dedicar 12 horas semanales al proyecto.
+
+```
+4 integrantes  ×  12 horas/semana  =  48 horas/semana
+```
+
+**Paso 2 — Convertir esas horas a puntos**
+
+```
+48 horas/semana  ÷  2 horas/punto  =  24 puntos/semana  (capacidad bruta)
+```
+
+**Paso 3 — Descontar el trabajo que no es construcción**
+
+No todas las horas comprometidas producen historias terminadas. Se van en reuniones de coordinación, revisión entre pares, preparación de entregas e imprevistos. El equipo aplica un **factor de carga del 80 %**, valor conservador estándar para equipos sin velocidad histórica medida.
+
+```
+24 puntos/semana  ×  0,80  =  19,2  ≈  19 puntos/semana
+```
+
+> **Velocidad efectiva del equipo: 19 puntos de historia por semana.**
+
+**Paso 4 — Capacidad total del proyecto**
+
+```
+19 puntos/semana  ×  8 semanas  =  152 puntos
+```
+
+**Paso 5 — Capacidad realmente disponible para construir**
+
+Las semanas 1 a 4 se dedicaron a acta de constitución, EDT, visión de arquitectura, escenarios de calidad, estrategia de pruebas y diseño de experimentos. Ese trabajo era necesario, pero no produjo historias del backlog de producto. Esa capacidad ya está consumida.
+
+```
+Capacidad total del proyecto            8 semanas × 19 pts  =  152 pts
+Consumida en semanas 1–4 (arquitectura)  4 semanas × 19 pts  =   76 pts
+──────────────────────────────────────────────────────────────────────
+Disponible para construcción (semanas 5–8)  4 semanas × 19 pts  =  76 pts
+```
+
+> **Capacidad disponible para construir historias: 76 puntos.**
+
+### 7.3 Capacidad por integrante
+
+La misma cuenta, vista por persona, muestra cuánto aporta cada integrante a esos 76 puntos:
+
+| Paso | Cálculo | Resultado |
+|---|---|---|
+| Horas comprometidas por persona, semanas 5 a 8 | 12 h/semana × 4 semanas | 48 h |
+| Convertidas a puntos | 48 h ÷ 2 h/punto | 24 pts brutos |
+| Aplicando el factor de carga del 80 % | 24 pts × 0,80 | **19 pts efectivos** |
+| Multiplicado por los cuatro integrantes | 19 pts × 4 personas | **76 pts** |
+
+| Integrante | Horas comprometidas | Puntos efectivos | Foco según su rol |
+|---|---|---|---|
+| Jazmin Córdoba | 48 h | 19 pts | Gerencia, usabilidad y entrega |
+| Juan Mejía | 48 h | 19 pts | Web front, integración de APIs y pagos |
+| Miguel Gómez | 48 h | 19 pts | Arquitectura, Open Finance, KYC, rendimiento y seguridad |
+| Angie Arandio | 48 h | 19 pts | Dominio, web back, móvil y pruebas unitarias |
+| **Total** | **192 h** | **76 pts** | |
+
+Las 192 horas brutas equivalen a 154 horas efectivas tras el factor de carga; las 38 horas restantes son las que absorben coordinación, revisión e imprevistos.
+
+### 7.4 El backlog completo frente a la capacidad
+
+Aquí está el resultado que condiciona todo el plan y conviene enunciarlo sin rodeos:
+
+| Concepto | Puntos | Historias |
+|---|---|---|
+| Backlog total del producto | 229 pts | 62 |
+| Capacidad disponible, semanas 5 a 8 | 76 pts | — |
+| **Diferencia** | **−153 pts** | **−45** |
+
+**El equipo no puede construir las 62 historias en el Proyecto Final 1.** Con 19 puntos por semana, agotar 229 puntos tomaría 12 semanas de construcción y solo quedan 4. Esto no es un error de estimación ni de planeación: es la consecuencia de que Solventa es una plataforma completa y el Proyecto Final 1 cubre una parte del ciclo de vida.
+
+Forzar los números para que cuadraran habría exigido reducir las estimaciones a un tercio de su valor, lo que produciría un plan que se incumple en la segunda semana. La respuesta correcta es la contraria: **declarar el alcance explícitamente** y comprometer solo lo que cabe.
+
+### 7.5 Alcance comprometido: 76 puntos que sí caben
+
+De las 62 historias del backlog se comprometen **17, que suman exactamente 76 puntos**. El criterio de selección, en este orden:
+
+1. **¿Valida un ASR que el proyecto debe demostrar?** Sin las historias de arquitectura ligadas a los experimentos de las semanas 5 y 6 no hay evidencia que presentar.
+2. **¿Pertenece al recorrido crítico mínimo?** *Cotizar → emitir* en web y *onboarding → consultar póliza* en móvil es el mínimo que hace demostrable el prototipo.
+3. **¿Es prerrequisito de algo de prioridad alta?** Hereda la prioridad de aquello que habilita.
+
+| Bloque | Historias | Puntos |
+|---|---|---|
+| Historias de arquitectura que sostienen los experimentos | 5 | 42 |
+| Historias funcionales del recorrido crítico web | 8 | 21 |
+| Historias funcionales del recorrido crítico móvil | 4 | 13 |
+| **Total comprometido** | **17** | **76** |
+| **Capacidad disponible** | | **76** |
+| **Holgura** | | **0** |
+
+> El alcance se ajustó a la capacidad exacta. No hay holgura, y el equipo asume ese compromiso de forma explícita: **ante un imprevisto se saca alcance, no se extienden horas.** Cualquier historia adicional que entre desplaza a otra.
+
+Las 45 historias restantes, que suman 153 puntos, quedan documentadas, estimadas y priorizadas en el backlog, y se difieren al Proyecto Final 2. Su detalle completo está en `historias_de_usuario_v2.docx`.
+
+### 7.6 Distribución del esfuerzo comprometido por integrante
+
+Así se reparten los 76 puntos entre las cuatro personas, respetando la afinidad con su rol:
+
+| Integrante | Historias asignadas | Puntos |
+|---|---|---|
+| **Miguel Gómez** | HU-ARQ-06 Tolerancia a fallos y failover (13) · FE-01.2 Autorizar consulta Open Finance (3) · FE-05.2 Verificar identidad con prueba de vida (5) | **21** |
+| **Jazmin Córdoba** | HU-ARQ-07 Optimización de latencia del scoring (8) · HU-ARQ-03 Tokenización de PII (8) · FE-05.1 Capturar documento de identidad (3) | **19** |
+| **Angie Arandio** | HU-ARQ-05 Persistencia PostgreSQL y Redis (5) · HU-ARQ-08 Event Bus Kafka (8) · FE-06.1 Ver pólizas en la billetera (2) · FE-06.2 Consultar pólizas sin conexión (3) | **18** |
+| **Juan Mejía** | FE-10.2 Iniciar sesión con segundo factor (3) · FE-01.1 Iniciar cotización (2) · FE-01.3 Ingresar datos del bien (2) · FE-01.4 Ver la prima calculada (3) · FE-02.1 Completar datos del tomador (2) · FE-02.4 Pagar la primera prima (3) · FE-02.5 Emitir la póliza (3) | **18** |
+| | **Total** | **76** |
+
+La asignación queda entre 18 y 21 puntos por persona, frente a una capacidad individual de 19. La desviación de ±2 puntos se absorbe con trabajo en parejas en las historias de arquitectura, que es donde se concentra: Miguel lleva 21 porque HU-ARQ-06 es la historia más grande del alcance, y en ella trabaja acompañado durante la semana 6.
+
+> Esta asignación es indicativa y se confirma en la planeación de cada sprint. Lo que no se negocia es el total: 76 puntos.
+
+### 7.7 Compromiso por sprint
+
+| Semana | Historias comprometidas | Puntos | Experimentos en curso |
+|---|---|---|---|
+| 5 (31 ago – 6 sep) | HU-ARQ-05, HU-ARQ-07, FE-10.2, FE-01.1 | 18 | EXP-01 · EXP-02 |
+| 6 (7 – 13 sep) | HU-ARQ-06, FE-01.2, FE-01.3 | 18 | EXP-04 · EXP-07 |
+| 7 (14 – 20 sep) | HU-ARQ-03, HU-ARQ-08, FE-01.4 | 19 | — |
+| 8 (21 – 27 sep) | FE-02.1, FE-02.4, FE-02.5, FE-05.1, FE-05.2, FE-06.1, FE-06.2 | 21 | — |
+| **Total** | **17 historias** | **76** | |
+
+La carga sube ligeramente hacia el final —18, 18, 19, 21— porque las historias de la semana 8 son de menor tamaño y se pueden paralelizar mejor entre los cuatro integrantes, mientras que las primeras semanas concentran mecanismos de arquitectura que exigen concentración de una sola persona.
+
+Las 42 horas de los cuatro experimentos del Sprint 1 de diseño (§5.13) están contenidas dentro de estos 76 puntos y no se suman aparte: construir el mecanismo y ejecutar el experimento que lo valida son parte de la misma historia. En puntos, esas 42 horas equivalen a 21 puntos, contenidos dentro de los 42 puntos asignados a las cinco historias de arquitectura.
+
+### 7.8 Estado del proyecto
 
 | Semana | Foco | Estado |
 |---|---|---|
@@ -977,35 +1206,13 @@ Los experimentos de la sección §5 no reemplazan a las pruebas: las anteceden. 
 | 3 (17–23 ago) | Escenarios de calidad, historias de usuario y frameworks | Completada · corregida en esta entrega |
 | 4 (24–30 ago) | Modelos de arquitectura, patrones y diseño de experimentos | Esta entrega |
 | 5 (31 ago–6 sep) | Ejecución de EXP-01 y EXP-02 · construcción del núcleo de cotización | Planificada |
-| 6 (7–13 sep) | Ejecución de EXP-03 y EXP-04 · cliente web | Planificada |
-| 7 (14–20 sep) | Cliente móvil · experimentos de holgura | Planificada |
+| 6 (7–13 sep) | Ejecución de EXP-04 y EXP-07 · cliente web | Planificada |
+| 7 (14–20 sep) | Cliente móvil · integración | Planificada |
 | 8 (21–27 sep) | Integración, cierre y presentación final | Planificada |
 
-### 7.2 Compromiso por sprint
+### 7.9 Tablero
 
-Con una velocidad efectiva de 19 puntos de historia por semana y 76 puntos disponibles para las semanas 5 a 8, el compromiso es el siguiente:
-
-| Semana | Historias comprometidas | SP |
-|---|---|---|
-| 5 | HU-ARQ-05, HU-ARQ-07, FE-10.2, FE-01.1 | 18 |
-| 6 | HU-ARQ-06, FE-01.2, FE-01.3 | 18 |
-| 7 | HU-ARQ-03, HU-ARQ-08, FE-01.4 | 19 |
-| 8 | FE-02.1, FE-02.4, FE-02.5, FE-05.1, FE-05.2, FE-06.1, FE-06.2 | 21 |
-| **Total** | **17 historias** | **76** |
-
-El detalle completo del backlog de 62 historias, el cálculo de la capacidad del equipo y el criterio de corte de alcance están en el documento de historias de usuario versión 2.0 que acompaña esta entrega.
-
-### 7.3 Correcciones aplicadas a la entrega de la semana 3
-
-| Observación recibida | Corrección | Dónde verificarla |
-|---|---|---|
-| Se esperaba la lista completa de historias, no solo 20 | Backlog descompuesto a 62 historias; promedio de 7,6 a 3,7 SP por historia | Documento de historias de usuario v2.0, §4 |
-| No se encontró evidencia del cálculo de capacidad | Cálculo paso a paso incorporado dentro del entregable | Documento de historias de usuario v2.0, §2 |
-| Backlog de 152 SP con solo 20 historias | Re-estimación de abajo hacia arriba a 229 SP y corte explícito de alcance | Documento de historias de usuario v2.0, §3 y §5 |
-
-### 7.4 Tablero
-
-El tablero del proyecto en Jira refleja el backlog descompuesto, con épicas, estimación en puntos de historia, prioridad y la asociación de cada historia de arquitectura con su ASR.
+El tablero del proyecto en Jira refleja el backlog descompuesto, con épicas, estimación en puntos de historia, prioridad y la asociación de cada historia de arquitectura con su ASR y su experimento.
 
 | Tablero | Qué muestra | Enlace |
 |---|---|---|
@@ -1013,18 +1220,18 @@ El tablero del proyecto en Jira refleja el backlog descompuesto, con épicas, es
 | Jira — Backlog | Backlog descompuesto de 62 historias ordenado por prioridad | https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/backlog |
 | Repositorio | Documentos, fuentes de los diagramas y registro de cambios | https://github.com/Migue765/proyecto-final-uniandes |
 
-### 7.5 Estado del tablero tras la actualización
+### 7.10 Estado del tablero tras la actualización
 
-| Tipo de incidencia | Cantidad | Story points |
+| Tipo de incidencia | Cantidad | Puntos de historia |
 |---|---|---|
 | Épica | 10 | — |
 | Función | 10 | — |
 | Historia | 62 | 229 |
 | Subtarea | 25 | — |
 
-El tablero es un proyecto gestionado por el equipo, cuya jerarquía tiene tres niveles: **Épica** en el nivel superior; **Función** e **Historia** como tipos hermanos en el nivel intermedio; y **Subtarea** en el inferior. Como Función e Historia comparten nivel, una historia no puede colgar de una función: ambas cuelgan de la épica, y la relación entre ellas se expresa con etiquetas. Por la misma razón la estimación vive únicamente en las historias; si las funciones también la llevaran, el tablero sumaría dos veces el mismo trabajo.
+El tablero es un proyecto gestionado por el equipo, cuya jerarquía tiene tres niveles: **Épica** en el nivel superior; **Función** e **Historia** como tipos hermanos en el nivel intermedio; y **Subtarea** en el inferior. Como Función e Historia comparten nivel, una historia no puede colgar de una función: ambas cuelgan de la épica, y la relación entre ellas se expresa con etiquetas. Por la misma razón la estimación vive únicamente en las historias; si las funciones también la llevaran, el tablero sumaría dos veces el mismo trabajo y mostraría 298 puntos donde el backlog real son 229.
 
-### 7.6 Cómo leer el tablero
+### 7.11 Cómo leer el tablero
 
 | Etiqueta | Significado |
 |---|---|
@@ -1036,7 +1243,7 @@ El tablero es un proyecto gestionado por el equipo, cuya jerarquía tiene tres n
 | `proyecto-1` · `proyecto-2` | Si entra en el alcance del Proyecto Final 1 o se difiere al 2 |
 | `EXP-01` … `EXP-08` | Historia de arquitectura que lleva ese experimento |
 
-Para ver únicamente el alcance comprometido de este proyecto, filtrar por `proyecto-1`: devuelve 17 historias y 76 puntos, que es exactamente el compromiso por sprint de §7.2.
+Para ver únicamente el alcance comprometido de este proyecto, filtrar por `proyecto-1`: devuelve 17 historias y 76 puntos, que es exactamente el compromiso por sprint de §7.7.
 
 ---
 

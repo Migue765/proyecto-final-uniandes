@@ -1,16 +1,15 @@
-# Historias de Usuario y Capacidad del Equipo — Solventa
-
-**Universidad de los Andes · Maestría en Ingeniería de Software · MISW4501**
-**Proyecto Integrador — Grupo 2**
-**Versión 2.0 · 30 de agosto de 2026**
-
-| Integrante | Rol |
-|---|---|
-| Jazmin Natalia Córdoba Puerto | Gerente — Usabilidad y entrega |
-| Juan Esteban Mejía Izasa | Web front, integración API, pagos |
-| Miguel Alejandro Gómez Alarcón | Arquitectura, Open Finance, KYC, rendimiento, seguridad |
-| Angie Natalia Arandio Niño | Dominio, web back, móvil, pruebas unitarias |
-
+---portada
+institucion: Universidad de los Andes
+facultad: Facultad de Ingeniería · Departamento de Ingeniería de Sistemas y Computación
+programa: Maestría en Ingeniería de Software
+curso: MISW4501 — Proyecto Final
+titulo: Historias de Usuario
+subtitulo: Backlog completo, capacidad del equipo y alcance del proyecto
+proyecto: Proyecto Solventa — Aseguradora digital sobre Finanzas Abiertas
+entrega: Corrección de la entrega — Semana 3  ·  Versión 2.0
+grupo: Grupo 2
+integrantes: Jazmin Natalia Córdoba Puerto ~ Gerente del proyecto — Usabilidad y entrega|Juan Esteban Mejía Izasa ~ Web front, integración de APIs y pagos|Miguel Alejandro Gómez Alarcón ~ Arquitectura, Open Finance, KYC, rendimiento y seguridad|Angie Natalia Arandio Niño ~ Dominio, web back, móvil y pruebas unitarias
+fecha: Bogotá D.C. · 30 de agosto de 2026
 ---
 
 ## Control de versiones

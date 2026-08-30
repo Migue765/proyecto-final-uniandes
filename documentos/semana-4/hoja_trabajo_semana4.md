@@ -1,16 +1,15 @@
-# Hoja de Trabajo — Arquitectura, Patrones y Experimentos
-
-**Universidad de los Andes · Maestría en Ingeniería de Software · MISW4501**
-**Proyecto Integrador — Grupo 2 · Solventa**
-**Semana 4 · 30 de agosto de 2026**
-
-| Integrante | Rol |
-|---|---|
-| Jazmin Natalia Córdoba Puerto | Gerente — Usabilidad y entrega |
-| Juan Esteban Mejía Izasa | Web front, integración API, pagos |
-| Miguel Alejandro Gómez Alarcón | Arquitectura, Open Finance, KYC, rendimiento, seguridad |
-| Angie Natalia Arandio Niño | Dominio, web back, móvil, pruebas unitarias |
-
+---portada
+institucion: Universidad de los Andes
+facultad: Facultad de Ingeniería · Departamento de Ingeniería de Sistemas y Computación
+programa: Maestría en Ingeniería de Software
+curso: MISW4501 — Proyecto Final
+titulo: Hoja de Trabajo
+subtitulo: Modelos de arquitectura, patrones de diseño y propuesta de experimentos
+proyecto: Proyecto Solventa — Aseguradora digital sobre Finanzas Abiertas
+entrega: Entrega — Semana 4
+grupo: Grupo 2
+integrantes: Jazmin Natalia Córdoba Puerto ~ Gerente del proyecto — Usabilidad y entrega|Juan Esteban Mejía Izasa ~ Web front, integración de APIs y pagos|Miguel Alejandro Gómez Alarcón ~ Arquitectura, Open Finance, KYC, rendimiento y seguridad|Angie Natalia Arandio Niño ~ Dominio, web back, móvil y pruebas unitarias
+fecha: Bogotá D.C. · 30 de agosto de 2026
 ---
 
 ## Contenido de este documento

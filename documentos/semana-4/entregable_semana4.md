@@ -3,26 +3,31 @@ institucion: Universidad de los Andes
 facultad: Facultad de Ingeniería · Departamento de Ingeniería de Sistemas y Computación
 programa: Maestría en Ingeniería de Software
 curso: MISW4501 — Proyecto Final
-titulo: Hoja de Trabajo
-subtitulo: Modelos de arquitectura, patrones de diseño y propuesta de experimentos
+titulo: Entrega Semana 4
+subtitulo: Modelos de arquitectura, patrones de diseño, experimentos, estrategia de pruebas y plan de trabajo
 proyecto: Proyecto Solventa — Aseguradora digital sobre Finanzas Abiertas
-entrega: Entrega — Semana 4
+entrega: Documento único de entrega
 grupo: Grupo 2
 integrantes: Jazmin Natalia Córdoba Puerto ~ Gerente del proyecto — Usabilidad y entrega|Juan Esteban Mejía Izasa ~ Web front, integración de APIs y pagos|Miguel Alejandro Gómez Alarcón ~ Arquitectura, Open Finance, KYC, rendimiento y seguridad|Angie Natalia Arandio Niño ~ Dominio, web back, móvil y pruebas unitarias
 fecha: Bogotá D.C. · 30 de agosto de 2026
 ---
 
-## Contenido de este documento
+## Mapa de la entrega
 
-| Sección | Contenido |
-|---|---|
-| §1 | Contexto y atributos de calidad que dirigen el diseño |
-| §2 | Modelos de arquitectura: vista funcional, de despliegue y de información |
-| §3 | Diseño detallado — patrones aplicados y su razonamiento frente a cada ASR |
-| §4 | Decisiones de arquitectura y alternativas descartadas |
-| §5 | Propuesta de experimentos de arquitectura |
-| §6 | Refinamiento de la estrategia de pruebas |
-| §7 | Plan de trabajo y estado del tablero |
+Este documento contiene **la totalidad de los entregables de la semana 4**. Cada ítem de la rúbrica se encuentra completo dentro de estas páginas; no se remite a archivos externos para ningún contenido calificable.
+
+| # | Ítem de la rúbrica | Puntos | Dónde está en este documento |
+|---|---|---|---|
+| 1 | **Hoja de trabajo: modelos de arquitectura, patrones detallados y experimentos** | **70** | |
+| 1a | Modelos de arquitectura — vista funcional, de despliegue y de información | 20 | §2, con las tres figuras embebidas |
+| 1b | Diseño detallado con patrones y razonamiento, en relación con los ASR | 30 | §3 (doce patrones) y §4 (decisiones y alternativas descartadas) |
+| 1c | Propuesta de experimentos — propósito, respuesta esperada, tecnologías y esfuerzo | 20 | §5 (ocho experimentos que cubren los nueve ASR) |
+| 2 | **Refinamiento de la estrategia de pruebas** | **10** | §6 |
+| 3 | **Actualización del plan de trabajo y tablero** | **10** | §7, con los enlaces al tablero y la guía de etiquetas |
+| 4 | **Video con evidencias** | **10** | §8, con el enlace y el guion completo por presentador |
+| — | *Corrección de la entrega de la semana 3* | *Reentrega* | §9, con remisión al documento de historias de usuario v2.0 |
+
+**Documento que acompaña esta entrega.** El backlog completo de 62 historias de usuario con sus criterios de aceptación, el cálculo de la capacidad del equipo y el corte de alcance entre Proyecto Final 1 y 2 están en `historias_de_usuario_v2.docx`, que constituye la corrección del entregable de la semana 3. En §9 se resume qué se corrigió y dónde verificarlo.
 
 ---
 
@@ -1002,6 +1007,243 @@ El detalle completo del backlog de 62 historias, el cálculo de la capacidad del
 
 El tablero del proyecto en Jira refleja el backlog descompuesto, con épicas, estimación en puntos de historia, prioridad y la asociación de cada historia de arquitectura con su ASR.
 
-**Tablero Jira:** https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/boards
-**Backlog:** https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/backlog
-**Repositorio:** https://github.com/Migue765/proyecto-final-uniandes
+| Tablero | Qué muestra | Enlace |
+|---|---|---|
+| Jira — Tablero | Épicas, funciones e historias con estimación, prioridad y etiquetas | https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/boards |
+| Jira — Backlog | Backlog descompuesto de 62 historias ordenado por prioridad | https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/backlog |
+| Repositorio | Documentos, fuentes de los diagramas y registro de cambios | https://github.com/Migue765/proyecto-final-uniandes |
+
+### 7.5 Estado del tablero tras la actualización
+
+| Tipo de incidencia | Cantidad | Story points |
+|---|---|---|
+| Épica | 10 | — |
+| Función | 10 | — |
+| Historia | 62 | 229 |
+| Subtarea | 25 | — |
+
+El tablero es un proyecto gestionado por el equipo, cuya jerarquía tiene tres niveles: **Épica** en el nivel superior; **Función** e **Historia** como tipos hermanos en el nivel intermedio; y **Subtarea** en el inferior. Como Función e Historia comparten nivel, una historia no puede colgar de una función: ambas cuelgan de la épica, y la relación entre ellas se expresa con etiquetas. Por la misma razón la estimación vive únicamente en las historias; si las funciones también la llevaran, el tablero sumaría dos veces el mismo trabajo.
+
+### 7.6 Cómo leer el tablero
+
+| Etiqueta | Significado |
+|---|---|
+| `FE-01` … `FE-10` | Función a la que pertenece la historia |
+| `funcion` | Marca los diez ítems de tipo Función |
+| `arquitectura` | Marca las once historias de arquitectura |
+| `canal-web` · `canal-movil` · `canal-api` | Canal donde se implementa |
+| `prioridad-alta` · `prioridad-media` · `prioridad-baja` | Prioridad asignada |
+| `proyecto-1` · `proyecto-2` | Si entra en el alcance del Proyecto Final 1 o se difiere al 2 |
+| `EXP-01` … `EXP-08` | Historia de arquitectura que lleva ese experimento |
+
+Para ver únicamente el alcance comprometido de este proyecto, filtrar por `proyecto-1`: devuelve 17 historias y 76 puntos, que es exactamente el compromiso por sprint de §7.2.
+
+---
+
+## 8. Video con evidencias
+
+### 8.1 Enlace al video
+
+| Descripción | Duración | Presentadores | Enlace |
+|---|---|---|---|
+| Correcciones de la semana 3, modelos de arquitectura, patrones de diseño, propuesta de experimentos y recorrido por el tablero | 8 minutos | Jazmin Córdoba · Miguel Gómez · Juan Mejía · Angie Arandio | *(pegar enlace del video)* |
+
+### 8.2 Contenido del video por bloque
+
+| Bloque | Presentador | Minuto | Contenido |
+|---|---|---|---|
+| 0 | Jazmin Córdoba | 0:00 – 0:45 | Apertura y qué contiene la entrega |
+| 1 | Jazmin Córdoba | 0:45 – 2:15 | Corrección de la semana 3: descomposición del backlog y cálculo de capacidad |
+| 2 | Miguel Gómez | 2:15 – 4:00 | Los tres modelos de arquitectura |
+| 3 | Juan Mejía | 4:00 – 5:45 | Patrones de diseño y su razonamiento frente a los ASR |
+| 4 | Angie Arandio | 5:45 – 7:15 | Propuesta de experimentos y criterio de selección por incertidumbre |
+| 5 | Jazmin Córdoba | 7:15 – 8:00 | Tablero actualizado y compromiso por sprint |
+
+### 8.3 Guion de la sustentación
+
+> El texto en párrafos es lo que se dice; el texto entre corchetes es lo que se muestra en pantalla. Los tiempos son orientativos.
+
+### Bloque 0 — Apertura · Jazmin · 0:00 – 0:45
+
+[Pantalla: portada de la hoja de trabajo de la semana 4]
+
+Buenas tardes. Somos el Grupo 2 y este es el avance de la semana 4 del proyecto Solventa, nuestra aseguradora digital construida sobre Finanzas Abiertas.
+
+Esta semana tenemos dos cosas para mostrar. La primera es la corrección de la entrega de la semana 3: recibimos una retroalimentación clara sobre el documento de historias de usuario y la trabajamos a fondo. La segunda es el entregable propio de esta semana: los modelos de arquitectura, el diseño detallado con patrones y la propuesta de experimentos.
+
+Empezamos por la corrección, porque cambia la base sobre la que está construido todo lo demás.
+
+---
+
+### Bloque 1 — Corrección de la semana 3 · Jazmin · 0:45 – 2:15
+
+[Pantalla: documento de historias de usuario v2.0, sección 1 «Correcciones aplicadas»]
+
+La retroalimentación nos señaló tres cosas y las tomamos todas.
+
+La primera: se esperaba la lista completa de historias del proyecto y nosotros entregamos veinte. Al revisarlo entendimos que el problema de fondo no era el número sino la granularidad. Teníamos ciento cincuenta y dos puntos de historia repartidos en veinte historias, es decir un promedio de siete coma seis puntos por historia. Un promedio así significa que lo que llamábamos historias eran en realidad features.
+
+[Pantalla: anexo de mapeo, mostrando SOL-3 descompuesta en seis historias]
+
+Por ejemplo, «Cotización de seguros en tiempo real» parecía una historia, pero adentro tenía el consentimiento de Open Finance, la captura de datos, el cálculo de la prima, la comparación de planes y la recuperación de la cotización. Son seis historias distintas, cada una verificable por separado.
+
+Descompusimos todo el backlog y pasamos de veinte a sesenta y dos historias. El promedio bajó de siete coma seis a tres coma siete puntos por historia, y ninguna historia funcional supera cinco puntos. En el ejercicio encontramos además algo que no teníamos: la autenticación web era un recorrido crítico sin una sola historia asociada. Ahora es una épica propia.
+
+[Pantalla: sección 2, cálculo de capacidad]
+
+La segunda observación fue que no se encontró la evidencia del cálculo de capacidad. Y tenía razón: el cálculo existía, pero lo habíamos dejado en un archivo del repositorio en vez de ponerlo dentro del documento que se entrega. Esa fue nuestra lección de la semana. Ahora el cálculo está completo dentro del entregable, paso a paso: cuatro personas por doce horas son cuarenta y ocho horas semanales; a dos horas por punto son veinticuatro puntos; aplicando un factor de carga del ochenta por ciento quedan diecinueve puntos por semana.
+
+[Pantalla: tabla de capacidad frente al backlog]
+
+Y la tercera observación, la advertencia sobre el proyecto final dos, la respondimos de frente. Al re-estimar de abajo hacia arriba el backlog subió a doscientos veintinueve puntos. Nuestra capacidad para las semanas cinco a ocho es de setenta y seis. No forzamos las cifras para que cuadraran: declaramos explícitamente qué entra en el Proyecto Final 1 y qué se difiere al 2.
+
+---
+
+### Bloque 2 — Modelos de arquitectura · Miguel · 2:15 – 4:00
+
+[Pantalla: Figura 1, vista funcional]
+
+Paso al entregable de esta semana. Definimos tres vistas de la arquitectura.
+
+Esta es la vista funcional. Son cuatro capas más una plataforma de datos. Arriba los canales: web en Angular, móvil en Kotlin nativo y los sistemas de socios. Después la capa Edge, donde ocurre todo lo que debe pasar antes de tocar lógica de negocio. Luego un backend por canal, y en el centro el núcleo de negocio con siete servicios delimitados por contexto de dominio.
+
+Lo importante de este diagrama está abajo a la izquierda: los adaptadores externos. Ningún servicio del núcleo conoce el formato de un proveedor. Todo pasa por un adaptador. Esa decisión es la que sostiene el escenario de modificabilidad.
+
+[Pantalla: Figura 2, vista de despliegue]
+
+Esta es la vista de despliegue. Dos zonas de disponibilidad en configuración activo-activo, no activo-pasivo. La diferencia importa: si una zona cae, la capacidad de la otra ya está caliente, así que el tiempo de recuperación depende de la detección y no del arranque de instancias. Eso es lo que hace alcanzable el objetivo de diez minutos.
+
+[Pantalla: Figura 3, vista de información]
+
+Y esta es la vista de información. Además de las entidades, clasificamos los datos en tres niveles, y el nivel determina el tratamiento. Esto es lo que vuelve verificable el escenario de confidencialidad: la afirmación «cero datos personales en texto plano» solo se puede comprobar si antes se declaró qué cuenta como dato personal.
+
+---
+
+### Bloque 3 — Patrones y su razonamiento · Juan · 4:00 – 5:45
+
+[Pantalla: sección 3.1, tabla resumen de patrones]
+
+Documentamos doce patrones. Lo que quiero destacar no es la lista sino cómo la construimos: cada patrón está aquí porque hay un escenario de calidad que lo exige, y de cada uno declaramos qué sacrificamos al adoptarlo.
+
+[Pantalla: sección 3.2, caché de perfiles]
+
+Un ejemplo. El escenario de latencia pide percentil noventa y cinco por debajo de doscientos milisegundos. El perfil de riesgo requiere consultar a Open Finance, que tarda cientos de milisegundos. Ese objetivo es inalcanzable por construcción si la cotización espera esa llamada. Por eso el caché de perfiles no es una optimización: es lo que hace posible el escenario.
+
+Y declaramos la contrapartida: un perfil cacheado puede estar hasta quince minutos desactualizado. Para un scoring de seguro es tolerable. No lo sería para un saldo de cuenta, y por eso el caché se aplica al perfil derivado y nunca al dato financiero crudo.
+
+[Pantalla: sección 3.6, puertos y adaptadores]
+
+Otro ejemplo. El escenario de modificabilidad pide integrar una pasarela de pagos nueva en menos de cuatro horas-hombre, sin tocar el núcleo. Con puertos y adaptadores, el núcleo define una interfaz en lenguaje de dominio y no conoce ninguna implementación. Integrar una pasarela nueva es escribir una clase y agregar una línea de configuración. Cero archivos modificados en el núcleo. Y eso no es una promesa: es una propiedad del grafo de dependencias, porque la flecha apunta al revés.
+
+[Pantalla: sección 4, decisiones descartadas]
+
+Documentamos también lo que descartamos y por qué. Un monolito modular nos habría simplificado estas ocho semanas, pero impide escalar de forma independiente el servicio de scoring, que es justamente el único con exigencia de latencia y el único con picos de diez veces el tráfico.
+
+---
+
+### Bloque 4 — Propuesta de experimentos · Angie · 5:45 – 7:15
+
+[Pantalla: sección 5.1, marco de experimentación]
+
+Diseñamos ocho experimentos que cubren los nueve escenarios de calidad. Partimos de una distinción: una prueba verifica que el sistema hace lo especificado; un experimento verifica que una decisión de diseño produce la propiedad que le atribuimos.
+
+Por eso cada experimento está formulado como una hipótesis falsable, y cada uno tiene un criterio de refutación explícito. Definimos de antemano qué resultado nos obligaría a cambiar el diseño, porque un experimento que no puede fracasar no aporta información.
+
+[Pantalla: sección 5.4, EXP-02]
+
+Este es el de degradación elegante. La hipótesis: con el proveedor respondiendo por encima de setecientos milisegundos y diez veces la carga normal, el interruptor de circuito abre en menos de diez segundos y el sistema mantiene el percentil noventa y cinco bajo doscientos milisegundos sirviendo desde caché, sin perder ninguna petición.
+
+Y el criterio de refutación: si perdemos peticiones por agotamiento del depósito de conexiones, eso nos diría que los tiempos de espera están mal calibrados frente al presupuesto de latencia. Sabemos de antemano qué aprenderíamos si sale mal.
+
+[Pantalla: sección 5.13, resumen del programa]
+
+Calificamos la incertidumbre de cada punto de sensibilidad y eso define cuándo se ejecuta cada uno. Cuatro resultaron de incertidumbre alta y forman el Sprint 1 de diseño, en las semanas cinco y seis. Un ejemplo de cómo esa calificación cambió un experimento: en integridad de pólizas, el bloqueo de escritura del almacenamiento es una garantía de la plataforma, así que ahí no tenemos incertidumbre. La incertidumbre está en si nuestra propia ruta de auditoría detecta el intento en menos de un segundo. Reenfocamos el experimento hacia eso.
+
+El programa completo son ochenta y dos horas. Cuarenta y dos las comprometemos en el Sprint 1, que es exactamente nuestra capacidad, repartidas entre los cuatro integrantes: once, once, diez y diez horas.
+
+[Pantalla: sección 6, refinamiento de estrategia de pruebas]
+
+Refinamos también la estrategia de pruebas. El cambio principal es que incorporamos la prueba de arquitectura como nivel propio, distinto de la prueba de integración, porque su criterio de éxito es una medida y no una aserción.
+
+---
+
+### Bloque 5 — Tablero y cierre · Jazmin · 7:15 – 8:00
+
+[Pantalla: tablero de Jira con el backlog descompuesto]
+
+Este es el tablero con el backlog ya descompuesto. Se ven las épicas, la estimación en puntos, la prioridad de cada historia y la asociación de cada historia de arquitectura con su escenario de calidad.
+
+[Pantalla: sección 7.2, compromiso por sprint]
+
+Y este es el compromiso por sprint para las cuatro semanas que quedan: dieciocho, dieciocho, diecinueve y veintiún puntos, setenta y seis en total, que es exactamente nuestra capacidad. No dejamos holgura, y lo asumimos de forma explícita: si aparece un imprevisto, sacamos alcance en vez de extender horas.
+
+En la semana cinco arrancamos con los experimentos de latencia y de degradación elegante, junto con la construcción del núcleo de cotización.
+
+Gracias.
+
+---
+
+### Lista de verificación antes de grabar
+
+- [ ] Los tres diagramas se ven nítidos a pantalla completa
+- [ ] El tablero de Jira está actualizado con las 62 historias antes de grabar el bloque 5
+- [ ] Los documentos están publicados y sus enlaces funcionan
+- [ ] Cada presentador probó su bloque en voz alta y cabe en su tiempo
+- [ ] La grabación tiene audio de un solo canal y volumen parejo entre presentadores
+- [ ] El video queda subido con acceso por enlace y ese enlace está pegado en el documento de entregables
+
+
+---
+
+## 9. Corrección de la entrega de la semana 3
+
+El documento de historias de usuario de la semana 3 obtuvo 10 de 40 puntos. Se corrigieron los tres hallazgos señalados y se detectaron dos adicionales por cuenta del equipo.
+
+### 9.1 Hallazgos señalados y su corrección
+
+| Observación recibida | Corrección aplicada | Dónde verificarla |
+|---|---|---|
+| *"Se esperaba la lista completa de historias de usuario del proyecto, no solo 20"* | El backlog se descompuso de 20 a **62 historias**. La revisión del tablero mostró el origen preciso del problema: ocho de las veinte estaban tipadas en Jira como **Función** y no como Historia, y ninguna tenía historias asociadas. El backlog tenía en realidad 12 historias y 8 funciones sin descomponer. El promedio pasó de 7,6 a 3,7 SP por historia | `historias_de_usuario_v2.docx` §3 y §4 · tablero Jira |
+| *"No se encontró la evidencia de cálculo de la capacidad del equipo"* | El cálculo está ahora **dentro del entregable**, con la aritmética paso a paso: 4 personas × 12 h = 48 h/semana → 24 SP → factor de carga 80% → 19 SP/semana → 76 SP disponibles para las semanas 5 a 8. En la versión anterior el cálculo existía, pero en un archivo del repositorio que no se entregaba | `historias_de_usuario_v2.docx` §2 |
+| *"Un backlog de 152 puntos de historia con sólo 20 HUs... le puede generar dolores de cabeza en el proyecto final 2"* | Se re-estimó de abajo hacia arriba: el backlog subió a **229 SP**. Frente a una capacidad de 76 SP se declara explícitamente qué entra en el Proyecto Final 1 y qué se difiere al Proyecto Final 2, con el criterio de corte documentado | `historias_de_usuario_v2.docx` §5 |
+
+### 9.2 Hallazgos detectados por el equipo
+
+| Hallazgo | Corrección |
+|---|---|
+| La **autenticación web** figuraba como recorrido crítico en la definición de alcance pero no tenía ninguna historia asociada en el backlog | Se creó la épica EP-06 y la función FE-10 con cuatro historias (9 SP) |
+| Las historias **no eran legibles sin abrir Jira**: el documento solo listaba identificador, nombre y enlace | Cada historia aparece ahora completa en el documento, con enunciado *Como / Quiero / Para*, criterios de aceptación, estimación, prioridad, canal y ASR relacionado |
+
+### 9.3 Resultado
+
+| Métrica | Semana 3 | Corrección |
+|---|---|---|
+| Historias en el backlog | 20 | 62 |
+| Promedio de puntos por historia | 7,6 SP | 3,7 SP |
+| Historia funcional más grande | 8 SP | 5 SP |
+| Story points totales | 152 SP | 229 SP |
+| Alcance declarado para el Proyecto Final 1 | — | 76 SP · 17 historias |
+| Diferido al Proyecto Final 2 | — | 153 SP · 45 historias |
+| Recorridos críticos sin historias | 1 (autenticación web) | 0 |
+
+---
+
+## 10. Enlaces y pendientes
+
+### 10.1 Enlaces de la entrega
+
+| Recurso | Enlace |
+|---|---|
+| Este documento | *(pegar enlace)* |
+| Historias de usuario v2.0 — corrección de la semana 3 | *(pegar enlace)* |
+| Video de sustentación | *(pegar enlace)* |
+| Jira — Tablero | https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/boards |
+| Jira — Backlog | https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/backlog |
+| Repositorio | https://github.com/Migue765/proyecto-final-uniandes |
+
+### 10.2 Pendientes antes de enviar
+
+- [ ] Publicar este documento y el de historias de usuario, y pegar sus enlaces en §10.1
+- [ ] Grabar el video siguiendo el guion de §8.3 y pegar su enlace en §8.1 y §10.1
+- [ ] Verificar que el tablero muestre las 62 historias antes de grabar el bloque 5 del video
+- [ ] Confirmar que las tres figuras de §2 se ven nítidas en la versión publicada

@@ -32,7 +32,7 @@ Esta versión responde a la retroalimentación recibida sobre la entrega de la s
 | 2 | *"No se encontró la evidencia de cálculo de la capacidad del equipo"* | Se incorpora el cálculo completo de capacidad **dentro de este documento**, con la aritmética paso a paso. En la versión 1.1 el cálculo existía en un archivo auxiliar del repositorio (`documentos/semana-3/README.md`) pero no en el entregable. | §2 |
 | 3 | *"Esto se refleja cuando se muestra un backlog de 152 puntos de historia con sólo 20 HUs"* | El promedio pasó de **7,6 SP/historia** a **3,7 SP/historia**. Ninguna historia supera 8 SP; ninguna historia funcional supera 5 SP. Se re-estimó de abajo hacia arriba: el backlog total subió de 152 SP a **229 SP**, lo que refleja alcance que antes estaba oculto dentro de historias demasiado gruesas. | §3, §4 |
 | 4 | *(Detectado por el equipo)* Las historias no eran legibles sin abrir Jira | Cada historia se presenta ahora completa en este documento: enunciado *Como / Quiero / Para*, criterios de aceptación, estimación, prioridad, canal y ASR relacionado. | §4 |
-| 5 | *(Detectado por el equipo)* El backlog excedía la capacidad sin un plan de alcance | Se define explícitamente qué entra en el **Proyecto Final 1** (76 SP) y qué se difiere al **Proyecto Final 2** (153 SP), con el criterio de corte documentado. | §5 |
+| 5 | *(Detectado por el equipo)* El backlog excedía la capacidad sin un plan de alcance | Se define explícitamente qué se compromete en los tres sprints del **Proyecto Final 2** (133 SP) y qué se difiere a una fase posterior (96 SP), con el criterio de corte documentado. | §5 |
 
 ---
 
@@ -71,45 +71,47 @@ No todas las horas comprometidas son horas productivas de construcción. Se desc
 
 > **Velocidad efectiva del equipo: 19 SP por semana.**
 
-**Paso 4 — Capacidad total del Proyecto Final 1**
+**Paso 4 — Dónde se gasta la capacidad del Proyecto Final 1**
+
+En el Proyecto Final 1 no se construyen las historias de usuario del producto: se construye la arquitectura, se diseñan y ejecutan los experimentos que la validan, y se construye la experiencia de usuario del prototipo. Sus 8 semanas × 19 SP = 152 SP se consumen íntegramente en ese trabajo.
+
+**Paso 5 — Capacidad del Proyecto Final 2, donde sí se construye el producto**
+
+El Proyecto Final 2 tiene una estructura fija de tres sprints: dos de dos semanas y uno de tres, siete semanas en total.
 
 ```
-19 SP/semana  ×  8 semanas  =  152 SP
+19 SP/semana  ×  7 semanas  =  133 SP
 ```
 
-**Paso 5 — Capacidad realmente disponible para construcción**
+| Sprint | Duración | Capacidad |
+|---|---|---|
+| Sprint 1 | 2 semanas | 38 SP |
+| Sprint 2 | 2 semanas | 38 SP |
+| Sprint 3 | 3 semanas | 57 SP |
+| **Total** | **7 semanas** | **133 SP** |
 
-Las semanas 1 a 4 se dedicaron a actividades de arquitectura y planeación (acta de constitución, EDT, visión de arquitectura, escenarios de calidad, estrategia de pruebas, diseño de experimentos), no a construir historias del backlog de producto. Esa capacidad ya está consumida.
+> **Capacidad disponible para construir historias: 133 SP.**
 
-```
-Capacidad total del proyecto          8 semanas × 19 SP  =  152 SP
-Consumida en semanas 1–4 (arquitectura)  4 semanas × 19 SP  =   76 SP
-─────────────────────────────────────────────────────────────────────
-Disponible para construcción (semanas 5–8)  4 semanas × 19 SP  =   76 SP
-```
-
-> **Capacidad disponible para construir historias: 76 SP.**
-
-### 2.3 Distribución individual (semanas 5–8)
+### 2.3 Capacidad por integrante en el Proyecto Final 2
 
 | Integrante | Horas comprometidas | SP equivalentes | Foco principal |
 |---|---|---|---|
-| Jazmin Córdoba | 48 h | 19 SP | Gerencia, usabilidad, entrega |
-| Juan Mejía | 48 h | 19 SP | Web front, integración API, pagos |
-| Miguel Gómez | 48 h | 19 SP | Arquitectura, Open Finance, KYC, rendimiento, seguridad |
-| Angie Arandio | 48 h | 19 SP | Dominio, web back, móvil, pruebas unitarias |
-| **Total bruto** | **192 h** | **96 SP** | |
-| **Total con factor de carga 80%** | **154 h** | **76 SP** | |
+| Jazmin Córdoba | 84 h | 33 SP | Gerencia, usabilidad, entrega |
+| Juan Mejía | 84 h | 33 SP | Web front, integración API, pagos |
+| Miguel Gómez | 84 h | 33 SP | Arquitectura, Open Finance, KYC, rendimiento, seguridad |
+| Angie Arandio | 84 h | 34 SP | Dominio, web back, móvil, pruebas unitarias |
+| **Total bruto** | **336 h** | **168 SP** | |
+| **Total con factor de carga 80%** | **269 h** | **133 SP** | |
 
 ### 2.4 Capacidad frente al backlog
 
 | Concepto | Story Points | Historias |
 |---|---|---|
 | Backlog total del producto | 229 SP | 62 |
-| Capacidad disponible (semanas 5–8) | 76 SP | — |
-| **Diferencia** | **−153 SP** | — |
+| Capacidad del Proyecto Final 2 (7 semanas) | 133 SP | — |
+| **Diferencia** | **−96 SP** | — |
 
-El backlog completo del producto **triplica** la capacidad disponible del equipo para el Proyecto Final 1. Esto no es un error de estimación: es la consecuencia de que Solventa es un producto de plataforma completo y el Proyecto Final 1 cubre solamente una parte del ciclo. La respuesta correcta no es reducir estimaciones sino **declarar el alcance explícitamente**, lo que se hace en la sección §5.
+El backlog completo del producto **excede en 96 puntos** la capacidad del Proyecto Final 2. Esto no es un error de estimación: es la consecuencia de que Solventa es un producto de plataforma completo y el curso cubre solamente una parte del ciclo. La respuesta correcta no es reducir estimaciones sino **declarar el alcance explícitamente**, lo que se hace en la sección §5.
 
 ---
 
@@ -179,9 +181,9 @@ Las historias de arquitectura (HU-ARQ) se mantienen sin descomponer porque repre
 ## 4. Backlog detallado
 
 > **Convención de prioridad:**
-> **Alta** — entra en el alcance del Proyecto Final 1 (semanas 5–8).
-> **Media** — se difiere al Proyecto Final 2; necesaria para el producto completo.
-> **Baja** — se difiere al Proyecto Final 2; deseable, no crítica.
+> **Alta** — se compromete en los sprints del Proyecto Final 2; es recorrido crítico o sostiene un ASR.
+> **Media** — se compromete si hay capacidad; necesaria para el producto completo.
+> **Baja** — se difiere a una fase posterior; deseable, no crítica.
 
 ---
 
@@ -1058,90 +1060,69 @@ La prioridad de cada historia se asignó combinando tres criterios, en este orde
 
 Las historias que no cumplen ninguno de los tres criterios se difieren al Proyecto Final 2.
 
-### 5.2 Alcance del Proyecto Final 1 (76 SP)
+### 5.2 Alcance comprometido en el Proyecto Final 2 (133 SP)
 
-**Historias de arquitectura — 42 SP**
+De las 62 historias del backlog se comprometen **30, que suman exactamente los 133 puntos** de capacidad de los tres sprints.
 
-| Orden | Historia | SP | Justificación |
-|---|---|---|---|
-| 1 | HU-ARQ-05 Persistencia PostgreSQL + Redis | 5 | Base sobre la que se montan los demás experimentos |
-| 2 | HU-ARQ-07 Latencia del motor de scoring | 8 | Valida ASR-1.1 — experimento de la semana 5 |
-| 3 | HU-ARQ-06 Tolerancia a fallos y failover | 13 | Valida ASR-3.1 — experimento de la semana 5 |
-| 4 | HU-ARQ-03 Tokenización de PII | 8 | Valida ASR-4.1 — experimento de la semana 6 |
-| 5 | HU-ARQ-08 Event Bus Kafka | 8 | Valida ASR-1.2 — degradación elegante |
-| | **Subtotal** | **42** | |
+| Bloque comprometido | Historias | SP |
+|---|---|---|
+| Historias de arquitectura que sostienen los ASR *(las once menos HU-ARQ-09, cuyo escenario multi-zona se difiere)* | 10 | 79 |
+| Cotización web completa — FE-01.1 a FE-01.6 | 6 | 15 |
+| Suscripción y emisión web, recorrido mínimo — FE-02.1, FE-02.3, FE-02.4, FE-02.5 | 4 | 11 |
+| Autenticación web completa — FE-10.1 a FE-10.4 | 4 | 9 |
+| Onboarding móvil, recorrido mínimo — FE-05.1, FE-05.2, FE-05.5 | 3 | 11 |
+| Billetera móvil, incluida la consulta sin conexión — FE-06.1, FE-06.2, FE-06.4 | 3 | 8 |
+| **Total comprometido** | **30** | **133** |
+| **Capacidad del Proyecto Final 2** | | **133** |
+| **Holgura** | | **0** |
 
-**Historias funcionales — 34 SP**
+> El alcance se ajustó a la capacidad exacta. No hay holgura, y el equipo asume ese compromiso de forma explícita: **ante un imprevisto se saca alcance, no se extienden horas.** Cualquier historia adicional que entre desplaza a otra.
 
-| Orden | Historia | Canal | SP | Justificación |
+### 5.3 Distribución por sprint
+
+| Sprint | Semanas | Foco | Historias | SP |
 |---|---|---|---|---|
-| 6 | FE-10.2 Iniciar sesión con segundo factor | Web | 3 | Puerta de entrada de todo el recorrido web |
-| 7 | FE-01.1 Iniciar cotización seleccionando ramo | Web | 2 | Inicio del recorrido crítico |
-| 8 | FE-01.2 Autorizar consulta Open Finance | Web | 3 | Diferenciador del producto; habilita ASR-4.1 |
-| 9 | FE-01.3 Ingresar datos del bien a asegurar | Web | 2 | Prerrequisito del cálculo de prima |
-| 10 | FE-01.4 Ver la prima calculada con desglose | Web | 3 | Donde se observa ASR-1.1 y ASR-1.2 |
-| 11 | FE-02.1 Completar datos del tomador | Web | 2 | Prerrequisito de la emisión |
-| 12 | FE-02.4 Pagar la primera prima | Web | 3 | Cierra el recorrido de venta |
-| 13 | FE-02.5 Emitir la póliza y generar certificado | Web | 3 | Resultado observable del recorrido web |
-| 14 | FE-05.1 Capturar el documento de identidad | Móvil | 3 | Inicio del recorrido móvil |
-| 15 | FE-05.2 Verificar identidad con prueba de vida | Móvil | 5 | Núcleo del onboarding móvil |
-| 16 | FE-06.1 Ver pólizas activas en la billetera | Móvil | 2 | Resultado observable del recorrido móvil |
-| 17 | FE-06.2 Consultar las pólizas sin conexión | Móvil | 3 | Donde se observa ASR-3.3 |
-| | **Subtotal** | | **34** | |
+| **Sprint 1** | 2 | Cimientos de arquitectura: persistencia, caché, bus de eventos y tokenización. Autenticación web | 8 | 38 |
+| **Sprint 2** | 2 | Recorrido de cotización completo con Open Finance. Latencia y degradación elegante | 10 | 38 |
+| **Sprint 3** | 3 | Suscripción, emisión y pagos. Onboarding móvil y billetera. Tolerancia a fallos e integridad | 12 | 57 |
+| **Total** | **7** | | **30** | **133** |
 
-| | SP |
-|---|---|
-| Historias de arquitectura | 42 |
-| Historias funcionales | 34 |
-| **Total alcance Proyecto Final 1** | **76** |
-| **Capacidad disponible (semanas 5–8)** | **76** |
-| **Holgura** | **0** |
+El Sprint 1 concentra historias de arquitectura porque son prerrequisito de todo lo demás: sin persistencia, caché y bus no hay dónde apoyar los recorridos funcionales. El Sprint 3 es más largo y absorbe más puntos, lo que da margen para el ajuste que casi siempre exige el cierre.
 
-> El alcance se ajustó deliberadamente a la capacidad exacta. No hay holgura, lo que significa que **cualquier historia adicional que entre desplaza a otra**. El equipo asume este compromiso de forma explícita: la respuesta ante un imprevisto será sacar alcance, no extender horas.
-
-### 5.3 Diferido al Proyecto Final 2 (153 SP)
+### 5.4 Diferido a una fase posterior (96 SP)
 
 | Bloque | Historias | SP |
 |---|---|---|
-| Completar el recorrido de venta web (comparar planes, documentos, firma, entrega) | 5 | 13 |
-| Administración de pólizas web (consulta, renovación, endosos, cancelación) | 5 | 13 |
-| Gestión de siniestros web completa (aviso, soporte, peritaje, liquidación) | 5 | 15 |
-| Autenticación web (registro, recuperación, gestión de sesiones) | 3 | 6 |
-| Completar identidad móvil (listas restrictivas, consentimiento, biometría, reintentos) | 4 | 11 |
-| Completar autogestión móvil (certificados, sincronización, siniestros, notificaciones) | 12 | 29 |
-| Portal de socios distribuidores completo | 5 | 16 |
-| Historias de arquitectura restantes | 6 | 50 |
-| **Total** | **45** | **153** |
+| HU-ARQ-09 Autoescalado horizontal y multi-AZ | 1 | 13 |
+| Completar suscripción y emisión web — FE-02.2, FE-02.6 | 2 | 5 |
+| Administración de pólizas web — FE-03.1 a FE-03.5 | 5 | 13 |
+| Gestión de siniestros web — FE-04.1 a FE-04.5 | 5 | 15 |
+| Completar onboarding móvil — FE-05.3, FE-05.4, FE-05.6 | 3 | 8 |
+| Completar billetera móvil — FE-06.3, FE-06.5 | 2 | 4 |
+| Notificaciones y asistencia móvil — FE-07.1 a FE-07.4 | 4 | 10 |
+| Reporte de siniestros móvil — FE-08.1 a FE-08.5 | 5 | 12 |
+| Portal de socios distribuidores — FE-09.1 a FE-09.5 | 5 | 16 |
+| **Total diferido** | **32** | **96** |
 
-### 5.4 Distribución por sprint semanal
-
-| Semana | Historias comprometidas | SP |
-|---|---|---|
-| Semana 5 (31 ago – 6 sep) | HU-ARQ-05, HU-ARQ-07, FE-10.2, FE-01.1 | 18 |
-| Semana 6 (7 – 13 sep) | HU-ARQ-06, FE-01.2, FE-01.3 | 18 |
-| Semana 7 (14 – 20 sep) | HU-ARQ-03, HU-ARQ-08, FE-01.4 | 19 |
-| Semana 8 (21 – 27 sep) | FE-02.1, FE-02.4, FE-02.5, FE-05.1, FE-05.2, FE-06.1, FE-06.2 | 21 |
-| **Total** | **17 historias** | **76** |
-
----
+Estas historias quedan documentadas, estimadas y priorizadas en el tablero. No se descartan: se declaran fuera del alcance comprometido, que es distinto.
 
 ## 6. Trazabilidad entre escenarios de calidad e historias
 
 Cada uno de los nueve escenarios de calidad definidos en la semana 3 se valida a través de al menos una historia de arquitectura y se observa en al menos una historia funcional.
 
-| ASR | Atributo | Historia de arquitectura que lo implementa | Historia funcional donde se observa | En Proyecto 1 |
+| ASR | Atributo | Historia de arquitectura que lo implementa | Historia funcional donde se observa | Comprometido |
 |---|---|---|---|---|
 | ASR-1.1 | Latencia | HU-ARQ-07 (SOL-28) | FE-01.4 Ver prima calculada | Sí |
 | ASR-1.2 | Latencia bajo degradación | HU-ARQ-08 (SOL-37) | FE-01.4 Ver prima calculada | Sí |
-| ASR-2.1 | Modificabilidad | HU-ARQ-02 (SOL-20) | FE-02.4 Pagar la primera prima | No |
-| ASR-2.2 | Modificabilidad | HU-ARQ-01 (SOL-21) | FE-01.1 Iniciar cotización · FE-09.3 Catálogo API | No |
+| ASR-2.1 | Modificabilidad | HU-ARQ-02 (SOL-20) | FE-02.4 Pagar la primera prima | Sí |
+| ASR-2.2 | Modificabilidad | HU-ARQ-01 (SOL-21) | FE-01.1 Iniciar cotización · FE-09.3 Catálogo API | Sí |
 | ASR-3.1 | Disponibilidad | HU-ARQ-06 (SOL-29) | FE-01.4 Ver prima calculada | Sí |
-| ASR-3.2 | Disponibilidad multi-AZ | HU-ARQ-09 (SOL-43) | Transversal a todo el sistema | No |
-| ASR-3.3 | Continuidad offline | HU-ARQ-10 (SOL-44) | FE-06.2 Consultar pólizas sin conexión | Parcial |
+| ASR-3.2 | Disponibilidad multi-AZ | HU-ARQ-09 (SOL-43) | Transversal a todo el sistema | **No — diferido** |
+| ASR-3.3 | Continuidad offline | HU-ARQ-10 (SOL-44) | FE-06.2 Consultar pólizas sin conexión | Sí |
 | ASR-4.1 | Confidencialidad | HU-ARQ-03 (SOL-23) | FE-01.2 Autorizar Open Finance | Sí |
-| ASR-4.2 | Integridad | HU-ARQ-11 (SOL-45) | FE-02.5 Emitir póliza y certificado | No |
+| ASR-4.2 | Integridad | HU-ARQ-11 (SOL-45) | FE-02.5 Emitir póliza y certificado | Sí |
 
-> ASR-3.3 se marca como parcial: la historia funcional que lo evidencia (FE-06.2) entra en el Proyecto Final 1, pero la historia de arquitectura que lo implementa por completo (HU-ARQ-10) se difiere. En el Proyecto Final 1 se demuestra la consulta sin conexión; la sincronización bidireccional completa queda para el Proyecto Final 2.
+> ASR-3.2 es el único escenario de calidad sin historia comprometida: HU-ARQ-09, que lo implementa, se difiere porque su validación exige infraestructura multi-zona con costo que el curso no cubre. Los otros ocho ASR tienen su historia de arquitectura dentro del alcance comprometido.
 
 ---
 

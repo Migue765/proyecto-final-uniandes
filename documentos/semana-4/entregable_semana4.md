@@ -3,10 +3,10 @@ institucion: Universidad de los Andes
 facultad: Facultad de Ingeniería · Departamento de Ingeniería de Sistemas y Computación
 programa: Maestría en Ingeniería de Software
 curso: MISW4501 — Proyecto Final
-titulo: Entrega Semana 4
+titulo: Avance Semana 4
 subtitulo: Modelos de arquitectura, patrones de diseño, experimentos, estrategia de pruebas y plan de trabajo
 proyecto: Proyecto Solventa — Aseguradora digital sobre Finanzas Abiertas
-entrega: Documento único de entrega
+entrega: Avance de entrega  ·  el bloque de arquitectura y experimentos cierra en la semana 5
 grupo: Grupo 2
 integrantes: Jazmin Natalia Córdoba Puerto ~ Gerente del proyecto — Usabilidad y entrega|Juan Esteban Mejía Izasa ~ Web front, integración de APIs y pagos|Miguel Alejandro Gómez Alarcón ~ Arquitectura, Open Finance, KYC, rendimiento y seguridad|Angie Natalia Arandio Niño ~ Dominio, web back, móvil y pruebas unitarias
 fecha: Bogotá D.C. · 30 de agosto de 2026
@@ -16,14 +16,16 @@ fecha: Bogotá D.C. · 30 de agosto de 2026
 
 Este documento contiene **la totalidad de los entregables de la semana 4**. Cada ítem de la rúbrica se encuentra completo dentro de estas páginas; no se remite a archivos externos para ningún contenido calificable.
 
+**Sobre el alcance de esta entrega.** Las semanas 4 y 5 forman un solo bloque de trabajo cuyo entregable final es la semana 5. Este documento es el **avance de la semana 4**, y su foco está donde el curso indica que debe estar esta semana: la arquitectura. El diseño de los experimentos se presenta ya completo en su estructura, y la semana 5 se reserva para ajustar la arquitectura si el diseño detallado revela una carencia, cerrar la versión final de las fichas de experimento e incorporar los wireframes. Lo que se detalla en §7.8.
+
 | # | Ítem de la rúbrica | Puntos | Dónde está en este documento |
 |---|---|---|---|
 | 1 | **Hoja de trabajo: modelos de arquitectura, patrones detallados y experimentos** | **70** | |
-| 1a | Modelos de arquitectura — vista funcional, de despliegue y de información | 20 | §2, con las tres figuras embebidas |
+| 1a | Modelos de arquitectura — vista funcional, de despliegue y de información | 20 | §2.1 declara el estilo de arquitectura y lo justifica; §2.2 a §2.4 desarrollan las tres vistas con sus figuras embebidas |
 | 1b | Diseño detallado con patrones y razonamiento, en relación con los ASR | 30 | §3: vista de asignación de patrones, matriz de trazabilidad patrón→táctica→componente→ASR, estructura de los patrones críticos y los doce patrones en detalle. §4: decisiones y alternativas descartadas |
-| 1c | Propuesta de experimentos — propósito, respuesta esperada, tecnologías y esfuerzo | 20 | §5 (ocho experimentos que cubren los nueve ASR) |
+| 1c | Propuesta de experimentos — propósito, respuesta esperada, tecnologías y esfuerzo | 20 | §5: criterio para decidir cuántos experimentos, tres fichas completas y las cinco alternativas evaluadas y descartadas con su razón |
 | 2 | **Refinamiento de la estrategia de pruebas** | **10** | §6 |
-| 3 | **Actualización del plan de trabajo y tablero** | **10** | §7: qué es un punto de historia, cálculo de la capacidad del equipo paso a paso, distribución del esfuerzo por integrante, compromiso por sprint y estado del tablero |
+| 3 | **Actualización del plan de trabajo y tablero** | **10** | §7: qué es un punto de historia, cálculo de la capacidad del equipo, dónde se gasta en el Proyecto Final 1, compromiso del backlog contra los tres sprints del Proyecto Final 2, viabilidad de construcción y estado del tablero |
 | 4 | **Video con evidencias** | **10** | §8, con el enlace y el guion completo por presentador |
 | — | *Corrección de la entrega de la semana 3* | *Reentrega* | §9, con remisión al documento de historias de usuario v2.0 |
 
@@ -61,7 +63,25 @@ El diseño que se presenta en este documento no parte de una preferencia tecnol�
 
 ## 2. Modelos de arquitectura
 
-### 2.1 Vista funcional
+### 2.1 Estilo de arquitectura
+
+Antes de presentar las vistas conviene declarar el **estilo** que gobierna la solución, porque es la decisión de la que dependen todas las demás. Solventa no adopta un estilo puro sino una **combinación deliberada de tres**, cada uno resolviendo un problema que los otros no resuelven bien.
+
+| Estilo | Dónde se aplica | Qué problema resuelve | ASR que lo exige |
+|---|---|---|---|
+| **Microservicios** | Núcleo de negocio: siete servicios delimitados por contexto de dominio | Permite escalar y desplegar de forma independiente el servicio con exigencia de latencia, sin arrastrar a los demás | ASR-1.1 · ASR-3.2 |
+| **Por capas** | Edge → BFF → Núcleo → Adaptadores | Confina las responsabilidades transversales —seguridad en el borde, formato por canal en el BFF, integración externa en los adaptadores— para que no se repitan en cada servicio | ASR-2.1 · ASR-4.1 |
+| **Orientado a eventos** | Comunicación asíncrona entre servicios del núcleo vía Event Bus | Saca del camino crítico todo lo que no es necesario para responder al usuario y desacopla productores de consumidores | ASR-1.2 · ASR-2.1 |
+
+**Por qué microservicios y no un monolito modular.** Un monolito habría simplificado el desarrollo en el plazo disponible, y esa era una alternativa seria. Se descartó por una razón concreta y no por moda: el servicio de Perfilamiento y Scoring es el único con una exigencia de latencia de 200 ms y el único que enfrenta picos de diez veces el tráfico normal durante campañas de socios. En un monolito, escalar ese componente obliga a replicar todo el sistema, lo que multiplica el costo de infraestructura por una necesidad que solo tiene una parte. La independencia de despliegue no es un fin: es lo que hace económicamente viable el ASR-1.1.
+
+**Por qué capas sobre los microservicios.** Los microservicios por sí solos no dicen dónde vive la autenticación, ni el formato de respuesta por canal, ni la traducción hacia proveedores externos. Sin capas, cada servicio termina implementando su propia versión de esas tres cosas, que es la principal fuente de inconsistencias de seguridad en arquitecturas de microservicios. Las capas asignan un único lugar a cada responsabilidad transversal.
+
+**Por qué eventos además de llamadas sincrónicas.** La emisión de una póliza dispara efectos en cuatro servicios. Si Emisión los llamara de forma sincrónica, su latencia sería la suma de las cuatro y su disponibilidad el producto de las cuatro. El estilo orientado a eventos convierte esa suma en una sola escritura al bus. La contrapartida es consistencia eventual, que se acepta para efectos secundarios pero **no** para el cobro de la prima, que permanece sincrónico dentro de la transacción de emisión.
+
+**Lo que el estilo deja fuera.** No se adopta arquitectura sin servidor para el núcleo, pese a que encajaría con los picos de tráfico, porque los arranques en frío son incompatibles con un presupuesto de 200 ms y porque el equipo no tiene experiencia previa que permita estimar su comportamiento con confianza. Tampoco se adopta una malla de servicios: aportaría observabilidad y control de tráfico, pero su costo de operación no se justifica con siete servicios y un equipo de cuatro personas.
+
+### 2.2 Vista funcional
 
 La vista funcional muestra cómo se descompone el sistema en componentes y cómo colaboran para atender los recorridos de negocio. La estructura es de cuatro capas más una plataforma de datos transversal.
 
@@ -79,7 +99,7 @@ La vista funcional muestra cómo se descompone el sistema en componentes y cómo
 
 **Adaptadores externos.** Cada proveedor externo —Open Finance, Open Data, KYC/AML, pasarelas de pago y firma electrónica— se alcanza exclusivamente a través de un adaptador que traduce entre el modelo del proveedor y el modelo de dominio de Solventa. Ningún servicio del núcleo conoce el formato de un proveedor.
 
-### 2.2 Vista de despliegue
+### 2.3 Vista de despliegue
 
 La vista de despliegue muestra dónde se ejecuta cada componente y qué mecanismos de redundancia lo protegen.
 
@@ -93,7 +113,7 @@ La vista de despliegue muestra dónde se ejecuta cada componente y qué mecanism
 
 **Servicios regionales.** El servicio de gestión de llaves cifra los datos en reposo y firma las pólizas emitidas; el almacenamiento de objetos con bloqueo de escritura garantiza que un registro de auditoría no pueda alterarse ni siquiera con credenciales administrativas; la observabilidad centralizada recoge métricas y trazas distribuidas de todos los servicios.
 
-### 2.3 Vista de información
+### 2.4 Vista de información
 
 La vista de información muestra las entidades de dominio, cómo se clasifican sus datos según sensibilidad y dónde se persiste cada clase.
 
@@ -167,17 +187,17 @@ Cada fila se lee así: el patrón materializa esas tácticas, vive en esos compo
 | Patrón | Tácticas que materializa | Componentes donde vive | ASR | Experimento |
 |---|---|---|---|---|
 | **P1** Cache-Aside | Mantener múltiples copias de datos computados · Reducir la demanda computacional en el camino crítico | Perfilamiento · Redis | ASR-1.1 · ASR-1.2 | EXP-01 |
-| **P2** Interruptor de circuito | Detectar fallas por tasa de respuesta · Degradación elegante | Adaptadores externos | ASR-1.2 · ASR-3.1 | EXP-02 · EXP-04 |
+| **P2** Interruptor de circuito | Detectar fallas por tasa de respuesta · Degradación elegante | Adaptadores externos | ASR-1.2 · ASR-3.1 | EXP-02 |
 | **P3** Tiempo de espera con reintento | Acotar el tiempo de espera · Reintento de operaciones idempotentes | Adaptadores externos | ASR-1.2 | EXP-02 |
-| **P4** Mamparo de aislamiento | Contener el fallo limitando recursos compartidos | Todo el núcleo (depósitos por dependencia) | ASR-3.1 | EXP-04 |
+| **P4** Mamparo de aislamiento | Contener el fallo limitando recursos compartidos | Todo el núcleo (depósitos por dependencia) | ASR-3.1 | EXP-02 (instrumentado) |
 | **P5** Puertos y adaptadores | Encapsular la variabilidad · Invertir dependencias · Diferir el enlace | Pagos & Recaudo · capa de adaptadores | ASR-2.1 | EXP-03 |
 | **P6** Strategy con configuración externalizada | Encapsular la variabilidad · Diferir el enlace al despliegue | Cotización & Rating · configuración de ramos | ASR-2.2 | EXP-03 |
-| **P7** Backend por canal | Aislar la variabilidad del canal · Reducir el acoplamiento entre canales | BFF Web · BFF Móvil | ASR-3.3 | EXP-06 |
+| **P7** Backend por canal | Aislar la variabilidad del canal · Reducir el acoplamiento entre canales | BFF Web · BFF Móvil | ASR-3.3 | Prototipo móvil |
 | **P8** Publicación y suscripción | Sacar del camino crítico lo no esencial · Desacoplar productor y consumidor | Event Bus · servicios del núcleo | ASR-1.2 · ASR-2.1 | EXP-02 |
-| **P9** Tokenización | Limitar el acceso por custodia centralizada · Cifrar en tránsito y reposo · Auditar cada acceso | Tokenización · Perfilamiento · Consentimientos | ASR-4.1 | EXP-07 |
-| **P10** Almacenamiento inmutable con firma | Verificar integridad · Registro no repudiable · Autorizar por token de servicio | Pólizas · Object Storage · Auditoría | ASR-4.2 | EXP-08 |
-| **P11** Cliente offline-first | Mantener copia local · Sincronización diferida · Acotar la vigencia del dato replicado | App móvil · BFF Móvil | ASR-3.3 | EXP-06 |
-| **P12** Multi-AZ con autoescalado | Redundancia activa · Replicación síncrona · Detección por comprobación de salud | EKS · RDS · MSK | ASR-3.2 | EXP-05 |
+| **P9** Tokenización | Limitar el acceso por custodia centralizada · Cifrar en tránsito y reposo · Auditar cada acceso | Tokenización · Perfilamiento · Consentimientos | ASR-4.1 | EXP-03 |
+| **P10** Almacenamiento inmutable con firma | Verificar integridad · Registro no repudiable · Autorizar por token de servicio | Pólizas · Object Storage · Auditoría | ASR-4.2 | Prueba de configuración |
+| **P11** Cliente offline-first | Mantener copia local · Sincronización diferida · Acotar la vigencia del dato replicado | App móvil · BFF Móvil | ASR-3.3 | Prototipo móvil |
+| **P12** Multi-AZ con autoescalado | Redundancia activa · Replicación síncrona · Detección por comprobación de salud | EKS · RDS · MSK | ASR-3.2 | Proyecto Final 2 |
 
 **Cobertura.** Los nueve ASR quedan cubiertos por al menos un patrón, y los doce patrones tienen al menos un ASR que los justifica. No hay patrones huérfanos —adoptados sin un requisito que los exija— ni ASR sin mecanismo asignado.
 
@@ -367,23 +387,45 @@ Un **punto de sensibilidad** es una decisión de arquitectura de la que depende 
 |---|---|---|---|---|
 | ASR-1.1 | Que el perfil derivado se pueda cachear con una tasa de acierto suficiente y que el procesamiento restante quepa en el presupuesto de 200 ms | SOL-28 | **Alta** | EXP-01 |
 | ASR-1.2 | La calibración del umbral y la ventana del interruptor de circuito, y el reparto del presupuesto de latencia entre tiempos de espera | SOL-37 | **Alta** | EXP-02 |
-| ASR-2.1 | Que la definición del puerto de pagos sea lo bastante general para absorber una pasarela con contrato distinto | SOL-20 | Media | EXP-03 |
-| ASR-2.2 | Que el motor de rating sea genuinamente agnóstico al ramo | SOL-21 | Media | EXP-03 |
-| ASR-3.1 | Que la ruta de respaldo hacia PostgreSQL absorba el tráfico del caché caído sin propagar la saturación | SOL-29 | **Alta** | EXP-04 |
-| ASR-3.2 | Que el esquema multi-zona opere de hecho como activo-activo y no como activo-pasivo encubierto | SOL-43 | Media-alta | EXP-05 |
-| ASR-3.3 | El protocolo de sincronización y la resolución de conflictos entre almacenamiento local y servidor | SOL-44 | Media | EXP-06 |
-| ASR-4.1 | Que la tokenización centralizada no introduzca latencia inaceptable ni deje rutas por donde el dato original se filtre | SOL-23 | **Alta** | EXP-07 |
-| ASR-4.2 | Que la ruta de auditoría detecte y registre una alteración en menos de 1 segundo | SOL-45 | Media | EXP-08 |
+| ASR-2.1 | Que la definición del puerto de pagos sea lo bastante general para absorber una pasarela con contrato distinto | SOL-20 | Media | Verificación estática |
+| ASR-2.2 | Que el motor de rating sea genuinamente agnóstico al ramo | SOL-21 | Media | Verificación estática |
+| ASR-3.1 | Que la ruta de respaldo hacia PostgreSQL absorba el tráfico del caché caído sin propagar la saturación | SOL-29 | **Alta** | Instrumentado dentro de EXP-02 |
+| ASR-3.2 | Que el esquema multi-zona opere de hecho como activo-activo y no como activo-pasivo encubierto | SOL-43 | Media-alta | Diferido a Proyecto Final 2 |
+| ASR-3.3 | El protocolo de sincronización y la resolución de conflictos entre almacenamiento local y servidor | SOL-44 | Media | Prototipo móvil, semanas 6–7 |
+| ASR-4.1 | Que la tokenización centralizada no introduzca latencia inaceptable ni deje rutas por donde el dato original se filtre | SOL-23 | **Alta** | EXP-03 |
+| ASR-4.2 | Que la ruta de auditoría detecte y registre una alteración en menos de 1 segundo | SOL-45 | Media | Prueba de configuración |
 
-**Por qué ocho experimentos y no nueve.** ASR-2.1 y ASR-2.2 son dos manifestaciones del mismo punto de sensibilidad de fondo: si la variabilidad del negocio está encapsulada en puntos de extensión o filtrada hacia el núcleo. Se miden de la misma forma —tocar un punto de variación y contar qué archivos cambian— y usan la misma instrumentación. Se agrupan en el EXP-03 con dos escenarios, lo que evita duplicar montaje sin perder cobertura: los nueve ASR quedan cubiertos.
+**Cobertura sin experimentar todo.** Los nueve puntos de sensibilidad quedan atendidos, pero por mecanismos distintos y proporcionados a su incertidumbre: tres con experimento propio, uno instrumentado dentro de otro experimento, dos por verificación estática del grafo de dependencias, uno con el prototipo móvil, uno con una prueba de configuración y uno diferido al Proyecto Final 2. El criterio que decide cuál va a cada categoría se explica en §5.3.
 
-**Por qué se experimenta ASR-4.2 pese a apoyarse en una garantía de plataforma.** El bloqueo de escritura del almacenamiento de objetos es una capacidad documentada por el proveedor y sobre eso el equipo no tiene incertidumbre. La incertidumbre real está en otro lado: en si **la ruta de auditoría propia** detecta y registra el intento en menos de 1 segundo. Eso sí es una decisión de diseño del equipo y por eso el EXP-08 se enfoca en el tiempo de detección, no en si el bloqueo funciona.
+### 5.3 Cuántos experimentos y con qué criterio
 
-**Sprint 1 de diseño.** Los cuatro experimentos de incertidumbre alta (EXP-01, EXP-02, EXP-04 y EXP-07) conforman el Sprint 1 y se ejecutan en las semanas 5 y 6, dentro de las 42 horas comprometidas. Los cuatro restantes quedan diseñados y programados, y se ejecutan según disponibilidad y en el Proyecto Final 2, por depender de infraestructura con costo o de incertidumbre menor.
+El curso no fija un número de experimentos: cada equipo debe justificar el suyo. El criterio del equipo combina una restricción de calendario con una regla de utilidad.
 
----
+**La restricción de calendario.** El diseño de los experimentos ocurre en las semanas 4 y 5, pero su **construcción y ejecución** ocurre en las semanas 6 y 7, que son las mismas dos semanas en que debe construirse toda la experiencia de usuario del prototipo web y móvil. No son dos semanas dedicadas a experimentar: son dos semanas compartidas.
 
-### 5.3 EXP-01 — Viabilidad del presupuesto de latencia del motor de scoring
+```
+Capacidad del equipo, semanas 6 y 7   2 semanas × 19 pts   =  38 pts  ≈  76 h
+Reserva para experiencia de usuario   (mockups, wireframes, prototipo)  ≈  40 h
+──────────────────────────────────────────────────────────────────────────────
+Disponible para construir experimentos                                 ≈  36 h
+```
+
+**La regla de utilidad.** Solo se experimenta donde el punto de sensibilidad genera incertidumbre real. Un experimento sobre una decisión de la que ya se conoce el resultado consume horas sin producir información. Aplicando esa regla a los nueve puntos de sensibilidad de §5.2, solo cuatro resultaron de incertidumbre alta, y de esos cuatro uno queda cubierto parcialmente por otro.
+
+**Resultado: tres experimentos, 34 horas.**
+
+| Experimento | Punto de sensibilidad | ASR | Esfuerzo |
+|---|---|---|---|
+| **EXP-01** Presupuesto de latencia | La tasa de acierto del caché de perfiles y el reparto del presupuesto entre saltos | ASR-1.1 | 10 h |
+| **EXP-02** Degradación elegante | La calibración del umbral y la ventana del interruptor de circuito | ASR-1.2 | 12 h |
+| **EXP-03** Tokenización de datos sensibles | Centralizar la custodia del dato en un único servicio | ASR-4.1 | 12 h |
+| | | **Total** | **34 h** |
+
+Las 34 horas caben en las 36 disponibles, con dos horas de margen. Proponer más habría significado o bien no construirlos, o bien sacrificar la experiencia de usuario, que también se califica.
+
+**Por qué estos tres y no otros.** Comparten una propiedad que los demás no tienen: **un resultado adverso obligaría a rehacer estructura, no a ajustar un parámetro.** Si el caché no alcanza la tasa de acierto necesaria hay que cambiar cuándo se calcula la prima; si el interruptor no se puede calibrar hay que rediseñar el aislamiento de recursos; si la tokenización centralizada filtra el dato hay que cambiar cómo viajan los eventos. Los cinco descartados, en cambio, admiten corrección local.
+
+### 5.4 EXP-01 — Viabilidad del presupuesto de latencia del motor de scoring
 
 | Campo | Contenido |
 |---|---|
@@ -451,8 +493,7 @@ Un **punto de sensibilidad** es una decisión de arquitectura de la que depende 
 | Herramientas de análisis | Apache JMeter 5.6 · WireMock · trazas distribuidas · CloudWatch |
 
 ---
-
-### 5.4 EXP-02 — Calibración de la degradación elegante
+### 5.5 EXP-02 — Calibración de la degradación elegante
 
 | Campo | Contenido |
 |---|---|
@@ -519,281 +560,7 @@ Un **punto de sensibilidad** es una decisión de arquitectura de la que depende 
 | Herramientas de análisis | Apache JMeter 5.6 · WireMock con retardo variable · Toxiproxy |
 
 ---
-
-### 5.5 EXP-03 — Modificabilidad de los puntos de extensión
-
-| Campo | Contenido |
-|---|---|
-| **Título** | Validación de la modificabilidad mediante Adapter y configuración externalizada |
-| **Propósito del experimento** | Medir empíricamente el costo de las dos variaciones que el negocio pedirá con más frecuencia —una pasarela de pagos nueva y un ramo de seguro nuevo— y verificar que ninguna obliga a modificar el núcleo |
-| **Resultados esperados** | Escenario A: una pasarela con contrato distinto integrada en menos de 4 horas-hombre y cero archivos del núcleo modificados. Escenario B: un ramo no contemplado disponible en el flujo de cotización y en la API de socios mediante configuración, con cero archivos del motor de rating modificados |
-| **Recursos requeridos** | Servicio de Pagos & Recaudo, puerto de pagos, simulador de pasarela, servicio de Cotización & Rating, configuración de ramos, PostgreSQL y repositorio con registro de cambios por archivo |
-| **Elementos de arquitectura** | ASR-2.1 y ASR-2.2. Vista funcional: Pagos & Recaudo, Adaptadores externos, Cotización & Rating y módulo de configuración de ramos |
-| **Esfuerzo estimado** | 10 horas-hombre (6 h escenario A · 4 h escenario B) |
-
-**Hipótesis de diseño**
-
-| Campo | Contenido |
-|---|---|
-| Puntos de sensibilidad | Generalidad de la definición del puerto de pagos · grado de agnosticismo del motor de rating respecto del ramo |
-| Historias de arquitectura asociadas | SOL-20 (HU-ARQ-02) · SOL-21 (HU-ARQ-01) |
-| Nivel de incertidumbre | **Media.** Ambos mecanismos están diseñados y el equipo los conoce; lo que no se sabe es si la abstracción es lo bastante general. Un resultado adverso obliga a redefinir una interfaz, no a rehacer la estructura, por lo que su incertidumbre es menor que la de los experimentos de rendimiento |
-| Patrones de arquitectura | **Ports & Adapters** · **Strategy con configuración externalizada** |
-| Descripción de los patrones | El núcleo define un puerto en lenguaje de dominio y desconoce toda implementación concreta; las reglas variables de cada ramo viven en configuración versionada y no en código |
-| Tácticas de arquitectura | Encapsular la variabilidad · Restringir las dependencias mediante inversión · Diferir el enlace hasta el tiempo de despliegue |
-| Descripción de las tácticas | La flecha de dependencia apunta del adaptador hacia el núcleo, de modo que agregar un proveedor no puede obligar a modificar el núcleo; y la selección concreta se resuelve por configuración |
-
-**Componentes involucrados**
-
-| Componente | Propósito y comportamiento esperado | Tecnología |
-|---|---|---|
-| Pagos & Recaudo | Ejecuta la lógica de cobro contra el puerto, sin conocer ninguna pasarela concreta | Python 3.11 · Flask |
-| Adaptador de pasarela nuevo | Traduce entre el contrato de la pasarela y el puerto de dominio. Es el único artefacto que se escribe | Python 3.11 · httpx |
-| Cotización & Rating | Evalúa el árbol de reglas del ramo sin conocer ramos concretos | Python 3.11 · Flask |
-| Módulo de configuración de ramos | Carga y valida la definición del ramo contra un esquema antes de activarla | Python 3.11 · JSON Schema |
-| Portal de socios | Expone el ramo nuevo por la API B2B sin cambios de código | Angular 17 |
-
-**Conectores involucrados**
-
-| Conector | Comportamiento a probar | Tecnología |
-|---|---|---|
-| Pagos → Puerto de dominio | Que la interfaz absorba un contrato distinto sin fugas de abstracción | Interfaz Python (inversión de dependencias) |
-| Adaptador → Pasarela simulada | Que la traducción quede confinada al adaptador | REST sobre TLS · httpx |
-| Cotización → Configuración de ramos | Que el ramo nuevo se cargue y valide sin reiniciar el motor | psycopg · PostgreSQL 15 |
-| Portal → API de socios | Que el catálogo refleje el ramo nuevo automáticamente | REST sobre TLS |
-
-**Medición**
-
-| Métrica | Instrumento | Umbral |
-|---|---|---|
-| Esfuerzo de integración de la pasarela | Cronometraje del trabajo | < 4 horas-hombre |
-| Archivos del núcleo modificados | `git diff --name-only` contra la base | 0 fuera de adaptadores y configuración |
-| Archivos del motor de rating modificados | `git diff --name-only` | 0 |
-| Pruebas del núcleo tras el cambio | pytest | Pasan sin modificación |
-
-**Criterio de refutación.** Cualquier archivo del núcleo que deba modificarse refuta la hipótesis e identifica exactamente dónde está la fuga de abstracción. La medida no es una opinión: es el conjunto de archivos que reporta el control de versiones.
-
-**Decisión alternativa ante resultado adverso.** Si el puerto de pagos resulta insuficiente, se redefine en términos de intención de negocio —autorizar, confirmar, reversar— en lugar de operaciones de pasarela. Si el motor de rating exige cambios, se extrae el fragmento dependiente del ramo hacia una estrategia cargada por configuración.
-
-**Tecnología asociada**
-
-| Elemento | Detalle |
-|---|---|
-| Justificación | La medición se apoya en el control de versiones, que da evidencia objetiva de qué se tocó, y en el cronometraje del trabajo de un integrante que no diseñó el módulo, para evitar el sesgo del autor |
-| Lenguaje | Python 3.11 |
-| Framework | Flask · Angular 17 (portal) |
-| Plataforma de despliegue | Docker Compose · AWS EKS |
-| Base de datos | PostgreSQL 15 |
-| Librerías | httpx · psycopg · jsonschema |
-| Herramientas de análisis | Git con registro de cambios por archivo · pytest 8 · Postman/Newman · simulador de pasarela |
-
----
-
-### 5.6 EXP-04 — Absorción del tráfico ante la caída del caché
-
-| Campo | Contenido |
-|---|---|
-| **Título** | Validación de tolerancia a fallos ante caída de Redis |
-| **Propósito del experimento** | Verificar que la pérdida del caché degrada el rendimiento sin interrumpir el servicio, y que el aislamiento por mamparo confina el efecto a los servicios que dependen del caché |
-| **Resultados esperados** | Conmutación a PostgreSQL en menos de 30 s, cero transacciones activas perdidas, disponibilidad ≥ 99,9% en la ventana medida y un servicio testigo sin afectación |
-| **Recursos requeridos** | Redis, PostgreSQL, Perfilamiento, Cotización, Pólizas como servicio testigo, `docker stop` o Toxiproxy para inducir la falla, JMeter y CloudWatch |
-| **Elementos de arquitectura** | ASR-3.1. Vista funcional: Perfilamiento, Cotización, Pólizas, Redis, PostgreSQL |
-| **Esfuerzo estimado** | 8 horas-hombre |
-
-**Hipótesis de diseño**
-
-| Campo | Contenido |
-|---|---|
-| Puntos de sensibilidad | Que el depósito de conexiones a PostgreSQL absorba el tráfico que atendía el caché · que la saturación no se propague por el recurso compartido |
-| Historias de arquitectura asociadas | SOL-29 (HU-ARQ-06) · SOL-26 (HU-ARQ-05) |
-| Nivel de incertidumbre | **Alta.** Cuando Redis cae, el 100% del tráfico que resolvía por caché pasa a PostgreSQL de golpe. No se sabe si el depósito dimensionado para operación normal soporta ese salto, ni si la saturación queda confinada al perfilamiento o alcanza a los servicios que comparten la base |
-| Patrones de arquitectura | **Circuit Breaker** · **Fallback** · **Bulkhead** |
-| Descripción de los patrones | El interruptor detecta la ausencia del caché, el fallback redirige a la fuente persistente y el mamparo impide que la saturación resultante alcance a otros servicios |
-| Tácticas de arquitectura | Detección de fallas mediante comprobación de vitalidad · Recuperación mediante fuente alternativa · Contención del fallo limitando recursos compartidos |
-| Descripción de las tácticas | Cada dependencia tiene su propio depósito de conexiones, de modo que agotar uno no agota los demás |
-
-**Componentes involucrados**
-
-| Componente | Propósito y comportamiento esperado | Tecnología |
-|---|---|---|
-| Perfilamiento & Scoring | Detecta la ausencia del caché y conmuta a la fuente primaria en menos de 30 s sin perder transacciones en curso | Python 3.11 · redis-py con comprobación de salud |
-| Pólizas | Sirve de testigo de propagación: debe mantener latencia y tasa de error sin alteración durante todo el incidente | Python 3.11 · Flask |
-| Cotización & Rating | Sostiene el flujo de usuario con degradación acotada y transitoria, sin errores | Python 3.11 · Flask |
-| Base de datos | Absorbe el tráfico redirigido desde un depósito dedicado | PostgreSQL 15 |
-
-**Conectores involucrados**
-
-| Conector | Comportamiento a probar | Tecnología |
-|---|---|---|
-| Perfilamiento → Caché | Que la pérdida de conexión se detecte rápido y no quede esperando | redis-py con tiempo de espera de conexión corto |
-| Perfilamiento → Base de datos | Que el depósito absorba el tráfico redirigido sin agotarse | psycopg con depósito dedicado |
-| Pólizas → Base de datos | Que su depósito, separado del anterior, permanezca intacto | psycopg con depósito independiente |
-
-**Medición**
-
-| Métrica | Instrumento | Umbral |
-|---|---|---|
-| Tiempo de conmutación a la fuente primaria | Trazas y registros del servicio | < 30 s |
-| Transacciones activas perdidas | Conciliación de enviadas contra confirmadas | 0 |
-| Disponibilidad en la ventana medida | Apache JMeter | ≥ 99,9% |
-| Latencia y errores del servicio testigo | Apache JMeter | Sin alteración significativa |
-
-**Criterio de refutación.** Queda refutada si el servicio de Pólizas se degrada: eso demostraría que el aislamiento por mamparo no está operando y que el fallo se propaga por el recurso compartido.
-
-**Decisión alternativa ante resultado adverso.** Se separa físicamente el acceso a datos: el perfilamiento deja de compartir instancia de base de datos con el resto, convirtiendo el aislamiento lógico en aislamiento de infraestructura.
-
-**Tecnología asociada**
-
-| Elemento | Detalle |
-|---|---|
-| Justificación | Se requiere inducir una falla real de infraestructura y observar simultáneamente el servicio afectado y uno no relacionado, que es la única forma de comprobar la contención |
-| Lenguaje | Python 3.11 |
-| Framework | Flask · Gunicorn |
-| Plataforma de despliegue | Docker Compose · AWS EKS |
-| Bases de datos | PostgreSQL 15 · Redis 7 |
-| Librerías | redis-py · psycopg · pybreaker |
-| Herramientas de análisis | Apache JMeter 5.6 · `docker stop` · Toxiproxy · CloudWatch |
-
----
-
-### 5.7 EXP-05 — Pérdida de una zona de disponibilidad
-
-| Campo | Contenido |
-|---|---|
-| **Título** | Validación de alta disponibilidad ante caída de una zona AWS |
-| **Propósito del experimento** | Verificar que el esquema multi-zona opera realmente como activo-activo y que los objetivos de tiempo y punto de recuperación se cumplen ante la pérdida completa de una zona |
-| **Resultados esperados** | Tráfico redirigido a la zona superviviente, promoción automática de la réplica de base de datos, continuidad del bus de eventos, RTO ≤ 10 minutos, RPO ≤ 30 s y cero transacciones confirmadas perdidas |
-| **Recursos requeridos** | AWS con EKS multi-AZ, RDS PostgreSQL con réplica, Amazon MSK, balanceador de aplicación, AWS Fault Injection Service y CloudWatch |
-| **Elementos de arquitectura** | ASR-3.2. Vista de despliegue: EKS en dos zonas, RDS multi-AZ, MSK, balanceador |
-| **Esfuerzo estimado** | 12 horas-hombre |
-
-**Hipótesis de diseño**
-
-| Campo | Contenido |
-|---|---|
-| Puntos de sensibilidad | Que la configuración sea activo-activo de hecho y no activo-pasivo encubierto · tiempo de promoción de la réplica · continuidad del bus de eventos |
-| Historias de arquitectura asociadas | SOL-43 (HU-ARQ-09) · SOL-29 (HU-ARQ-06) |
-| Nivel de incertidumbre | **Media-alta.** El diseño afirma que la capacidad de la zona superviviente ya está caliente, pero eso solo se comprueba induciendo la falla. Si en la práctica opera como activo-pasivo, el RTO dependerá del arranque en frío y el objetivo de 10 minutos queda en riesgo |
-| Patrones de arquitectura | **Active-Active** · **Replication** · **Automatic Failover** |
-| Descripción de los patrones | Ambas zonas reciben tráfico simultáneamente y los datos se replican de forma síncrona, de modo que la recuperación dependa de la detección y no del aprovisionamiento |
-| Tácticas de arquitectura | Redundancia activa · Replicación síncrona de estado · Detección de fallas mediante comprobación de salud del balanceador |
-| Descripción de las tácticas | Mantener capacidad ya caliente en ambas zonas es lo que hace que el tiempo de recuperación se mida en decenas de segundos y no en minutos de arranque |
-
-**Componentes involucrados**
-
-| Componente | Propósito y comportamiento esperado | Tecnología |
-|---|---|---|
-| Servicios de negocio | Se ejecutan en pods repartidos entre zonas con reglas de antiafinidad; ninguna zona concentra todas las réplicas | Python 3.11 · Flask sobre Kubernetes |
-| Orquestador | Retira de rotación los pods que no responden y escala la zona superviviente | Amazon EKS · Horizontal Pod Autoscaler |
-| Base de datos | Promueve automáticamente la réplica a primaria conservando el RPO | Amazon RDS PostgreSQL multi-AZ |
-| Bus de eventos | Continúa operando con los brokers de la zona superviviente | Amazon MSK |
-
-**Conectores involucrados**
-
-| Conector | Comportamiento a probar | Tecnología |
-|---|---|---|
-| Internet → Balanceador | Que la detección de la zona caída y la redirección ocurran en segundos | AWS Application Load Balancer |
-| Servicios → Base de datos | Que la reconexión tras la promoción sea automática y no requiera reinicio | psycopg con reintento y descubrimiento de punto final |
-| Servicios → Bus de eventos | Que no se pierdan eventos confirmados durante la conmutación | kafka-python contra MSK multi-AZ |
-| Zona A ↔ Zona B | Que la replicación sostenga un RPO de 30 s | Replicación síncrona de RDS |
-
-**Medición**
-
-| Métrica | Instrumento | Umbral |
-|---|---|---|
-| Tiempo de recuperación del servicio | CloudWatch · JMeter | RTO ≤ 10 min |
-| Pérdida de datos | Conciliación de transacciones confirmadas antes y después | RPO ≤ 30 s |
-| Transacciones confirmadas perdidas | Consulta de verificación sobre la base | 0 |
-| Capacidad absorbida por la zona superviviente | Métricas del autoescalador | Sin rechazo de solicitudes |
-
-**Criterio de refutación.** Un RTO superior a 10 minutos indicaría que el esquema opera de hecho como activo-pasivo. La pérdida de transacciones confirmadas indicaría que la replicación no es síncrona.
-
-**Decisión alternativa ante resultado adverso.** Se pasa de replicación asíncrona a síncrona aceptando el costo en latencia de escritura, y se reserva capacidad mínima garantizada por zona en lugar de depender del autoescalado para absorber el tráfico redirigido.
-
-**Tecnología asociada**
-
-| Elemento | Detalle |
-|---|---|
-| Justificación | Solo un servicio de inyección de fallas permite provocar la pérdida de una zona de forma controlada y repetible; simularlo apagando instancias no reproduce el comportamiento del balanceador |
-| Lenguaje | Python 3.11 |
-| Framework | Flask |
-| Plataforma de despliegue | AWS EKS multi-AZ |
-| Bases de datos | Amazon RDS PostgreSQL multi-AZ |
-| Librerías | psycopg · kafka-python |
-| Herramientas de análisis | AWS Fault Injection Service · CloudWatch · Apache JMeter 5.6 |
-
----
-
-### 5.8 EXP-06 — Continuidad del cliente móvil sin conexión
-
-| Campo | Contenido |
-|---|---|
-| **Título** | Validación de operación offline y sincronización de pólizas en la aplicación móvil |
-| **Propósito del experimento** | Verificar que la billetera de pólizas es plenamente funcional sin red, que la sincronización posterior cumple el objetivo de tiempo y que el almacenamiento local no expone información en claro |
-| **Resultados esperados** | 100% de las consultas de póliza resueltas sin conexión, sincronización completa en ≤ 10 s al recuperar conectividad sin intervención del usuario, aviso de datos desactualizados al superar 24 horas y almacenamiento local ilegible fuera de la aplicación |
-| **Recursos requeridos** | Emulador o dispositivo Android, aplicación móvil, BFF Móvil, API de pólizas y control de conectividad del emulador |
-| **Elementos de arquitectura** | ASR-3.3. Vista funcional: aplicación móvil, almacenamiento local cifrado, BFF Móvil y módulo de sincronización |
-| **Esfuerzo estimado** | 10 horas-hombre |
-
-**Hipótesis de diseño**
-
-| Campo | Contenido |
-|---|---|
-| Puntos de sensibilidad | Protocolo de sincronización y resolución de conflictos entre el almacenamiento local y el servidor · cifrado del almacenamiento local |
-| Historias de arquitectura asociadas | SOL-44 (HU-ARQ-10) |
-| Nivel de incertidumbre | **Media.** El patrón offline-first está definido, pero no se conoce el costo real de la sincronización con el volumen de pólizas de un usuario típico ni cómo se comporta la resolución de conflictos cuando el dato cambió en ambos lados |
-| Patrones de arquitectura | **Offline-First** · **Deferred Synchronization** |
-| Descripción de los patrones | La aplicación trata el almacenamiento local como fuente de lectura y la red como mecanismo de actualización en segundo plano; las acciones ejecutadas sin conexión se encolan y se envían en orden al recuperar la red |
-| Tácticas de arquitectura | Mantener una copia local del estado · Sincronización diferida con reintento · Acotar la vigencia del dato replicado |
-| Descripción de las tácticas | La vigencia de 24 horas acota cuánto puede desviarse el dato local, y el aviso al vencer traslada al usuario la decisión de confiar o no en lo que ve |
-
-**Componentes involucrados**
-
-| Componente | Propósito y comportamiento esperado | Tecnología |
-|---|---|---|
-| Aplicación móvil | Sirve las pólizas desde el almacenamiento local sin requerir red | Kotlin nativo · Android |
-| Almacenamiento local cifrado | Conserva las pólizas cifradas y solo la información mínima necesaria para mostrarlas | Room con SQLCipher · EncryptedSharedPreferences |
-| Módulo de sincronización | Detecta la reconexión y sincroniza en 10 s o menos sin intervención | Kotlin · WorkManager |
-| BFF Móvil | Expone las pólizas en cargas compactas y resuelve conflictos con precedencia del servidor | Python 3.11 · Flask |
-
-**Conectores involucrados**
-
-| Conector | Comportamiento a probar | Tecnología |
-|---|---|---|
-| Aplicación → Almacenamiento local | Que la consulta se resuelva sin red y el contenido esté cifrado en reposo | Room · SQLCipher |
-| Aplicación → BFF Móvil | Que la carga útil sea compacta y tolere red intermitente | REST sobre TLS 1.3 · Retrofit · OkHttp |
-| Módulo de sincronización ↔ BFF | Que las acciones diferidas se envíen en el orden en que se ejecutaron | WorkManager con reintento y espera creciente |
-
-**Medición**
-
-| Métrica | Instrumento | Umbral |
-|---|---|---|
-| Consultas resueltas sin conexión | Suite de pruebas instrumentadas | 100% |
-| Tiempo de sincronización tras reconectar | Cronometraje instrumentado | ≤ 10 s |
-| Legibilidad del almacenamiento local | Inspección del dispositivo con depuración | Ilegible fuera de la aplicación |
-| Aviso de datos desactualizados | Prueba con reloj adelantado 24 h | Aviso visible, consulta no bloqueada |
-
-**Criterio de refutación.** Cualquier consulta de póliza que requiera red refuta la hipótesis. Una sincronización por encima de 10 s obliga a revisar el protocolo del BFF Móvil.
-
-**Decisión alternativa ante resultado adverso.** Se pasa de sincronización por instantánea completa a sincronización incremental por diferencias, enviando solo lo que cambió desde la última marca de sincronización.
-
-**Tecnología asociada**
-
-| Elemento | Detalle |
-|---|---|
-| Justificación | El experimento exige controlar la conectividad de forma determinista e inspeccionar el almacenamiento del dispositivo, lo que solo es viable en emulador con depuración habilitada |
-| Lenguajes | Kotlin (cliente) · Python 3.11 (BFF) |
-| Frameworks | Android SDK · Flask |
-| Plataforma de despliegue | Emulador Android API 34 · AWS EKS (BFF) |
-| Almacenamiento | Room con SQLCipher · EncryptedSharedPreferences |
-| Librerías | Retrofit · OkHttp · WorkManager · Kotlin Coroutines |
-| Herramientas de análisis | Espresso · JUnit 5 · MockK · control de conectividad del emulador · Android Debug Bridge |
-
-> **Corrección respecto de versiones anteriores de esta propuesta.** Versiones previas mencionaban `AsyncStorage` como almacenamiento local. `AsyncStorage` pertenece a React Native, stack que el equipo descartó el 19 de agosto al adoptar Kotlin nativo. El mecanismo correcto es Room con cifrado, complementado con `EncryptedSharedPreferences` para credenciales.
-
----
-
-### 5.9 EXP-07 — Costo y hermeticidad de la tokenización de datos sensibles
+### 5.6 EXP-03 — Costo y hermeticidad de la tokenización de datos sensibles
 
 | Campo | Contenido |
 |---|---|
@@ -865,85 +632,28 @@ Un **punto de sensibilidad** es una decisión de arquitectura de la que depende 
 > **Precisión respecto de versiones anteriores.** AWS KMS **no** es un servicio de tokenización: gestiona el ciclo de vida de las llaves. La tokenización la implementa un servicio propio de Solventa que usa KMS para custodiar la llave con la que cifra el dato original. Confundirlos dejaría el ASR-4.1 sin componente responsable.
 
 ---
+### 5.7 Alternativas evaluadas y descartadas
 
-### 5.10 EXP-08 — Tiempo de detección de una alteración de póliza
+Se diseñaron y evaluaron cinco experimentos adicionales que finalmente no se proponen. Documentar por qué se descartaron es parte del criterio de estimación: no se trata de no haberlos pensado.
 
-| Campo | Contenido |
-|---|---|
-| **Título** | Validación de integridad y auditoría de pólizas emitidas |
-| **Propósito del experimento** | Verificar que un intento de alterar una póliza emitida con credenciales válidas es rechazado por la plataforma y, sobre todo, que **la ruta de auditoría propia lo detecta y registra en menos de 1 segundo** |
-| **Resultados esperados** | Escritura y borrado directos rechazados por el bloqueo de escritura, entrada en el registro de auditoría en menos de 1 s, verificación de firma detectando cualquier alteración y registro de auditoría inalterable |
-| **Recursos requeridos** | Servicio de Emisión & Pólizas, almacenamiento de objetos con bloqueo de escritura, AWS KMS, registro de auditoría, credenciales administrativas de prueba y CloudWatch |
-| **Elementos de arquitectura** | ASR-4.2. Vista funcional: Emisión & Pólizas, Object Storage, Consentimientos & Auditoría. Vista de información: datos confidenciales firmados |
-| **Esfuerzo estimado** | 8 horas-hombre |
-
-**Hipótesis de diseño**
-
-| Campo | Contenido |
-|---|---|
-| Puntos de sensibilidad | Tiempo de detección de la ruta de auditoría · verificación de firma en cada lectura |
-| Historias de arquitectura asociadas | SOL-45 (HU-ARQ-11) · SOL-23 (HU-ARQ-03) |
-| Nivel de incertidumbre | **Media.** El bloqueo de escritura es una garantía documentada de la plataforma y sobre eso no hay incertidumbre. La incertidumbre está en la ruta de auditoría propia: si el registro se escribe de forma asíncrona, el umbral de 1 segundo puede no cumplirse, y eso sí es una decisión de diseño del equipo |
-| Patrones de arquitectura | **Immutable Storage (WORM)** · **Audit Trail** · **Digital Signature** |
-| Descripción de los patrones | El almacenamiento rechaza toda modificación durante el periodo de retención incluso para cuentas administrativas; cada operación deja un registro inmutable; y la firma permite detectar alteración en cualquier lectura posterior |
-| Tácticas de arquitectura | Detección de intrusión mediante verificación de integridad · Registro no repudiable de las operaciones · Autorización mediante token de servicio |
-| Descripción de las tácticas | El control no depende de que el atacante carezca de permisos, sino de que la plataforma no acepte la operación: pasa de ser una política a ser una propiedad del sistema |
-
-**Componentes involucrados**
-
-| Componente | Propósito y comportamiento esperado | Tecnología |
+| Candidato | ASR | Por qué se descarta |
 |---|---|---|
-| Emisión & Pólizas | Firma la póliza al emitirla y verifica la firma en cada lectura, bloqueando la operación ante firma inválida | Python 3.11 · Flask |
-| Almacenamiento de objetos | Rechaza modificación y borrado durante el periodo de retención, incluso con credenciales administrativas | Amazon S3 con Object Lock en modo cumplimiento |
-| Gestión de llaves | Firma el resumen del documento y custodia la llave | AWS KMS |
-| Consentimientos & Auditoría | Registra cada operación con servicio, momento, token y resumen antes y después, en menos de 1 s | Python 3.11 · Flask · S3 Object Lock |
+| **Caída del caché** — verificar que la ruta de respaldo hacia PostgreSQL absorba el tráfico sin propagar la saturación | ASR-3.1 | Se cubre parcialmente en el EXP-02: el interruptor de circuito y el mamparo que se calibran ahí son los mismos mecanismos que operan ante la caída de Redis. Se instrumenta el EXP-02 para registrar también ese escenario, en lugar de montar un experimento propio. Ahorra 8 horas |
+| **Modificabilidad de los puntos de extensión** — medir el costo de integrar una pasarela nueva | ASR-2.1 · ASR-2.2 | Su medida es el conjunto de archivos que cambian, y eso se comprueba revisando el grafo de dependencias y el registro del control de versiones. No requiere montaje ni ejecución: es una verificación estática que se hace durante la revisión de código |
+| **Pérdida de una zona de disponibilidad** | ASR-3.2 | Requiere infraestructura multi-zona en la nube con costo real y un servicio de inyección de fallas. El presupuesto del curso no lo cubre. Se difiere al Proyecto Final 2, donde la infraestructura ya estará provisionada |
+| **Continuidad del cliente móvil sin conexión** | ASR-3.3 | El prototipo móvil que se construye en las semanas 6 y 7 como parte de la experiencia de usuario ya ejercita este escenario. Validarlo ahí evita duplicar el montaje del emulador |
+| **Integridad de pólizas emitidas** | ASR-4.2 | El bloqueo de escritura del almacenamiento de objetos es una garantía documentada de la plataforma y sobre eso el equipo no tiene incertidumbre. Lo que sí es incierto —el tiempo de detección de la ruta de auditoría propia— se verifica con una prueba de configuración dentro de la suite de seguridad, no con un experimento |
 
-**Conectores involucrados**
+> Esta tabla responde a una distinción que el curso subraya: **un experimento valida una hipótesis de diseño, no el funcionamiento de una herramienta.** Ninguno de los tres experimentos propuestos prueba si una tecnología hace lo que promete; los tres prueban si una decisión del equipo produce la propiedad de calidad que se le atribuyó.
 
-| Conector | Comportamiento a probar | Tecnología |
-|---|---|---|
-| Emisión → Almacenamiento | Que la escritura autorizada funcione y la directa sea rechazada | AWS SDK (boto3) |
-| Emisión → Gestión de llaves | Que la firma se genere y verifique sin exponer el material de la llave | AWS KMS · boto3 |
-| Cliente administrativo → Almacenamiento | Que el intento de sobrescritura y borrado sea rechazado por la plataforma | AWS CLI con credenciales administrativas |
-| Almacenamiento → Auditoría | Que el evento de intento llegue al registro en menos de 1 s | Notificaciones de evento de S3 · CloudTrail |
-
-**Medición**
-
-| Métrica | Instrumento | Umbral |
-|---|---|---|
-| Resultado del intento de sobrescritura y borrado | Cliente administrativo | Rechazado por la plataforma |
-| Latencia entre el intento y la entrada de auditoría | Marcas de tiempo comparadas | < 1 s |
-| Detección de alteración por verificación de firma | Prueba con documento modificado fuera de banda | 100% detectado |
-| Inmutabilidad del propio registro de auditoría | Intento de alteración del registro | Rechazado |
-
-**Criterio de refutación.** Si el registro de auditoría tarda más de 1 segundo, la ruta es demasiado lenta y debe pasar a un camino sincrónico. Si la sobrescritura tiene éxito, la configuración de retención está mal aplicada.
-
-**Decisión alternativa ante resultado adverso.** Se traslada el registro de auditoría del camino asíncrono al sincrónico dentro de la transacción de escritura, aceptando el costo en latencia de emisión a cambio de garantizar el umbral de detección.
-
-**Tecnología asociada**
-
-| Elemento | Detalle |
-|---|---|
-| Justificación | El experimento requiere credenciales administrativas reales para comprobar que ni siquiera ellas pueden alterar el documento; simularlo con permisos restringidos no probaría nada |
-| Lenguaje | Python 3.11 |
-| Framework | Flask |
-| Plataforma de despliegue | AWS EKS |
-| Almacenamiento | Amazon S3 con Object Lock · PostgreSQL 15 |
-| Librerías | boto3 · cryptography · psycopg |
-| Herramientas de análisis | AWS CLI · CloudTrail · CloudWatch · verificación de resúmenes SHA-256 |
-
-> **Precisión respecto de versiones anteriores.** El registro de auditoría **no** puede vivir solo en CloudWatch: CloudWatch es una plataforma de observabilidad, no un almacenamiento inmutable, y el ASR-4.2 exige que el registro sea inalterable durante 5 años por regulación. El almacén de auditoría es S3 con Object Lock; CloudWatch se usa para la observabilidad y la alerta.
-
----
-
-### 5.11 Ficha consolidada de tecnología
+### 5.8 Ficha consolidada de tecnología
 
 Tecnología completa del programa de experimentación. La columna de familiaridad importa: donde el equipo no domina la herramienta, el esfuerzo estimado incluye el tiempo de aprendizaje.
 
 | Categoría | Tecnología | Experimentos | Familiaridad |
 |---|---|---|---|
 | Lenguaje backend | Python 3.11 | Todos | Alta |
-| Lenguaje móvil | Kotlin | EXP-06 | Media |
+| Lenguaje móvil | Kotlin | Prototipo móvil | Media |
 | Lenguaje web | TypeScript · Angular 17 | EXP-03 | Media |
 | Framework backend | Flask · Gunicorn | Todos | Alta |
 | Base de datos | PostgreSQL 15 | 01, 03, 04, 05, 07, 08 | Alta |
@@ -959,7 +669,7 @@ Tecnología completa del programa de experimentación. La columna de familiarida
 | SDK de nube | boto3 | 07, 08 | Media |
 | Criptografía | cryptography | 07, 08 | Media |
 | Validación de esquema | jsonschema | 03 | Alta |
-| Cliente móvil | Retrofit · OkHttp · WorkManager · Room con SQLCipher | EXP-06 | Media |
+| Cliente móvil | Retrofit · OkHttp · WorkManager · Room con SQLCipher | Prototipo móvil | Media |
 | Orquestación local | Docker · Docker Compose | Todos | Alta |
 | Orquestación de nube | Amazon EKS · Horizontal Pod Autoscaler | 05 | Media |
 | Generación de carga | Apache JMeter 5.6 | 01, 02, 04, 05 | Media |
@@ -973,36 +683,41 @@ Tecnología completa del programa de experimentación. La columna de familiarida
 | Observabilidad | AWS CloudWatch · CloudTrail | 04, 05, 08 | Media |
 | Control de versiones | Git con registro de cambios por archivo | 03 | Alta |
 
-### 5.12 Distribución de actividades por integrante
+### 5.9 Distribución de actividades por integrante
 
-Reparto equitativo de las 42 horas del Sprint 1 de diseño, que agrupa los cuatro experimentos de incertidumbre alta.
+Reparto de las 34 horas de construcción y ejecución de los tres experimentos, durante las semanas 6 y 7.
 
 | Integrante | Actividades asignadas | Experimentos | Horas |
 |---|---|---|---|
-| **Miguel Gómez** | Construir el servicio de Perfilamiento con su caché; instrumentar las trazas por salto; calibrar el interruptor recorriendo la rejilla de configuraciones; ejecutar la verificación de TLS y la búsqueda de datos cebo | 01 · 02 · 07 | 11 h |
-| **Angie Arandio** | Construir el servicio de Cotización y el motor de rating; construir la ruta de respaldo hacia PostgreSQL y los depósitos separados por dependencia; ejecutar la falla inducida del caché y conciliar transacciones | 01 · 04 | 11 h |
-| **Juan Mejía** | Construir el adaptador Open Finance y el simulador con retardo controlado; construir el servicio de Tokenización e integrarlo al recorrido; configurar los conectores con sus depósitos y tiempos de espera | 01 · 02 · 07 | 10 h |
-| **Jazmin Córdoba** | Preparar el entorno en contenedores; construir los planes de carga en JMeter; ejecutar las corridas y consolidar las mediciones; redactar el informe de resultados y la decisión que se toma con cada uno | 01 · 02 · 04 | 10 h |
-| | | **Total** | **42 h** |
+| **Miguel Gómez** | Construir el servicio de Perfilamiento con su caché; instrumentar las trazas por salto; calibrar el interruptor recorriendo la rejilla de configuraciones | EXP-01 · EXP-02 | 9 h |
+| **Juan Mejía** | Construir el adaptador Open Finance y el simulador con retardo controlado; construir el servicio de Tokenización e integrarlo al recorrido de cotización | EXP-01 · EXP-03 | 9 h |
+| **Angie Arandio** | Construir el servicio de Cotización y el motor de rating; sembrar los datos cebo e inspeccionar volcados, temas del bus y tráfico capturado | EXP-01 · EXP-03 | 8 h |
+| **Jazmin Córdoba** | Preparar el entorno en contenedores; construir los planes de carga; ejecutar las corridas, consolidar las mediciones y redactar el informe de resultados | EXP-01 · EXP-02 | 8 h |
+| | | **Total** | **34 h** |
 
-> El reparto asigna a cada integrante al menos dos experimentos y combina construcción con medición, de modo que nadie quede solo construyendo ni solo midiendo. La redacción del informe se asigna explícitamente porque un experimento cuyo resultado no se documenta no reduce la incertidumbre del equipo, solo la de quien lo ejecutó. El reparto de los cuatro experimentos restantes se define al programarlos.
+> Cada integrante participa en al menos dos experimentos y combina construcción con medición, de modo que nadie quede solo construyendo ni solo midiendo. La redacción del informe se asigna explícitamente porque un experimento cuyo resultado no se documenta no reduce la incertidumbre del equipo, solo la de quien lo ejecutó.
+>
+> Estas 34 horas conviven en las semanas 6 y 7 con la construcción de la experiencia de usuario, para la que se reservan unas 40 horas. La suma se aproxima a las 76 horas efectivas de esas dos semanas, sin holgura.
 
-### 5.13 Resumen del programa de experimentación
+### 5.10 Resumen y calendario del programa
 
-| Experimento | ASR | Historia | Incertidumbre | Esfuerzo | Cuándo |
-|---|---|---|---|---|---|
-| EXP-01 Presupuesto de latencia | ASR-1.1 | SOL-28 | Alta | 10 h | Semana 5 |
-| EXP-02 Degradación elegante | ASR-1.2 | SOL-37 | Alta | 12 h | Semana 5 |
-| EXP-04 Caída del caché | ASR-3.1 | SOL-29 | Alta | 8 h | Semana 6 |
-| EXP-07 Tokenización | ASR-4.1 | SOL-23 | Alta | 12 h | Semana 6 |
-| **Sprint 1 de diseño** | | | | **42 h** | **Semanas 5–6** |
-| EXP-03 Modificabilidad | ASR-2.1 · ASR-2.2 | SOL-20 · SOL-21 | Media | 10 h | Programado |
-| EXP-05 Pérdida de zona | ASR-3.2 | SOL-43 | Media-alta | 12 h | Programado |
-| EXP-06 Continuidad offline | ASR-3.3 | SOL-44 | Media | 10 h | Programado |
-| EXP-08 Integridad de pólizas | ASR-4.2 | SOL-45 | Media | 8 h | Programado |
-| **Programa completo** | **9 ASR** | | | **82 h** | |
+| Experimento | ASR | Historia | Incertidumbre | Esfuerzo | Diseño | Construcción y ejecución |
+|---|---|---|---|---|---|---|
+| EXP-01 Presupuesto de latencia | ASR-1.1 | SOL-28 | Alta | 10 h | Semanas 4–5 | Semana 6 |
+| EXP-02 Degradación elegante | ASR-1.2 · ASR-3.1 | SOL-37 · SOL-29 | Alta | 12 h | Semanas 4–5 | Semanas 6–7 |
+| EXP-03 Tokenización | ASR-4.1 | SOL-23 | Alta | 12 h | Semanas 4–5 | Semana 7 |
+| **Total** | | | | **34 h** | | |
 
-Los ocho experimentos quedan **diseñados** en esta entrega, que es lo que corresponde a la semana 4. Su **ejecución** se escalona: las 42 horas del Sprint 1 caben exactamente en la capacidad comprometida para el Proyecto Final 1 y equivalen a 21 puntos de historia con la convención de 1 punto igual a 2 horas, contenidos dentro de los 42 puntos asignados a las historias de arquitectura. Los cuatro restantes se ejecutan según disponibilidad y en el Proyecto Final 2, por depender de infraestructura de nube con costo —EXP-05 y EXP-08— o por tener incertidumbre menor —EXP-03 y EXP-06—.
+**Cómo se reparte el calendario.** El diseño de los tres experimentos ocurre en las semanas 4 y 5 —esta entrega contiene la versión de avance y la semana 5 cierra la versión final—. La construcción y ejecución ocurre en las semanas 6 y 7, compartidas con la experiencia de usuario. Los resultados y el ajuste de las decisiones de diseño que se deriven de ellos se consolidan en la semana 8.
+
+| Semana | Experimentos | Experiencia de usuario |
+|---|---|---|
+| 4 | Diseño — versión de avance *(esta entrega)* | — |
+| 5 | Diseño — versión final | Definición de recorridos y wireframes de baja fidelidad |
+| 6 | Construcción y ejecución de EXP-01 y EXP-02 | Mockups de alta fidelidad del recorrido web |
+| 7 | Ejecución de EXP-02 y EXP-03 | Prototipo móvil, incluida la consulta sin conexión |
+| 8 | Análisis de resultados y ajuste del diseño | Consolidación y cierre |
+
 
 ---
 
@@ -1033,7 +748,7 @@ La estrategia de pruebas versión 2.0, entregada en la semana 3, se refina en tr
 
 ### 6.3 Relación entre experimentos y pruebas
 
-Los experimentos de la sección §5 no reemplazan a las pruebas: las anteceden. Un experimento responde «¿esta decisión de diseño produce la propiedad que necesito?». Una prueba responde «¿esta propiedad sigue presente después del último cambio?». Por eso cada experimento que resulte satisfactorio deja como residuo una prueba automatizada que lo vuelve a ejecutar de forma continua: el EXP-01 se convierte en una prueba de rendimiento periódica, y el EXP-04 en una verificación de seguridad dentro del proceso de integración.
+Los experimentos de la sección §5 no reemplazan a las pruebas: las anteceden. Un experimento responde «¿esta decisión de diseño produce la propiedad que necesito?». Una prueba responde «¿esta propiedad sigue presente después del último cambio?». Por eso cada experimento que resulte satisfactorio deja como residuo una prueba automatizada que lo vuelve a ejecutar de forma continua: el EXP-01 se convierte en una prueba de rendimiento periódica, y el EXP-03 en una verificación de seguridad dentro del proceso de integración.
 
 ---
 
@@ -1132,83 +847,113 @@ La misma cuenta, vista por persona, muestra cuánto aporta cada integrante a eso
 
 Las 192 horas brutas equivalen a 154 horas efectivas tras el factor de carga; las 38 horas restantes son las que absorben coordinación, revisión e imprevistos.
 
-### 7.4 El backlog completo frente a la capacidad
+### 7.4 Dónde se gasta la capacidad del Proyecto Final 1
 
-Aquí está el resultado que condiciona todo el plan y conviene enunciarlo sin rodeos:
+Conviene distinguir dos cosas que es fácil confundir: la capacidad del equipo y aquello en lo que se gasta.
+
+**En el Proyecto Final 1 no se construyen las historias de usuario del producto.** Se construye la arquitectura, se diseñan y ejecutan los experimentos que la validan, y se construye la experiencia de usuario del prototipo. Las historias del backlog se implementan en el Proyecto Final 2.
+
+| Semanas | En qué se gasta la capacidad | Puntos |
+|---|---|---|
+| 1–3 | Acta de constitución, EDT, visión de arquitectura, escenarios de calidad, estrategia de pruebas, backlog | 57 |
+| 4–5 | Diseño de la arquitectura y de los experimentos | 38 |
+| 6–7 | Construcción y ejecución de los experimentos (34 h) + experiencia de usuario: mockups, wireframes y prototipo (≈40 h) | 38 |
+| 8 | Análisis de resultados, ajuste del diseño y preparación del backlog del Sprint 1 | 19 |
+| **Total Proyecto Final 1** | | **152** |
+
+Los 152 puntos son exactamente la capacidad calculada en §7.2 para las ocho semanas. Ninguno de ellos produce historias del backlog de producto terminadas, y eso es lo esperado en esta fase.
+
+### 7.5 Capacidad del Proyecto Final 2 y compromiso del backlog
+
+El Proyecto Final 2 tiene una estructura fija que no se negocia: **tres sprints, de dos, dos y tres semanas**, siete semanas en total. Con la misma velocidad de 19 puntos por semana:
+
+```
+19 puntos/semana  ×  7 semanas  =  133 puntos
+```
+
+| Sprint | Duración | Capacidad |
+|---|---|---|
+| Sprint 1 | 2 semanas | 38 pts |
+| Sprint 2 | 2 semanas | 38 pts |
+| Sprint 3 | 3 semanas | 57 pts |
+| **Total** | **7 semanas** | **133 pts** |
+
+**El backlog frente a esa capacidad:**
 
 | Concepto | Puntos | Historias |
 |---|---|---|
-| Backlog total del producto | 229 pts | 62 |
-| Capacidad disponible, semanas 5 a 8 | 76 pts | — |
-| **Diferencia** | **−153 pts** | **−45** |
+| Backlog total del producto | 229 | 62 |
+| Capacidad del Proyecto Final 2 | 133 | — |
+| **Comprometido** | **133** | **30** |
+| **Diferido a una fase posterior** | **96** | **32** |
 
-**El equipo no puede construir las 62 historias en el Proyecto Final 1.** Con 19 puntos por semana, agotar 229 puntos tomaría 12 semanas de construcción y solo quedan 4. Esto no es un error de estimación ni de planeación: es la consecuencia de que Solventa es una plataforma completa y el Proyecto Final 1 cubre una parte del ciclo de vida.
+El backlog completo no cabe: sobran 96 puntos. Forzar los números para que cuadraran habría exigido reducir las estimaciones a poco más de la mitad, produciendo un plan que se incumple en el primer sprint. La respuesta correcta es **declarar el alcance**: se comprometen las 30 historias de mayor prioridad, que suman exactamente los 133 puntos disponibles.
 
-Forzar los números para que cuadraran habría exigido reducir las estimaciones a un tercio de su valor, lo que produciría un plan que se incumple en la segunda semana. La respuesta correcta es la contraria: **declarar el alcance explícitamente** y comprometer solo lo que cabe.
+**Criterio de priorización, en este orden:**
 
-### 7.5 Alcance comprometido: 76 puntos que sí caben
+1. **¿Valida un ASR que el sistema debe demostrar?** Las historias de arquitectura ligadas a los escenarios de calidad entran primero: sin ellas no hay atributos de calidad, solo funcionalidad.
+2. **¿Pertenece al recorrido crítico?** *Cotizar → suscribir → emitir* en web y *onboarding → consultar póliza* en móvil es lo que hace que el producto exista.
+3. **¿Es prerrequisito de algo ya comprometido?** Hereda la prioridad de aquello que habilita.
 
-De las 62 historias del backlog se comprometen **17, que suman exactamente 76 puntos**. El criterio de selección, en este orden:
-
-1. **¿Valida un ASR que el proyecto debe demostrar?** Sin las historias de arquitectura ligadas a los experimentos de las semanas 5 y 6 no hay evidencia que presentar.
-2. **¿Pertenece al recorrido crítico mínimo?** *Cotizar → emitir* en web y *onboarding → consultar póliza* en móvil es el mínimo que hace demostrable el prototipo.
-3. **¿Es prerrequisito de algo de prioridad alta?** Hereda la prioridad de aquello que habilita.
-
-| Bloque | Historias | Puntos |
+| Bloque comprometido | Historias | Puntos |
 |---|---|---|
-| Historias de arquitectura que sostienen los experimentos | 5 | 42 |
-| Historias funcionales del recorrido crítico web | 8 | 21 |
-| Historias funcionales del recorrido crítico móvil | 4 | 13 |
-| **Total comprometido** | **17** | **76** |
-| **Capacidad disponible** | | **76** |
+| Historias de arquitectura que sostienen los ASR *(las once menos HU-ARQ-09, cuyo escenario multi-zona se difiere)* | 10 | 79 |
+| Cotización web completa — FE-01 | 6 | 15 |
+| Suscripción y emisión web — FE-02, recorrido mínimo | 4 | 11 |
+| Autenticación web completa — FE-10 | 4 | 9 |
+| Onboarding móvil — FE-05, recorrido mínimo | 3 | 11 |
+| Billetera móvil — FE-06, incluida la consulta sin conexión | 3 | 8 |
+| **Total comprometido** | **30** | **133** |
+| **Capacidad del Proyecto Final 2** | | **133** |
 | **Holgura** | | **0** |
 
-> El alcance se ajustó a la capacidad exacta. No hay holgura, y el equipo asume ese compromiso de forma explícita: **ante un imprevisto se saca alcance, no se extienden horas.** Cualquier historia adicional que entre desplaza a otra.
+> El alcance se ajustó a la capacidad exacta y el equipo asume ese compromiso de forma explícita: **ante un imprevisto se saca alcance, no se extienden horas.** Cualquier historia adicional que entre desplaza a otra.
 
-Las 45 historias restantes, que suman 153 puntos, quedan documentadas, estimadas y priorizadas en el backlog, y se difieren al Proyecto Final 2. Su detalle completo está en `historias_de_usuario_v2.docx`.
+Las 32 historias diferidas —administración de pólizas, gestión completa de siniestros, portal de socios y la mayor parte de la autogestión móvil— quedan documentadas, estimadas y priorizadas en el backlog. Su detalle está en `historias_de_usuario_v2.docx`.
 
-### 7.6 Distribución del esfuerzo comprometido por integrante
+### 7.6 Distribución por sprint del Proyecto Final 2
 
-Así se reparten los 76 puntos entre las cuatro personas, respetando la afinidad con su rol:
+| Sprint | Semanas | Foco | Historias | Puntos |
+|---|---|---|---|---|
+| **Sprint 1** | 2 | Cimientos de arquitectura: persistencia, caché, bus de eventos y tokenización. Autenticación web | 8 | 38 |
+| **Sprint 2** | 2 | Recorrido de cotización completo con Open Finance. Latencia y degradación elegante | 10 | 38 |
+| **Sprint 3** | 3 | Suscripción, emisión y pagos. Onboarding móvil y billetera. Tolerancia a fallos e integridad | 12 | 57 |
+| **Total** | **7** | | **30** | **133** |
 
-| Integrante | Historias asignadas | Puntos |
+El Sprint 1 concentra historias de arquitectura porque son prerrequisito de todo lo demás: sin persistencia, caché y bus no hay dónde apoyar los recorridos funcionales. El Sprint 3 es más largo y absorbe más puntos, lo que da margen para el ajuste que casi siempre exige el cierre.
+
+### 7.7 Viabilidad: ¿es construible esta arquitectura?
+
+La arquitectura del Proyecto Final 1 no es un documento que se archiva: es el compromiso que el equipo debe cumplir en el Proyecto Final 2, y los tutores validarán que el código se conforme a ella. Por eso el equipo verificó explícitamente que lo propuesto sea construible en siete semanas por cuatro personas a doce horas semanales.
+
+**Lo que efectivamente se construye:**
+
+| Elemento de la arquitectura | Se construye en Proyecto Final 2 | Justificación |
 |---|---|---|
-| **Miguel Gómez** | HU-ARQ-06 Tolerancia a fallos y failover (13) · FE-01.2 Autorizar consulta Open Finance (3) · FE-05.2 Verificar identidad con prueba de vida (5) | **21** |
-| **Jazmin Córdoba** | HU-ARQ-07 Optimización de latencia del scoring (8) · HU-ARQ-03 Tokenización de PII (8) · FE-05.1 Capturar documento de identidad (3) | **19** |
-| **Angie Arandio** | HU-ARQ-05 Persistencia PostgreSQL y Redis (5) · HU-ARQ-08 Event Bus Kafka (8) · FE-06.1 Ver pólizas en la billetera (2) · FE-06.2 Consultar pólizas sin conexión (3) | **18** |
-| **Juan Mejía** | FE-10.2 Iniciar sesión con segundo factor (3) · FE-01.1 Iniciar cotización (2) · FE-01.3 Ingresar datos del bien (2) · FE-01.4 Ver la prima calculada (3) · FE-02.1 Completar datos del tomador (2) · FE-02.4 Pagar la primera prima (3) · FE-02.5 Emitir la póliza (3) | **18** |
-| | **Total** | **76** |
+| Servicios del núcleo | **5 de 7** | Cotización & Rating, Perfilamiento, Suscripción & Emisión, Pólizas y Tokenización. Siniestros y Consentimientos quedan como interfaz mínima, porque sus recorridos completos están diferidos |
+| Capa BFF | **2 de 2** | El BFF Móvil es indispensable para el ASR-3.3; el BFF Web para el recorrido de cotización |
+| Adaptadores externos | **3 de 5** | Open Finance, pasarela de pagos y KYC. Open Data y firma electrónica se simulan, porque su integración real no aporta información arquitectural nueva |
+| Plataforma de datos | **Completa** | PostgreSQL, Redis y Kafka son prerrequisito de tres ASR |
+| Despliegue multi-zona | **No** | Se despliega en una sola zona. El ASR-3.2 se difiere: su validación exige infraestructura con costo que el curso no cubre |
 
-La asignación queda entre 18 y 21 puntos por persona, frente a una capacidad individual de 19. La desviación de ±2 puntos se absorbe con trabajo en parejas en las historias de arquitectura, que es donde se concentra: Miguel lleva 21 porque HU-ARQ-06 es la historia más grande del alcance, y en ella trabaja acompañado durante la semana 6.
+**Por qué el estilo elegido no infla el costo de construcción.** La preocupación razonable con microservicios es que cinco servicios cuesten cinco veces más que uno. En este caso no ocurre, por tres razones: los cinco comparten un mismo esqueleto de proyecto y las mismas bibliotecas de acceso a datos y de cliente HTTP; se ejecutan con un único archivo de composición de contenedores, de modo que levantar el sistema completo es un comando; y la frontera entre ellos coincide con la frontera de responsabilidad entre integrantes, lo que reduce el costo de coordinación en lugar de aumentarlo.
 
-> Esta asignación es indicativa y se confirma en la planeación de cada sprint. Lo que no se negocia es el total: 76 puntos.
+**Riesgo declarado.** El elemento de mayor riesgo de cronograma no es la arquitectura sino el cliente móvil nativo, seguido de las pruebas. Son las dos actividades que el curso identifica como principales causas de retraso. Por eso el onboarding móvil y la billetera entran en el Sprint 3, con las tres semanas de mayor holgura, y por eso la estrategia de pruebas se revisa en cada entrega en lugar de darse por cerrada.
 
-### 7.7 Compromiso por sprint
-
-| Semana | Historias comprometidas | Puntos | Experimentos en curso |
-|---|---|---|---|
-| 5 (31 ago – 6 sep) | HU-ARQ-05, HU-ARQ-07, FE-10.2, FE-01.1 | 18 | EXP-01 · EXP-02 |
-| 6 (7 – 13 sep) | HU-ARQ-06, FE-01.2, FE-01.3 | 18 | EXP-04 · EXP-07 |
-| 7 (14 – 20 sep) | HU-ARQ-03, HU-ARQ-08, FE-01.4 | 19 | — |
-| 8 (21 – 27 sep) | FE-02.1, FE-02.4, FE-02.5, FE-05.1, FE-05.2, FE-06.1, FE-06.2 | 21 | — |
-| **Total** | **17 historias** | **76** | |
-
-La carga sube ligeramente hacia el final —18, 18, 19, 21— porque las historias de la semana 8 son de menor tamaño y se pueden paralelizar mejor entre los cuatro integrantes, mientras que las primeras semanas concentran mecanismos de arquitectura que exigen concentración de una sola persona.
-
-Las 42 horas de los cuatro experimentos del Sprint 1 de diseño (§5.13) están contenidas dentro de estos 76 puntos y no se suman aparte: construir el mecanismo y ejecutar el experimento que lo valida son parte de la misma historia. En puntos, esas 42 horas equivalen a 21 puntos, contenidos dentro de los 42 puntos asignados a las cinco historias de arquitectura.
-
-### 7.8 Estado del proyecto
+### 7.8 Plan del Proyecto Final 1
 
 | Semana | Foco | Estado |
 |---|---|---|
 | 1 (3–9 ago) | Acta de constitución y backlog inicial | Completada |
 | 2 (10–16 ago) | Visión de arquitectura, EDT y estrategia de pruebas | Completada |
 | 3 (17–23 ago) | Escenarios de calidad, historias de usuario y frameworks | Completada · corregida en esta entrega |
-| 4 (24–30 ago) | Modelos de arquitectura, patrones y diseño de experimentos | Esta entrega |
-| 5 (31 ago–6 sep) | Ejecución de EXP-01 y EXP-02 · construcción del núcleo de cotización | Planificada |
-| 6 (7–13 sep) | Ejecución de EXP-04 y EXP-07 · cliente web | Planificada |
-| 7 (14–20 sep) | Cliente móvil · integración | Planificada |
-| 8 (21–27 sep) | Integración, cierre y presentación final | Planificada |
+| 4 (24–30 ago) | **Arquitectura detallada y diseño de experimentos — versión de avance** | **Esta entrega** |
+| 5 (31 ago–6 sep) | Cierre de la arquitectura y versión final del diseño de experimentos · wireframes | Planificada |
+| 6 (7–13 sep) | Construcción y ejecución de EXP-01 y EXP-02 · mockups del recorrido web | Planificada |
+| 7 (14–20 sep) | Ejecución de EXP-02 y EXP-03 · prototipo móvil | Planificada |
+| 8 (21–27 sep) | Análisis de resultados, ajuste del diseño y preparación del backlog del Sprint 1 | Planificada |
+
+> **Esta entrega es un avance, no la versión final.** El bloque de arquitectura y experimentos abarca las semanas 4 y 5, y se cierra en la semana 5. Lo que la semana 5 puede modificar: el ajuste de los modelos si el diseño detallado revela una carencia, la versión final de las tres fichas de experimento, y la incorporación de los wireframes.
 
 ### 7.9 Tablero
 
@@ -1241,7 +986,7 @@ El tablero es un proyecto gestionado por el equipo, cuya jerarquía tiene tres n
 | `canal-web` · `canal-movil` · `canal-api` | Canal donde se implementa |
 | `prioridad-alta` · `prioridad-media` · `prioridad-baja` | Prioridad asignada |
 | `proyecto-1` · `proyecto-2` | Si entra en el alcance del Proyecto Final 1 o se difiere al 2 |
-| `EXP-01` … `EXP-08` | Historia de arquitectura que lleva ese experimento |
+| `EXP-01` … `EXP-03` | Historia de arquitectura que lleva ese experimento |
 
 Para ver únicamente el alcance comprometido de este proyecto, filtrar por `proyecto-1`: devuelve 17 historias y 76 puntos, que es exactamente el compromiso por sprint de §7.7.
 

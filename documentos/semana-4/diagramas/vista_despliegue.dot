@@ -1,0 +1,92 @@
+// Solventa - Vista de despliegue en AWS
+// Render:  dot -Tpng -Gdpi=150 vista_despliegue.dot -o imagenes/vista_despliegue.png
+digraph VistaDespliegue {
+    rankdir=TB;
+    compound=true;
+    nodesep=0.30;
+    ranksep=0.50;
+    fontname="Helvetica";
+    node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=9 penwidth=0.8 margin="0.14,0.08"];
+    edge [fontname="Helvetica" fontsize=8 color="#5A6B7B" penwidth=1.0 arrowsize=0.7];
+
+    usuarios [label="Clientes web · móvil · socios B2B" shape=box style="rounded,filled"
+              fillcolor="#E8EDF2" color="#7F8C99" fontsize=10];
+
+    subgraph cluster_aws {
+        label="  AWS · Región principal us-east-1  ";
+        fontsize=12; fontname="Helvetica-Bold"; color="#E8912D"; style="rounded"; bgcolor="#FFFCF7";
+
+        cf  [label="CloudFront + WAF" fillcolor="#FAE0BE" color="#E8912D"];
+        alb [label="Application Load Balancer\n(multi-AZ)" fillcolor="#FAE0BE" color="#E8912D"];
+
+        subgraph cluster_azA {
+            label="  Zona de disponibilidad A  ";
+            fontsize=10; fontname="Helvetica-Bold"; color="#5B9BD5"; style="rounded"; bgcolor="#F2F8FD";
+            eksA [label="EKS · nodos\npods de servicios\n(HPA activo)" fillcolor="#D3E7F7" color="#4A7EB5"];
+            rdsA [label="RDS PostgreSQL\nprimaria" shape=cylinder fillcolor="#D3E7F7" color="#4A7EB5"];
+            mskA [label="MSK broker" shape=box3d fillcolor="#D3E7F7" color="#4A7EB5"];
+            ecA  [label="ElastiCache\nRedis primaria" shape=cylinder fillcolor="#D3E7F7" color="#4A7EB5"];
+        }
+
+        subgraph cluster_azB {
+            label="  Zona de disponibilidad B  ";
+            fontsize=10; fontname="Helvetica-Bold"; color="#7C9E5B"; style="rounded"; bgcolor="#F6FAF2";
+            eksB [label="EKS · nodos\npods de servicios\n(HPA activo)" fillcolor="#DDEFCB" color="#7C9E5B"];
+            rdsB [label="RDS PostgreSQL\nréplica en espera" shape=cylinder fillcolor="#DDEFCB" color="#7C9E5B"];
+            mskB [label="MSK broker" shape=box3d fillcolor="#DDEFCB" color="#7C9E5B"];
+            ecB  [label="ElastiCache\nRedis réplica" shape=cylinder fillcolor="#DDEFCB" color="#7C9E5B"];
+        }
+
+        subgraph cluster_srv {
+            label="  Servicios regionales  ";
+            fontsize=10; fontname="Helvetica-Bold"; color="#9B6BA8"; style="rounded"; bgcolor="#FAF5FB";
+            s3   [label="S3\npólizas + Object Lock" shape=cylinder fillcolor="#E7D6ED" color="#9B6BA8"];
+            kms  [label="KMS\ncifrado y firma" fillcolor="#E7D6ED" color="#9B6BA8"];
+            cw   [label="CloudWatch\n+ X-Ray" fillcolor="#E7D6ED" color="#9B6BA8"];
+            secm [label="Secrets Manager" fillcolor="#E7D6ED" color="#9B6BA8"];
+        }
+    }
+
+    subgraph cluster_dr {
+        label="  AWS · Región DR us-west-2  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#B5654A"; style="rounded,dashed"; bgcolor="#FDF5F2";
+        drRds [label="RDS réplica\ncross-region" shape=cylinder fillcolor="#F6D9CD" color="#B5654A"];
+        drS3  [label="S3 replicación\ncross-region" shape=cylinder fillcolor="#F6D9CD" color="#B5654A"];
+    }
+
+    subgraph cluster_ext {
+        label="  Proveedores externos  ";
+        fontsize=10; fontname="Helvetica-Bold"; color="#7F8C99"; style="rounded"; bgcolor="#F7F8F9";
+        ext [label="Open Finance · Open Data · KYC/AML\nPasarelas de pago · Firma electrónica"
+             fillcolor="#E8EDF2" color="#7F8C99"];
+    }
+
+    // ---- flujo de entrada
+    usuarios -> cf;
+    cf  -> alb;
+    alb -> eksA;
+    alb -> eksB;
+
+    // ---- dentro de cada zona
+    eksA -> rdsA;  eksA -> ecA;  eksA -> mskA;
+    eksB -> rdsB;  eksB -> ecB;  eksB -> mskB;
+
+    // ---- replicacion
+    rdsA -> rdsB [label=" replicación síncrona \n RPO ≤ 30 s " style=dashed color="#B5654A"];
+    ecA  -> ecB  [label=" replicación " style=dashed color="#B5654A"];
+    mskA -> mskB [label=" réplica de particiones " style=dashed color="#B5654A"];
+
+    // ---- servicios regionales
+    eksA -> s3;
+    eksA -> kms;
+    eksA -> cw   [style=dotted];
+    eksB -> cw   [style=dotted];
+    eksA -> secm [style=dotted];
+
+    // ---- DR
+    rdsA -> drRds [label=" replicación \n cross-region " style=dashed color="#B5654A"];
+    s3   -> drS3  [label=" CRR " style=dashed color="#B5654A"];
+
+    // ---- salida a externos
+    eksA -> ext [label=" TLS 1.3 "];
+}

@@ -1,0 +1,102 @@
+// Solventa - Vista funcional de la arquitectura
+// Render:  dot -Tpng -Gdpi=150 vista_funcional.dot -o imagenes/vista_funcional.png
+digraph VistaFuncional {
+    rankdir=TB;
+    compound=true;
+    splines=polyline;
+    nodesep=0.35;
+    ranksep=0.55;
+    fontname="Helvetica";
+    node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=10 penwidth=0.8 margin="0.16,0.09"];
+    edge [fontname="Helvetica" fontsize=8 color="#5A6B7B" penwidth=1.0 arrowsize=0.7];
+
+    subgraph cluster_canales {
+        label="  Canales  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#8FA8BF"; style="rounded"; bgcolor="#F4F8FB";
+        web    [label="Portal Web\nAngular 17" fillcolor="#D6E9F8" color="#5B9BD5"];
+        movil  [label="App Móvil\nKotlin nativo" fillcolor="#D6E9F8" color="#5B9BD5"];
+        socios [label="Sistemas de\nSocios (B2B)" fillcolor="#D6E9F8" color="#5B9BD5"];
+    }
+
+    subgraph cluster_edge {
+        label="  Capa Edge  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#C79A3C"; style="rounded"; bgcolor="#FDF8EE";
+        waf [label="WAF" fillcolor="#FAE6C0" color="#C79A3C"];
+        gw  [label="API Gateway\nrate limit · authN" fillcolor="#FAE6C0" color="#C79A3C"];
+    }
+
+    subgraph cluster_bff {
+        label="  Capa BFF  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#7C9E5B"; style="rounded"; bgcolor="#F5FAF0";
+        bffw [label="BFF Web" fillcolor="#DCEFC8" color="#7C9E5B"];
+        bffm [label="BFF Móvil\n+ sync offline" fillcolor="#DCEFC8" color="#7C9E5B"];
+    }
+
+    subgraph cluster_core {
+        label="  Núcleo de negocio (DDD)  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#5B7FA6"; style="rounded"; bgcolor="#EEF4FA";
+        cot  [label="Cotización\n& Rating" fillcolor="#C9DCF0" color="#4A7EB5"];
+        perf [label="Perfilamiento\n& Scoring" fillcolor="#C9DCF0" color="#4A7EB5"];
+        sus  [label="Suscripción\n& Emisión" fillcolor="#C9DCF0" color="#4A7EB5"];
+        pol  [label="Pólizas" fillcolor="#C9DCF0" color="#4A7EB5"];
+        sin  [label="Siniestros" fillcolor="#C9DCF0" color="#4A7EB5"];
+        pag  [label="Pagos\n& Recaudo" fillcolor="#C9DCF0" color="#4A7EB5"];
+        cons [label="Consentimientos\n& Auditoría" fillcolor="#C9DCF0" color="#4A7EB5"];
+    }
+
+    subgraph cluster_plataforma {
+        label="  Plataforma de datos  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#9B6BA8"; style="rounded"; bgcolor="#F8F2FA";
+        bus   [label="Event Bus\nKafka / MSK" shape=box3d fillcolor="#E5D3EC" color="#9B6BA8"];
+        redis [label="Caché\nRedis" shape=cylinder fillcolor="#E5D3EC" color="#9B6BA8"];
+        pg    [label="PostgreSQL" shape=cylinder fillcolor="#E5D3EC" color="#9B6BA8"];
+        s3    [label="Object Storage\nS3 + Object Lock" shape=cylinder fillcolor="#E5D3EC" color="#9B6BA8"];
+    }
+
+    subgraph cluster_adapt {
+        label="  Adaptadores externos  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#B5654A"; style="rounded"; bgcolor="#FCF2EF";
+        aof  [label="Open Finance" fillcolor="#F5D5C9" color="#B5654A"];
+        aod  [label="Open Data" fillcolor="#F5D5C9" color="#B5654A"];
+        akyc [label="KYC / AML" fillcolor="#F5D5C9" color="#B5654A"];
+        apay [label="Pasarelas\nde pago" fillcolor="#F5D5C9" color="#B5654A"];
+        afir [label="Firma\nelectrónica" fillcolor="#F5D5C9" color="#B5654A"];
+    }
+
+    // ---- flujo principal
+    web    -> waf;
+    movil  -> waf;
+    socios -> waf;
+    waf    -> gw;
+    gw     -> bffw;
+    gw     -> bffm;
+    bffw   -> cot;
+    bffw   -> pol;
+    bffm   -> pol;
+    bffm   -> sin;
+
+    // ---- interacciones del nucleo
+    cot  -> perf   [label=" scoring "];
+    cot  -> sus    [style=dashed label=" evento "];
+    sus  -> pol    [style=dashed label=" evento "];
+    sus  -> pag;
+    sin  -> pag    [style=dashed];
+    perf -> cons   [label=" valida "];
+
+    // ---- plataforma
+    perf -> redis  [label=" perfil cacheado "];
+    cot  -> pg;
+    pol  -> pg;
+    pol  -> s3     [label=" póliza firmada "];
+    cons -> s3     [label=" log inmutable "];
+    sus  -> bus    [style=dashed];
+    sin  -> bus    [style=dashed];
+    pag  -> bus    [style=dashed];
+
+    // ---- adaptadores
+    perf -> aof;
+    perf -> aod;
+    sus  -> akyc;
+    pag  -> apay;
+    sus  -> afir;
+}

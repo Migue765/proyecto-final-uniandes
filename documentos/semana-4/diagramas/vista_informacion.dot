@@ -1,0 +1,68 @@
+// Solventa - Vista de informacion: entidades de dominio, clasificacion y almacenamiento
+// Render:  dot -Tpng -Gdpi=150 vista_informacion.dot -o imagenes/vista_informacion.png
+digraph VistaInformacion {
+    rankdir=LR;
+    compound=true;
+    nodesep=0.28;
+    ranksep=0.70;
+    fontname="Helvetica";
+    node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=9 penwidth=0.8 margin="0.14,0.08"];
+    edge [fontname="Helvetica" fontsize=8 color="#5A6B7B" penwidth=1.0 arrowsize=0.7];
+
+    subgraph cluster_ent {
+        label="  Entidades de dominio  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#5B7FA6"; style="rounded"; bgcolor="#EEF4FA";
+
+        cli  [label="Cliente\nid · nombre · documento" fillcolor="#C9DCF0" color="#4A7EB5"];
+        perf [label="Perfil de riesgo\nscore · señales" fillcolor="#C9DCF0" color="#4A7EB5"];
+        cons [label="Consentimiento\nalcance · vigencia" fillcolor="#C9DCF0" color="#4A7EB5"];
+        cotz [label="Cotización\nprima · vigencia" fillcolor="#C9DCF0" color="#4A7EB5"];
+        pol  [label="Póliza\nnúmero · coberturas" fillcolor="#C9DCF0" color="#4A7EB5"];
+        sin  [label="Siniestro\nestado · valor" fillcolor="#C9DCF0" color="#4A7EB5"];
+        pago [label="Pago\nmonto · medio" fillcolor="#C9DCF0" color="#4A7EB5"];
+        soc  [label="Socio distribuidor\nAPI keys · cuota" fillcolor="#C9DCF0" color="#4A7EB5"];
+    }
+
+    subgraph cluster_clas {
+        label="  Clasificación de datos  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#B5654A"; style="rounded"; bgcolor="#FCF2EF";
+        c1 [label="Restringido\nPII · datos financieros\ntokenizado + KMS" fillcolor="#F3C9BA" color="#B5654A"];
+        c2 [label="Confidencial\npólizas · siniestros\ncifrado en reposo" fillcolor="#F8DDD2" color="#B5654A"];
+        c3 [label="Interno\ncatálogos · tarifas\nsin cifrado especial" fillcolor="#FCEFE9" color="#B5654A"];
+    }
+
+    subgraph cluster_alm {
+        label="  Almacenamiento  ";
+        fontsize=11; fontname="Helvetica-Bold"; color="#9B6BA8"; style="rounded"; bgcolor="#F8F2FA";
+        pg    [label="PostgreSQL\ntransaccional ACID" shape=cylinder fillcolor="#E5D3EC" color="#9B6BA8"];
+        redis [label="Redis\ncaché · TTL 15 min" shape=cylinder fillcolor="#E5D3EC" color="#9B6BA8"];
+        s3    [label="S3 + Object Lock\ndocumentos · auditoría" shape=cylinder fillcolor="#E5D3EC" color="#9B6BA8"];
+        kafka [label="Kafka / MSK\neventos · retención 7 d" shape=box3d fillcolor="#E5D3EC" color="#9B6BA8"];
+    }
+
+    // ---- relaciones entre entidades
+    cli  -> cons [label=" otorga "];
+    cli  -> perf [label=" tiene "];
+    cli  -> cotz [label=" solicita "];
+    cotz -> pol  [label=" origina "];
+    pol  -> sin  [label=" ampara "];
+    pol  -> pago [label=" genera "];
+    soc  -> cotz [label=" origina B2B " style=dashed];
+
+    // ---- clasificacion
+    perf -> c1 [style=dotted color="#B5654A"];
+    cli  -> c1 [style=dotted color="#B5654A"];
+    cons -> c2 [style=dotted color="#B5654A"];
+    pol  -> c2 [style=dotted color="#B5654A"];
+    sin  -> c2 [style=dotted color="#B5654A"];
+    pago -> c1 [style=dotted color="#B5654A"];
+    cotz -> c3 [style=dotted color="#B5654A"];
+
+    // ---- persistencia
+    c1 -> pg    [label=" tokenizado "];
+    c1 -> redis [label=" perfil TTL "];
+    c2 -> pg;
+    c2 -> s3    [label=" firmado "];
+    c3 -> pg;
+    c2 -> kafka [label=" eventos de dominio " style=dashed];
+}

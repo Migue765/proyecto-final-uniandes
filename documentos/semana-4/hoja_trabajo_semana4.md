@@ -278,325 +278,655 @@ Un experimento de arquitectura no es una prueba de software. Una prueba verifica
 
 De esa definición se desprenden cuatro consecuencias que gobiernan el diseño de esta sección:
 
-1. **El experimento construye una porción del diseño, no un banco de pruebas desechable.** Los microservicios y conectores que se levantan para el experimento son los mismos que quedan en el producto. Lo que se recorta es el alcance funcional, no la fidelidad arquitectural.
+1. **El experimento construye una porción del diseño, no un banco de pruebas desechable.** Los microservicios y conectores que se levantan son los mismos que quedan en el producto. Lo que se recorta es el alcance funcional, no la fidelidad arquitectural.
 2. **El experimento debe medir de forma precisa.** Una conclusión del tipo «funcionó bien» no reduce incertidumbre. Cada experimento define de antemano la métrica, el instrumento que la captura y el umbral que separa el éxito del fracaso.
-3. **Si el análisis no es favorable, se cambia la decisión de diseño y se experimenta de nuevo.** Por eso cada ficha incluye explícitamente cuál es la decisión alternativa que se adoptaría ante un resultado adverso. Un experimento sin plan B no es un experimento: es una demostración.
-4. **Solo se experimenta donde hay incertidumbre.** Si el punto de sensibilidad no genera incertidumbre en el equipo, experimentarlo consume esfuerzo sin producir información. La selección de qué se experimenta se justifica en §5.2.
+3. **Si el análisis no es favorable, se cambia la decisión de diseño y se experimenta de nuevo.** Por eso cada ficha declara cuál es la decisión alternativa que se adoptaría ante un resultado adverso. Un experimento sin plan B no es un experimento: es una demostración.
+4. **Solo se experimenta donde hay incertidumbre.** Si el punto de sensibilidad no genera incertidumbre en el equipo, experimentarlo consume esfuerzo sin producir información.
 
-### 5.2 Puntos de sensibilidad e identificación de la incertidumbre
+### 5.2 Puntos de sensibilidad, incertidumbre y selección
 
-Un **punto de sensibilidad** es una decisión de arquitectura de la que depende críticamente el cumplimiento de una historia de arquitectura. Antes de diseñar experimento alguno, el equipo identificó los puntos de sensibilidad de las once historias de arquitectura y evaluó, para cada uno, cuánta incertidumbre genera.
+Un **punto de sensibilidad** es una decisión de arquitectura de la que depende críticamente el cumplimiento de una historia de arquitectura. El equipo identificó los puntos de sensibilidad de las once historias de arquitectura y calificó la incertidumbre de cada uno con tres criterios: si el equipo ha implementado antes ese mecanismo, si el cumplimiento del umbral depende de valores que hoy no se conocen, y si un resultado adverso obligaría a rehacer estructura y no solo a ajustar parámetros.
 
-La incertidumbre se calificó con tres criterios: si el equipo ha implementado antes ese mecanismo, si el cumplimiento del umbral depende de valores que hoy no se conocen, y si un resultado adverso obligaría a rehacer estructura y no solo a ajustar parámetros.
-
-| Historia | ASR | Punto de sensibilidad (decisión crítica) | Incertidumbre | ¿Se experimenta? |
+| ASR | Punto de sensibilidad (decisión crítica) | Historia | Incertidumbre | Experimento |
 |---|---|---|---|---|
-| HU-ARQ-07 | ASR-1.1 | Que el perfil derivado se pueda cachear con una tasa de acierto suficiente y que el procesamiento restante quepa en el presupuesto de 200 ms | **Alta** | Sí — EXP-01 |
-| HU-ARQ-08 | ASR-1.2 | La calibración del umbral y la ventana del interruptor de circuito, y el reparto del presupuesto de latencia entre tiempos de espera | **Alta** | Sí — EXP-02 |
-| HU-ARQ-06 | ASR-3.1 | Que la ruta de respaldo hacia PostgreSQL absorba el tráfico del caché caído sin propagar la saturación a otros servicios | **Alta** | Sí — EXP-03 |
-| HU-ARQ-03 | ASR-4.1 | Que la tokenización centralizada no introduzca latencia inaceptable en el camino crítico ni deje rutas por donde el dato original se filtre | **Alta** | Sí — EXP-04 |
-| HU-ARQ-02 | ASR-2.1 | Que la definición del puerto de pagos sea lo bastante general para absorber una pasarela con contrato distinto sin fugas de abstracción | Media | Se difiere al Proyecto Final 2 |
-| HU-ARQ-10 | ASR-3.3 | El protocolo de sincronización y la resolución de conflictos entre el almacenamiento local y el servidor | Media | Se difiere al Proyecto Final 2 |
-| HU-ARQ-01 | ASR-2.2 | Que el motor de rating sea genuinamente agnóstico al ramo | Media | Se difiere al Proyecto Final 2 |
-| HU-ARQ-11 | ASR-4.2 | El bloqueo de escritura del almacenamiento de objetos | **Baja** | **No.** Es una capacidad documentada y garantizada por la plataforma, no una decisión de diseño incierta. Se verifica con una prueba de configuración, no con un experimento |
-| HU-ARQ-09 | ASR-3.2 | El comportamiento activo-activo multi-zona y la promoción automática de la réplica | Media | Se difiere al Proyecto Final 2 por dependencia de infraestructura con costo |
+| ASR-1.1 | Que el perfil derivado se pueda cachear con una tasa de acierto suficiente y que el procesamiento restante quepa en el presupuesto de 200 ms | SOL-28 | **Alta** | EXP-01 |
+| ASR-1.2 | La calibración del umbral y la ventana del interruptor de circuito, y el reparto del presupuesto de latencia entre tiempos de espera | SOL-37 | **Alta** | EXP-02 |
+| ASR-2.1 | Que la definición del puerto de pagos sea lo bastante general para absorber una pasarela con contrato distinto | SOL-20 | Media | EXP-03 |
+| ASR-2.2 | Que el motor de rating sea genuinamente agnóstico al ramo | SOL-21 | Media | EXP-03 |
+| ASR-3.1 | Que la ruta de respaldo hacia PostgreSQL absorba el tráfico del caché caído sin propagar la saturación | SOL-29 | **Alta** | EXP-04 |
+| ASR-3.2 | Que el esquema multi-zona opere de hecho como activo-activo y no como activo-pasivo encubierto | SOL-43 | Media-alta | EXP-05 |
+| ASR-3.3 | El protocolo de sincronización y la resolución de conflictos entre almacenamiento local y servidor | SOL-44 | Media | EXP-06 |
+| ASR-4.1 | Que la tokenización centralizada no introduzca latencia inaceptable ni deje rutas por donde el dato original se filtre | SOL-23 | **Alta** | EXP-07 |
+| ASR-4.2 | Que la ruta de auditoría detecte y registre una alteración en menos de 1 segundo | SOL-45 | Media | EXP-08 |
 
-> **Sobre HU-ARQ-11.** Se decidió deliberadamente no diseñar un experimento para el bloqueo de escritura del almacenamiento de objetos. El mecanismo es una garantía de la plataforma con comportamiento especificado por el proveedor; el equipo no tiene incertidumbre sobre si funciona, sino sobre si lo configuró bien. Esa es una pregunta de verificación de configuración, y su lugar es la suite de pruebas de seguridad, no el programa de experimentación. Aplicar aquí el criterio del profesor —no experimentar lo que no genera incertidumbre— libera 8 horas que se reasignan a los experimentos de latencia, donde la incertidumbre sí es alta.
+**Por qué ocho experimentos y no nueve.** ASR-2.1 y ASR-2.2 son dos manifestaciones del mismo punto de sensibilidad de fondo: si la variabilidad del negocio está encapsulada en puntos de extensión o filtrada hacia el núcleo. Se miden de la misma forma —tocar un punto de variación y contar qué archivos cambian— y usan la misma instrumentación. Se agrupan en el EXP-03 con dos escenarios, lo que evita duplicar montaje sin perder cobertura: los nueve ASR quedan cubiertos.
 
-**Sprint 1 de diseño.** El programa de experimentación se limita deliberadamente a los cuatro puntos de sensibilidad de incertidumbre alta, que conforman el Sprint 1 de diseño y se ejecutan en las semanas 5 y 6. Los cinco puntos de sensibilidad restantes se difieren al Proyecto Final 2: concentrar las 42 horas disponibles en los cuatro experimentos que realmente reducen incertidumbre produce más información que repartirlas entre nueve.
+**Por qué se experimenta ASR-4.2 pese a apoyarse en una garantía de plataforma.** El bloqueo de escritura del almacenamiento de objetos es una capacidad documentada por el proveedor y sobre eso el equipo no tiene incertidumbre. La incertidumbre real está en otro lado: en si **la ruta de auditoría propia** detecta y registra el intento en menos de 1 segundo. Eso sí es una decisión de diseño del equipo y por eso el EXP-08 se enfoca en el tiempo de detección, no en si el bloqueo funciona.
+
+**Sprint 1 de diseño.** Los cuatro experimentos de incertidumbre alta (EXP-01, EXP-02, EXP-04 y EXP-07) conforman el Sprint 1 y se ejecutan en las semanas 5 y 6, dentro de las 42 horas comprometidas. Los cuatro restantes quedan diseñados y programados, y se ejecutan según disponibilidad y en el Proyecto Final 2, por depender de infraestructura con costo o de incertidumbre menor.
+
+---
 
 ### 5.3 EXP-01 — Viabilidad del presupuesto de latencia del motor de scoring
 
 | Campo | Contenido |
 |---|---|
-| **Historia de arquitectura** | HU-ARQ-07 · Optimización de latencia del motor de scoring (SOL-28) |
-| **Requisito de calidad objetivo** | ASR-1.1 — p95 < 200 ms con 500 req/min; p99 < 400 ms |
-| **Punto de sensibilidad** | Resolver el scoring desde un perfil derivado cacheado en lugar de consultar Open Finance en el camino crítico |
-| **Incertidumbre que motiva el experimento** | El equipo no sabe dos cosas: qué tasa de acierto real produce una ventana de vigencia de 15 minutos en un flujo donde el usuario itera sobre planes, y cuánto del presupuesto de 200 ms consume el procesamiento propio una vez descontada la consulta externa. Si el procesamiento propio consume 150 ms, el diseño no cierra por más que el caché acierte |
-| **Propósito** | Determinar si la decisión de cachear el perfil derivado hace viable el presupuesto de latencia, y medir el reparto real de ese presupuesto entre sus componentes |
+| **Título** | Validación de latencia del motor de scoring en condiciones normales de operación |
+| **Propósito del experimento** | Determinar si la decisión de resolver el scoring desde un perfil derivado cacheado hace viable el presupuesto de 200 ms, y medir el reparto real de ese presupuesto entre sus componentes |
+| **Resultados esperados** | p95 < 200 ms y p99 < 400 ms bajo 500 solicitudes por minuto, con tasa de acierto de caché ≥ 80% y 0% de errores |
+| **Recursos requeridos** | Servicios de Cotización & Rating y de Perfilamiento, Redis, PostgreSQL, adaptador Open Finance, WireMock para simular el proveedor y Apache JMeter para generar carga |
+| **Elementos de arquitectura** | ASR-1.1. Vista funcional: Cotización & Rating, Perfilamiento, Adaptador Open Finance, Redis. Vista de despliegue: EKS, RDS PostgreSQL, ElastiCache |
+| **Esfuerzo estimado** | 10 horas-hombre |
 
-**Patrones y tácticas que se validan**
+**Hipótesis de diseño**
 
-| Tipo | Elemento |
+| Campo | Contenido |
 |---|---|
-| Patrón | P1 — Caché de perfiles con lectura anticipada |
-| Táctica (rendimiento) | Mantener múltiples copias de los datos computados |
-| Táctica (rendimiento) | Reducir la demanda computacional en el camino crítico |
-| Táctica (rendimiento) | Acotar el tiempo de ejecución mediante presupuesto de latencia por salto |
+| Puntos de sensibilidad | Tasa de acierto del caché de perfiles y reparto del presupuesto de latencia entre saltos |
+| Historias de arquitectura asociadas | SOL-28 (HU-ARQ-07) · SOL-26 (HU-ARQ-05) |
+| Nivel de incertidumbre | **Alta.** El equipo no sabe qué tasa de acierto produce una vigencia de 15 minutos en un flujo donde el usuario itera sobre planes, ni cuánto del presupuesto consume el procesamiento propio. Si el rating consume 150 ms, el diseño no cierra por más que el caché acierte |
+| Patrones de arquitectura | **Cache-Aside** |
+| Descripción de los patrones | El servicio consulta primero el caché y solo ante ausencia recurre a la fuente costosa, escribiendo el resultado con vigencia acotada |
+| Tácticas de arquitectura | Mantener múltiples copias de los datos computados · Reducir la demanda computacional en el camino crítico · Acotar el tiempo de ejecución mediante presupuesto por salto |
+| Descripción de las tácticas | Se evita la llamada externa en el camino crítico sirviendo el perfil derivado desde memoria, y se asigna a cada salto un tiempo máximo derivado hacia atrás del objetivo extremo a extremo |
 
-**Porción del diseño que se construye**
+**Componentes involucrados**
 
-Se implementa el camino crítico completo de cotización con fidelidad arquitectural: los tres componentes reales, sus conectores reales y la persistencia real. Se recorta el alcance funcional a un solo ramo y un solo plan de cobertura.
-
-**Microservicios involucrados**
-
-| Microservicio | Propósito en el experimento | Comportamiento esperado | Tecnología |
-|---|---|---|---|
-| Cotización y Rating | Recibe la solicitud, solicita el perfil, aplica el motor de rating y compone la prima | Responder el 95% de las solicitudes en menos de 200 ms; consumir menos de 40 ms en el cálculo de rating | Python 3.11 · Flask · Gunicorn con trabajadores concurrentes |
-| Perfilamiento y Scoring | Resuelve el perfil de riesgo consultando primero el caché y recurriendo al proveedor externo solo ante ausencia | Tasa de acierto de caché ≥ 80%; menos de 20 ms en el camino de acierto | Python 3.11 · Flask |
-| Adaptador Open Finance | Traduce entre el modelo del proveedor y el modelo de dominio, con tiempo de espera acotado | Respetar un tiempo de espera de 150 ms; no bloquear más allá de ese límite | Python 3.11 · httpx con depósito de conexiones |
+| Componente | Propósito y comportamiento esperado | Tecnología |
+|---|---|---|
+| Cotización & Rating | Recibe la solicitud, pide el perfil, aplica el motor de rating y compone la prima. Debe consumir menos de 40 ms en el cálculo | Python 3.11 · Flask · Gunicorn |
+| Perfilamiento & Scoring | Resuelve el perfil consultando primero el caché. Tasa de acierto ≥ 80%, menos de 20 ms en el camino de acierto | Python 3.11 · Flask |
+| Adaptador Open Finance | Traduce del modelo del proveedor al de dominio respetando un tiempo de espera de 150 ms | Python 3.11 · httpx |
+| Caché de perfiles | Sirve el perfil derivado con vigencia de 15 minutos | Redis 7 |
+| Base de datos | Provee tarifas y parámetros del ramo | PostgreSQL 15 |
 
 **Conectores involucrados**
 
-| Conector | Comportamiento que se prueba | Tecnología |
+| Conector | Comportamiento a probar | Tecnología |
 |---|---|---|
-| Cotización → Perfilamiento | Que el salto de red entre servicios añada menos de 5 ms al percentil 95 | HTTP/1.1 con conexión persistente y depósito de conexiones |
-| Perfilamiento → Caché | Que la lectura del perfil se resuelva por debajo de 2 ms en el percentil 99 | Protocolo RESP · cliente redis-py con depósito |
-| Cotización → Base de datos | Que la consulta de tarifas y parámetros del ramo no supere 10 ms | psycopg con depósito de conexiones |
-| Perfilamiento → Proveedor externo | Que el tiempo de espera de 150 ms se respete y no se desborde | HTTP sobre TLS hacia un simulador con latencia controlada |
+| Cotización → Perfilamiento | Que el salto de red añada menos de 5 ms al p95 | HTTP/1.1 con conexión persistente y depósito |
+| Perfilamiento → Caché | Que la lectura se resuelva por debajo de 2 ms en p99 | Protocolo RESP · redis-py con depósito |
+| Cotización → Base de datos | Que la consulta de tarifas no supere 10 ms | psycopg con depósito |
+| Perfilamiento → Proveedor externo | Que el tiempo de espera de 150 ms se respete y no se desborde | HTTP sobre TLS hacia WireMock con retardo fijo |
 
-**Montaje y medición**
-
-Entorno en contenedores con los tres servicios, PostgreSQL y Redis. Un simulador reemplaza a Open Finance con latencia fija de 300 ms. Se genera carga de 500 peticiones por minuto durante 10 minutos, con una distribución de clientes que produce la tasa de acierto objetivo. Se instrumenta cada salto por separado para poder atribuir el tiempo consumido a un componente concreto y no solo al total.
+**Medición**
 
 | Métrica | Instrumento | Umbral |
 |---|---|---|
-| Latencia extremo a extremo por percentil | JMeter | p95 < 200 ms · p99 < 400 ms |
+| Latencia extremo a extremo por percentil | Apache JMeter | p95 < 200 ms · p99 < 400 ms |
 | Tasa de acierto del caché | Contadores del servicio de perfilamiento | ≥ 80% |
-| Latencia por salto | Trazas distribuidas | Ver tabla de conectores |
-| Tasa de error | JMeter | 0% |
+| Latencia atribuida a cada salto | Trazas distribuidas | Ver tabla de conectores |
+| Tasa de error | Apache JMeter | 0% |
 
-**Resultado esperado y criterio de refutación**
+**Criterio de refutación.** La hipótesis queda refutada si el p95 supera 200 ms **teniendo la tasa de acierto en el objetivo**: eso significaría que el problema no está en la estrategia de caché sino en el procesamiento propio.
 
-Se espera p95 por debajo de 200 ms con tasa de acierto igual o superior al 80% y cero errores. La hipótesis queda refutada si el p95 supera 200 ms **teniendo la tasa de acierto en el objetivo**: eso significaría que el problema no está en la estrategia de caché sino en el procesamiento propio.
+**Decisión alternativa ante resultado adverso.** Se revisa el momento del cálculo: se pasa de calcular la prima de forma sincrónica a precalcular las combinaciones más frecuentes de ramo y perfil, sirviendo el cálculo exacto solo para las poco frecuentes. Convierte el problema de latencia en uno de espacio, más barato de resolver.
 
-**Decisión alternativa ante resultado adverso**
+**Tecnología asociada**
 
-Si se refuta, la decisión de diseño que se revisa es el momento del cálculo: se pasa de calcular la prima de forma sincrónica a precalcular las primas de las combinaciones más frecuentes de ramo y perfil, y servir el cálculo exacto solo para las combinaciones poco frecuentes. Esto convierte el problema de latencia en un problema de espacio de almacenamiento, que es más barato de resolver.
+| Elemento | Detalle |
+|---|---|
+| Justificación | Las herramientas permiten generar carga controlada, simular la dependencia externa con retardo determinista y atribuir el tiempo consumido a un componente concreto, que es lo que el experimento necesita medir |
+| Lenguaje | Python 3.11 |
+| Framework | Flask · Gunicorn |
+| Plataforma de despliegue | Docker Compose (experimento) · AWS EKS (destino) |
+| Bases de datos | PostgreSQL 15 · Redis 7 |
+| Librerías | redis-py · psycopg · httpx |
+| Herramientas de análisis | Apache JMeter 5.6 · WireMock · trazas distribuidas · CloudWatch |
 
-**Esfuerzo:** 10 horas-hombre · **Prioridad:** Alta · **Sprint 1 de diseño, semana 5**
+---
 
 ### 5.4 EXP-02 — Calibración de la degradación elegante
 
 | Campo | Contenido |
 |---|---|
-| **Historia de arquitectura** | HU-ARQ-08 · Event Bus Kafka y degradación elegante (SOL-37) |
-| **Requisito de calidad objetivo** | ASR-1.2 — p95 < 200 ms desde caché con el proveedor degradado; 0% de peticiones perdidas |
-| **Punto de sensibilidad** | El umbral y la ventana del interruptor de circuito, y el reparto del presupuesto de latencia entre los tiempos de espera de cada salto |
-| **Incertidumbre que motiva el experimento** | El interruptor de circuito es un mecanismo conocido, pero sus parámetros no se pueden derivar analíticamente. Un umbral demasiado alto deja que el sistema se sature antes de abrir; uno demasiado bajo abre ante fluctuaciones normales y degrada innecesariamente. El equipo no tiene datos previos para elegir esos valores |
-| **Propósito** | Encontrar la calibración del interruptor que abre a tiempo para evitar el agotamiento de recursos sin abrir de forma espuria, y confirmar que la ruta degradada sostiene el objetivo de latencia |
+| **Título** | Validación de degradación elegante ante lentitud del proveedor Open Finance |
+| **Propósito del experimento** | Encontrar la calibración del interruptor de circuito que abre a tiempo para evitar el agotamiento de recursos sin abrir de forma espuria, y confirmar que la ruta degradada sostiene el objetivo de latencia |
+| **Resultados esperados** | Interruptor abierto en menos de 10 s desde el inicio de la degradación, p95 < 200 ms sirviendo desde caché, 0% de solicitudes perdidas por timeout externo y 0 aperturas espurias en operación normal |
+| **Recursos requeridos** | Montaje del EXP-01 más el interruptor de circuito instrumentado, WireMock con inyección de retardo creciente y Apache JMeter |
+| **Elementos de arquitectura** | ASR-1.2. Vista funcional: Perfilamiento, Adaptador Open Finance, Redis, Event Bus |
+| **Esfuerzo estimado** | 12 horas-hombre |
 
-**Patrones y tácticas que se validan**
+**Hipótesis de diseño**
 
-| Tipo | Elemento |
+| Campo | Contenido |
 |---|---|
-| Patrón | P2 — Interruptor de circuito · P3 — Tiempo de espera con reintento y espera creciente |
-| Táctica (disponibilidad) | Detección de fallas mediante monitoreo de la tasa de respuesta |
-| Táctica (disponibilidad) | Degradación elegante ante indisponibilidad de una dependencia |
-| Táctica (rendimiento) | Acotar el tiempo de espera para liberar recursos |
+| Puntos de sensibilidad | Umbral y ventana del interruptor de circuito · reparto del presupuesto de latencia entre tiempos de espera |
+| Historias de arquitectura asociadas | SOL-37 (HU-ARQ-08) · SOL-28 (HU-ARQ-07) · SOL-26 (HU-ARQ-05) |
+| Nivel de incertidumbre | **Alta.** El interruptor es un mecanismo conocido, pero sus parámetros no se derivan analíticamente. Un umbral alto deja que el sistema se sature antes de abrir; uno bajo abre ante fluctuaciones normales y degrada sin necesidad. El equipo no tiene datos previos para elegirlos |
+| Patrones de arquitectura | **Circuit Breaker** · **Fallback** |
+| Descripción de los patrones | El interruptor corta las llamadas a una dependencia degradada tras superar un umbral de fallos, y el fallback continúa la operación con la fuente alternativa en lugar de propagar el error |
+| Tácticas de arquitectura | Detección de fallas mediante monitoreo de la tasa de respuesta · Degradación elegante ante indisponibilidad · Acotar el tiempo de espera para liberar recursos |
+| Descripción de las tácticas | Se limita el tiempo que el sistema espera a un tercero y se decide dejar de esperar antes de que el depósito de conexiones se agote |
 
-**Porción del diseño que se construye**
+**Componentes involucrados**
 
-Se reutiliza el montaje del EXP-01 y se añade el interruptor de circuito envolviendo al adaptador Open Finance, con su estado expuesto como métrica. Es una extensión del mismo código de producción, no un montaje paralelo.
-
-**Microservicios involucrados**
-
-| Microservicio | Propósito en el experimento | Comportamiento esperado | Tecnología |
-|---|---|---|---|
-| Perfilamiento y Scoring | Alojar el interruptor y decidir entre ruta normal y ruta degradada | Cambiar a ruta degradada en menos de 10 s desde el inicio de la degradación | Python 3.11 · pybreaker |
-| Adaptador Open Finance | Ser el recurso protegido por el interruptor | Fallar rápido cuando el interruptor está abierto, sin consumir conexiones | Python 3.11 · httpx |
-| Cotización y Rating | Consumir el perfil sin conocer si vino por ruta normal o degradada | Mantener p95 < 200 ms durante toda la degradación | Python 3.11 · Flask |
+| Componente | Propósito y comportamiento esperado | Tecnología |
+|---|---|---|
+| Perfilamiento & Scoring | Aloja el interruptor y decide entre ruta normal y degradada. Debe conmutar en menos de 10 s | Python 3.11 · pybreaker |
+| Adaptador Open Finance | Recurso protegido por el interruptor. Debe fallar rápido sin consumir conexiones cuando está abierto | Python 3.11 · httpx |
+| Cotización & Rating | Consume el perfil sin saber por qué ruta vino. Mantiene p95 < 200 ms durante la degradación | Python 3.11 · Flask |
+| Caché de perfiles | Sostiene el volumen completo de tráfico redirigido | Redis 7 |
 
 **Conectores involucrados**
 
-| Conector | Comportamiento que se prueba | Tecnología |
+| Conector | Comportamiento a probar | Tecnología |
 |---|---|---|
-| Perfilamiento → Proveedor externo | Que ante latencia superior a 700 ms el interruptor abra antes de que se agote el depósito de conexiones | HTTP con interruptor y tiempo de espera de 150 ms |
-| Perfilamiento → Caché | Que la ruta degradada sostenga el volumen completo de tráfico redirigido | redis-py con depósito dimensionado para el pico |
+| Perfilamiento → Proveedor externo | Que ante latencia superior a 700 ms el interruptor abra antes de agotar el depósito | httpx con pybreaker y tiempo de espera de 150 ms |
+| Perfilamiento → Caché | Que la ruta degradada absorba el 100% del tráfico redirigido | redis-py con depósito dimensionado para el pico |
 | Instrumentación del interruptor | Que las transiciones de estado se registren con marca de tiempo precisa | Métricas expuestas por el servicio |
+| Servicios → Event Bus | Que la publicación de eventos no bloquee la respuesta al usuario | Kafka 3.x (KRaft) · kafka-python |
 
-**Montaje y medición**
-
-Sobre el montaje del EXP-01 se inyecta latencia creciente en el simulador hasta superar los 700 ms, sosteniendo una carga de 10× la nominal. Se recorre una rejilla de configuraciones del interruptor variando umbral de fallo y tamaño de ventana, para identificar la combinación que abre a tiempo sin abrir de forma espuria.
+**Medición**
 
 | Métrica | Instrumento | Umbral |
 |---|---|---|
 | Tiempo hasta la apertura del interruptor | Métrica de estado del interruptor | < 10 s |
-| Latencia durante la degradación | JMeter | p95 < 200 ms |
-| Peticiones perdidas por agotamiento de recursos | JMeter · métricas del depósito | 0% |
-| Aperturas espurias en operación normal | Métrica de estado del interruptor | 0 en 10 min de carga nominal |
+| Latencia durante la degradación | Apache JMeter | p95 < 200 ms |
+| Solicitudes perdidas por agotamiento de recursos | JMeter · métricas del depósito | 0% |
+| Aperturas espurias bajo carga nominal | Métrica de estado del interruptor | 0 en 10 minutos |
 
-**Resultado esperado y criterio de refutación**
+**Criterio de refutación.** Queda refutada si ninguna configuración de la rejilla ensayada logra abrir a tiempo sin producir aperturas espurias: eso indicaría que el problema no es de calibración sino de dimensionamiento de los depósitos de recursos.
 
-Se espera identificar al menos una configuración que cumpla las cuatro métricas simultáneamente. La hipótesis queda refutada si ninguna configuración de la rejilla logra abrir a tiempo sin producir aperturas espurias: eso indicaría que el problema no es de calibración sino de dimensionamiento de los depósitos de recursos.
+**Decisión alternativa ante resultado adverso.** Se adopta el mamparo de aislamiento como mecanismo primario en lugar de complementario: se asigna al adaptador Open Finance un depósito de conexiones propio y estrecho, de modo que su saturación sea imposible de propagar aunque el interruptor no abra a tiempo.
 
-**Decisión alternativa ante resultado adverso**
+**Tecnología asociada**
 
-Si se refuta, se añade el mamparo de aislamiento (P4) como mecanismo primario en lugar de complementario: se asigna al adaptador Open Finance un depósito de conexiones propio y estrecho, de modo que su saturación sea imposible de propagar aunque el interruptor no abra a tiempo.
+| Elemento | Detalle |
+|---|---|
+| Justificación | Se requiere inyectar retardo de forma progresiva y observar el estado interno del interruptor, lo que exige instrumentarlo y no solo medir desde fuera |
+| Lenguaje | Python 3.11 |
+| Framework | Flask · Gunicorn |
+| Plataforma de despliegue | Docker Compose · AWS EKS |
+| Bases de datos | Redis 7 · PostgreSQL 15 |
+| Librerías | pybreaker · httpx · redis-py · kafka-python |
+| Herramientas de análisis | Apache JMeter 5.6 · WireMock con retardo variable · Toxiproxy |
 
-**Esfuerzo:** 12 horas-hombre · **Prioridad:** Alta · **Sprint 1 de diseño, semana 5**
+---
 
-### 5.5 EXP-03 — Absorción del tráfico ante la caída del caché
+### 5.5 EXP-03 — Modificabilidad de los puntos de extensión
 
 | Campo | Contenido |
 |---|---|
-| **Historia de arquitectura** | HU-ARQ-06 · Tolerancia a fallos y failover (SOL-29) |
-| **Requisito de calidad objetivo** | ASR-3.1 — recuperación < 30 s; disponibilidad ≥ 99,9%; cero transacciones activas perdidas |
-| **Punto de sensibilidad** | Que la ruta de respaldo hacia PostgreSQL absorba el tráfico que atendía el caché sin propagar la saturación al resto de los servicios |
-| **Incertidumbre que motiva el experimento** | Cuando Redis cae, el 100% del tráfico que resolvía por caché pasa a PostgreSQL de golpe. El equipo no sabe si el depósito de conexiones dimensionado para operación normal soporta ese salto, ni si la saturación resultante se mantiene confinada al perfilamiento o se propaga a los servicios que comparten la misma base |
-| **Propósito** | Verificar que la caída del caché degrada el rendimiento sin interrumpir el servicio, y que el aislamiento por mamparo confina el efecto |
+| **Título** | Validación de la modificabilidad mediante Adapter y configuración externalizada |
+| **Propósito del experimento** | Medir empíricamente el costo de las dos variaciones que el negocio pedirá con más frecuencia —una pasarela de pagos nueva y un ramo de seguro nuevo— y verificar que ninguna obliga a modificar el núcleo |
+| **Resultados esperados** | Escenario A: una pasarela con contrato distinto integrada en menos de 4 horas-hombre y cero archivos del núcleo modificados. Escenario B: un ramo no contemplado disponible en el flujo de cotización y en la API de socios mediante configuración, con cero archivos del motor de rating modificados |
+| **Recursos requeridos** | Servicio de Pagos & Recaudo, puerto de pagos, simulador de pasarela, servicio de Cotización & Rating, configuración de ramos, PostgreSQL y repositorio con registro de cambios por archivo |
+| **Elementos de arquitectura** | ASR-2.1 y ASR-2.2. Vista funcional: Pagos & Recaudo, Adaptadores externos, Cotización & Rating y módulo de configuración de ramos |
+| **Esfuerzo estimado** | 10 horas-hombre (6 h escenario A · 4 h escenario B) |
 
-**Patrones y tácticas que se validan**
+**Hipótesis de diseño**
 
-| Tipo | Elemento |
+| Campo | Contenido |
 |---|---|
-| Patrón | P2 — Interruptor de circuito · P4 — Mamparo de aislamiento |
-| Táctica (disponibilidad) | Detección de fallas mediante comprobación de vitalidad |
-| Táctica (disponibilidad) | Recuperación mediante degradación a una fuente alternativa |
-| Táctica (disponibilidad) | Contención del fallo mediante limitación de recursos compartidos |
+| Puntos de sensibilidad | Generalidad de la definición del puerto de pagos · grado de agnosticismo del motor de rating respecto del ramo |
+| Historias de arquitectura asociadas | SOL-20 (HU-ARQ-02) · SOL-21 (HU-ARQ-01) |
+| Nivel de incertidumbre | **Media.** Ambos mecanismos están diseñados y el equipo los conoce; lo que no se sabe es si la abstracción es lo bastante general. Un resultado adverso obliga a redefinir una interfaz, no a rehacer la estructura, por lo que su incertidumbre es menor que la de los experimentos de rendimiento |
+| Patrones de arquitectura | **Ports & Adapters** · **Strategy con configuración externalizada** |
+| Descripción de los patrones | El núcleo define un puerto en lenguaje de dominio y desconoce toda implementación concreta; las reglas variables de cada ramo viven en configuración versionada y no en código |
+| Tácticas de arquitectura | Encapsular la variabilidad · Restringir las dependencias mediante inversión · Diferir el enlace hasta el tiempo de despliegue |
+| Descripción de las tácticas | La flecha de dependencia apunta del adaptador hacia el núcleo, de modo que agregar un proveedor no puede obligar a modificar el núcleo; y la selección concreta se resuelve por configuración |
 
-**Porción del diseño que se construye**
+**Componentes involucrados**
 
-Se añade al montaje anterior la ruta de respaldo del perfilamiento hacia PostgreSQL y los depósitos de conexiones separados por dependencia. Se incorpora un segundo servicio —Pólizas— que comparte la base de datos, para poder observar si la saturación se propaga.
-
-**Microservicios involucrados**
-
-| Microservicio | Propósito en el experimento | Comportamiento esperado | Tecnología |
-|---|---|---|---|
-| Perfilamiento y Scoring | Detectar la ausencia del caché y conmutar a la fuente primaria | Conmutar en menos de 30 s; no perder transacciones en curso | Python 3.11 · redis-py con comprobación de salud |
-| Pólizas | Servir como testigo de propagación del fallo | Mantener su latencia y su tasa de error sin alteración durante todo el incidente | Python 3.11 · Flask |
-| Cotización y Rating | Sostener el flujo de usuario durante la conmutación | Degradar la latencia de forma acotada y transitoria, sin errores | Python 3.11 · Flask |
+| Componente | Propósito y comportamiento esperado | Tecnología |
+|---|---|---|
+| Pagos & Recaudo | Ejecuta la lógica de cobro contra el puerto, sin conocer ninguna pasarela concreta | Python 3.11 · Flask |
+| Adaptador de pasarela nuevo | Traduce entre el contrato de la pasarela y el puerto de dominio. Es el único artefacto que se escribe | Python 3.11 · httpx |
+| Cotización & Rating | Evalúa el árbol de reglas del ramo sin conocer ramos concretos | Python 3.11 · Flask |
+| Módulo de configuración de ramos | Carga y valida la definición del ramo contra un esquema antes de activarla | Python 3.11 · JSON Schema |
+| Portal de socios | Expone el ramo nuevo por la API B2B sin cambios de código | Angular 17 |
 
 **Conectores involucrados**
 
-| Conector | Comportamiento que se prueba | Tecnología |
+| Conector | Comportamiento a probar | Tecnología |
+|---|---|---|
+| Pagos → Puerto de dominio | Que la interfaz absorba un contrato distinto sin fugas de abstracción | Interfaz Python (inversión de dependencias) |
+| Adaptador → Pasarela simulada | Que la traducción quede confinada al adaptador | REST sobre TLS · httpx |
+| Cotización → Configuración de ramos | Que el ramo nuevo se cargue y valide sin reiniciar el motor | psycopg · PostgreSQL 15 |
+| Portal → API de socios | Que el catálogo refleje el ramo nuevo automáticamente | REST sobre TLS |
+
+**Medición**
+
+| Métrica | Instrumento | Umbral |
+|---|---|---|
+| Esfuerzo de integración de la pasarela | Cronometraje del trabajo | < 4 horas-hombre |
+| Archivos del núcleo modificados | `git diff --name-only` contra la base | 0 fuera de adaptadores y configuración |
+| Archivos del motor de rating modificados | `git diff --name-only` | 0 |
+| Pruebas del núcleo tras el cambio | pytest | Pasan sin modificación |
+
+**Criterio de refutación.** Cualquier archivo del núcleo que deba modificarse refuta la hipótesis e identifica exactamente dónde está la fuga de abstracción. La medida no es una opinión: es el conjunto de archivos que reporta el control de versiones.
+
+**Decisión alternativa ante resultado adverso.** Si el puerto de pagos resulta insuficiente, se redefine en términos de intención de negocio —autorizar, confirmar, reversar— en lugar de operaciones de pasarela. Si el motor de rating exige cambios, se extrae el fragmento dependiente del ramo hacia una estrategia cargada por configuración.
+
+**Tecnología asociada**
+
+| Elemento | Detalle |
+|---|---|
+| Justificación | La medición se apoya en el control de versiones, que da evidencia objetiva de qué se tocó, y en el cronometraje del trabajo de un integrante que no diseñó el módulo, para evitar el sesgo del autor |
+| Lenguaje | Python 3.11 |
+| Framework | Flask · Angular 17 (portal) |
+| Plataforma de despliegue | Docker Compose · AWS EKS |
+| Base de datos | PostgreSQL 15 |
+| Librerías | httpx · psycopg · jsonschema |
+| Herramientas de análisis | Git con registro de cambios por archivo · pytest 8 · Postman/Newman · simulador de pasarela |
+
+---
+
+### 5.6 EXP-04 — Absorción del tráfico ante la caída del caché
+
+| Campo | Contenido |
+|---|---|
+| **Título** | Validación de tolerancia a fallos ante caída de Redis |
+| **Propósito del experimento** | Verificar que la pérdida del caché degrada el rendimiento sin interrumpir el servicio, y que el aislamiento por mamparo confina el efecto a los servicios que dependen del caché |
+| **Resultados esperados** | Conmutación a PostgreSQL en menos de 30 s, cero transacciones activas perdidas, disponibilidad ≥ 99,9% en la ventana medida y un servicio testigo sin afectación |
+| **Recursos requeridos** | Redis, PostgreSQL, Perfilamiento, Cotización, Pólizas como servicio testigo, `docker stop` o Toxiproxy para inducir la falla, JMeter y CloudWatch |
+| **Elementos de arquitectura** | ASR-3.1. Vista funcional: Perfilamiento, Cotización, Pólizas, Redis, PostgreSQL |
+| **Esfuerzo estimado** | 8 horas-hombre |
+
+**Hipótesis de diseño**
+
+| Campo | Contenido |
+|---|---|
+| Puntos de sensibilidad | Que el depósito de conexiones a PostgreSQL absorba el tráfico que atendía el caché · que la saturación no se propague por el recurso compartido |
+| Historias de arquitectura asociadas | SOL-29 (HU-ARQ-06) · SOL-26 (HU-ARQ-05) |
+| Nivel de incertidumbre | **Alta.** Cuando Redis cae, el 100% del tráfico que resolvía por caché pasa a PostgreSQL de golpe. No se sabe si el depósito dimensionado para operación normal soporta ese salto, ni si la saturación queda confinada al perfilamiento o alcanza a los servicios que comparten la base |
+| Patrones de arquitectura | **Circuit Breaker** · **Fallback** · **Bulkhead** |
+| Descripción de los patrones | El interruptor detecta la ausencia del caché, el fallback redirige a la fuente persistente y el mamparo impide que la saturación resultante alcance a otros servicios |
+| Tácticas de arquitectura | Detección de fallas mediante comprobación de vitalidad · Recuperación mediante fuente alternativa · Contención del fallo limitando recursos compartidos |
+| Descripción de las tácticas | Cada dependencia tiene su propio depósito de conexiones, de modo que agotar uno no agota los demás |
+
+**Componentes involucrados**
+
+| Componente | Propósito y comportamiento esperado | Tecnología |
+|---|---|---|
+| Perfilamiento & Scoring | Detecta la ausencia del caché y conmuta a la fuente primaria en menos de 30 s sin perder transacciones en curso | Python 3.11 · redis-py con comprobación de salud |
+| Pólizas | Sirve de testigo de propagación: debe mantener latencia y tasa de error sin alteración durante todo el incidente | Python 3.11 · Flask |
+| Cotización & Rating | Sostiene el flujo de usuario con degradación acotada y transitoria, sin errores | Python 3.11 · Flask |
+| Base de datos | Absorbe el tráfico redirigido desde un depósito dedicado | PostgreSQL 15 |
+
+**Conectores involucrados**
+
+| Conector | Comportamiento a probar | Tecnología |
 |---|---|---|
 | Perfilamiento → Caché | Que la pérdida de conexión se detecte rápido y no quede esperando | redis-py con tiempo de espera de conexión corto |
-| Perfilamiento → Base de datos | Que el depósito absorba el tráfico redirigido sin agotarse | psycopg con depósito dedicado y dimensionado para el pico |
+| Perfilamiento → Base de datos | Que el depósito absorba el tráfico redirigido sin agotarse | psycopg con depósito dedicado |
 | Pólizas → Base de datos | Que su depósito, separado del anterior, permanezca intacto | psycopg con depósito independiente |
 
-**Montaje y medición**
-
-Carga sostenida nominal sobre cotización y sobre pólizas simultáneamente. Se detiene el contenedor de Redis a mitad del ensayo y se reinicia dos minutos después. Se registra el comportamiento de ambos servicios durante todo el ciclo.
+**Medición**
 
 | Métrica | Instrumento | Umbral |
 |---|---|---|
 | Tiempo de conmutación a la fuente primaria | Trazas y registros del servicio | < 30 s |
-| Transacciones activas perdidas | Conciliación de peticiones enviadas contra confirmadas | 0 |
-| Disponibilidad en la ventana medida | JMeter | ≥ 99,9% |
-| Latencia y errores del servicio testigo | JMeter | Sin alteración significativa |
+| Transacciones activas perdidas | Conciliación de enviadas contra confirmadas | 0 |
+| Disponibilidad en la ventana medida | Apache JMeter | ≥ 99,9% |
+| Latencia y errores del servicio testigo | Apache JMeter | Sin alteración significativa |
 
-**Resultado esperado y criterio de refutación**
+**Criterio de refutación.** Queda refutada si el servicio de Pólizas se degrada: eso demostraría que el aislamiento por mamparo no está operando y que el fallo se propaga por el recurso compartido.
 
-Se espera conmutación por debajo de 30 s, cero transacciones perdidas y un servicio testigo sin afectación. La hipótesis queda refutada si el servicio de Pólizas se degrada: eso demostraría que el aislamiento por mamparo no está operando y que el fallo se propaga por el recurso compartido.
+**Decisión alternativa ante resultado adverso.** Se separa físicamente el acceso a datos: el perfilamiento deja de compartir instancia de base de datos con el resto, convirtiendo el aislamiento lógico en aislamiento de infraestructura.
 
-**Decisión alternativa ante resultado adverso**
+**Tecnología asociada**
 
-Si se refuta, se separa físicamente el acceso a datos: el perfilamiento deja de compartir instancia de base de datos con el resto y pasa a tener la suya, convirtiendo el aislamiento lógico en aislamiento de infraestructura.
+| Elemento | Detalle |
+|---|---|
+| Justificación | Se requiere inducir una falla real de infraestructura y observar simultáneamente el servicio afectado y uno no relacionado, que es la única forma de comprobar la contención |
+| Lenguaje | Python 3.11 |
+| Framework | Flask · Gunicorn |
+| Plataforma de despliegue | Docker Compose · AWS EKS |
+| Bases de datos | PostgreSQL 15 · Redis 7 |
+| Librerías | redis-py · psycopg · pybreaker |
+| Herramientas de análisis | Apache JMeter 5.6 · `docker stop` · Toxiproxy · CloudWatch |
 
-**Esfuerzo:** 8 horas-hombre · **Prioridad:** Alta · **Sprint 1 de diseño, semana 6**
+---
 
-### 5.6 EXP-04 — Costo y hermeticidad de la tokenización de datos sensibles
+### 5.7 EXP-05 — Pérdida de una zona de disponibilidad
 
 | Campo | Contenido |
 |---|---|
-| **Historia de arquitectura** | HU-ARQ-03 · Tokenización de PII y trazabilidad (SOL-23) |
-| **Requisito de calidad objetivo** | ASR-4.1 — 100% TLS 1.3; 100% de campos personales tokenizados; cero datos personales en texto plano |
-| **Punto de sensibilidad** | Centralizar la custodia del dato sensible en un único servicio, en lugar de cifrar por campo en cada servicio |
-| **Incertidumbre que motiva el experimento** | La decisión tiene dos riesgos que el equipo no puede resolver en el papel. El primero es de rendimiento: el servicio de tokenización es un salto adicional y un punto único, y no se sabe cuánto añade al camino crítico. El segundo es de hermeticidad: el diseño afirma que el dato original no sale del servicio custodio, pero esa afirmación solo se puede sostener inspeccionando lo que realmente circula y se persiste |
-| **Propósito** | Medir el costo en latencia de la tokenización centralizada y verificar empíricamente que no existe ninguna ruta por la cual el dato original escape del servicio custodio |
+| **Título** | Validación de alta disponibilidad ante caída de una zona AWS |
+| **Propósito del experimento** | Verificar que el esquema multi-zona opera realmente como activo-activo y que los objetivos de tiempo y punto de recuperación se cumplen ante la pérdida completa de una zona |
+| **Resultados esperados** | Tráfico redirigido a la zona superviviente, promoción automática de la réplica de base de datos, continuidad del bus de eventos, RTO ≤ 10 minutos, RPO ≤ 30 s y cero transacciones confirmadas perdidas |
+| **Recursos requeridos** | AWS con EKS multi-AZ, RDS PostgreSQL con réplica, Amazon MSK, balanceador de aplicación, AWS Fault Injection Service y CloudWatch |
+| **Elementos de arquitectura** | ASR-3.2. Vista de despliegue: EKS en dos zonas, RDS multi-AZ, MSK, balanceador |
+| **Esfuerzo estimado** | 12 horas-hombre |
 
-**Patrones y tácticas que se validan**
+**Hipótesis de diseño**
 
-| Tipo | Elemento |
+| Campo | Contenido |
 |---|---|
-| Patrón | P9 — Tokenización de datos sensibles |
-| Táctica (seguridad) | Limitar el acceso mediante custodia centralizada |
-| Táctica (seguridad) | Cifrar los datos en tránsito y en reposo |
-| Táctica (seguridad) | Registrar la auditoría de cada acceso al dato original |
+| Puntos de sensibilidad | Que la configuración sea activo-activo de hecho y no activo-pasivo encubierto · tiempo de promoción de la réplica · continuidad del bus de eventos |
+| Historias de arquitectura asociadas | SOL-43 (HU-ARQ-09) · SOL-29 (HU-ARQ-06) |
+| Nivel de incertidumbre | **Media-alta.** El diseño afirma que la capacidad de la zona superviviente ya está caliente, pero eso solo se comprueba induciendo la falla. Si en la práctica opera como activo-pasivo, el RTO dependerá del arranque en frío y el objetivo de 10 minutos queda en riesgo |
+| Patrones de arquitectura | **Active-Active** · **Replication** · **Automatic Failover** |
+| Descripción de los patrones | Ambas zonas reciben tráfico simultáneamente y los datos se replican de forma síncrona, de modo que la recuperación dependa de la detección y no del aprovisionamiento |
+| Tácticas de arquitectura | Redundancia activa · Replicación síncrona de estado · Detección de fallas mediante comprobación de salud del balanceador |
+| Descripción de las tácticas | Mantener capacidad ya caliente en ambas zonas es lo que hace que el tiempo de recuperación se mida en decenas de segundos y no en minutos de arranque |
 
-**Porción del diseño que se construye**
+**Componentes involucrados**
 
-Se implementa el servicio de tokenización real y se integra en el recorrido completo de cotización, incluyendo el paso de consentimiento. Se siembran datos cebo con patrones reconocibles para poder rastrearlos por todo el sistema.
-
-**Microservicios involucrados**
-
-| Microservicio | Propósito en el experimento | Comportamiento esperado | Tecnología |
-|---|---|---|---|
-| Tokenización | Custodiar el dato original y entregar tokens sin valor fuera del sistema | Tokenizar en menos de 15 ms; registrar en auditoría cada destokenización | Python 3.11 · Flask · cifrado con llave gestionada |
-| Perfilamiento y Scoring | Operar exclusivamente sobre el perfil derivado, sin necesitar el dato original | No solicitar destokenización en el camino crítico de cotización | Python 3.11 · Flask |
-| Consentimientos y Auditoría | Registrar el consentimiento y permitir su revocación | Que la revocación invalide la destokenización en menos de 5 min | Python 3.11 · Flask · PostgreSQL |
+| Componente | Propósito y comportamiento esperado | Tecnología |
+|---|---|---|
+| Servicios de negocio | Se ejecutan en pods repartidos entre zonas con reglas de antiafinidad; ninguna zona concentra todas las réplicas | Python 3.11 · Flask sobre Kubernetes |
+| Orquestador | Retira de rotación los pods que no responden y escala la zona superviviente | Amazon EKS · Horizontal Pod Autoscaler |
+| Base de datos | Promueve automáticamente la réplica a primaria conservando el RPO | Amazon RDS PostgreSQL multi-AZ |
+| Bus de eventos | Continúa operando con los brokers de la zona superviviente | Amazon MSK |
 
 **Conectores involucrados**
 
-| Conector | Comportamiento que se prueba | Tecnología |
+| Conector | Comportamiento a probar | Tecnología |
 |---|---|---|
-| Servicio a servicio | Que el 100% de las conexiones negocie TLS 1.3 y ninguna caiga a una versión anterior | TLS 1.3 entre contenedores |
-| Perfilamiento → Tokenización | Que el salto añada menos de 15 ms y no esté en el camino crítico de cotización | HTTP sobre TLS con depósito de conexiones |
-| Servicios → Bus de eventos | Que ningún evento publicado contenga datos personales en texto plano | Kafka con inspección de los mensajes de los temas |
-| Servicios → Base de datos | Que ninguna tabla persista datos personales en texto plano | psycopg · inspección directa de los volcados |
+| Internet → Balanceador | Que la detección de la zona caída y la redirección ocurran en segundos | AWS Application Load Balancer |
+| Servicios → Base de datos | Que la reconexión tras la promoción sea automática y no requiera reinicio | psycopg con reintento y descubrimiento de punto final |
+| Servicios → Bus de eventos | Que no se pierdan eventos confirmados durante la conmutación | kafka-python contra MSK multi-AZ |
+| Zona A ↔ Zona B | Que la replicación sostenga un RPO de 30 s | Replicación síncrona de RDS |
 
-**Montaje y medición**
-
-Se ejecuta el recorrido completo de cotización con datos cebo. Se captura el tráfico entre servicios, se vuelcan las tablas de PostgreSQL y se consumen los mensajes de todos los temas de Kafka. Se buscan los patrones cebo en cada uno de esos artefactos.
+**Medición**
 
 | Métrica | Instrumento | Umbral |
 |---|---|---|
-| Coincidencias de datos cebo fuera del servicio custodio | Búsqueda sobre volcados, tráfico y mensajes | 0 |
-| Versión de TLS negociada | Captura de tráfico · OWASP ZAP | TLS 1.3 en el 100% |
+| Tiempo de recuperación del servicio | CloudWatch · JMeter | RTO ≤ 10 min |
+| Pérdida de datos | Conciliación de transacciones confirmadas antes y después | RPO ≤ 30 s |
+| Transacciones confirmadas perdidas | Consulta de verificación sobre la base | 0 |
+| Capacidad absorbida por la zona superviviente | Métricas del autoescalador | Sin rechazo de solicitudes |
+
+**Criterio de refutación.** Un RTO superior a 10 minutos indicaría que el esquema opera de hecho como activo-pasivo. La pérdida de transacciones confirmadas indicaría que la replicación no es síncrona.
+
+**Decisión alternativa ante resultado adverso.** Se pasa de replicación asíncrona a síncrona aceptando el costo en latencia de escritura, y se reserva capacidad mínima garantizada por zona en lugar de depender del autoescalado para absorber el tráfico redirigido.
+
+**Tecnología asociada**
+
+| Elemento | Detalle |
+|---|---|
+| Justificación | Solo un servicio de inyección de fallas permite provocar la pérdida de una zona de forma controlada y repetible; simularlo apagando instancias no reproduce el comportamiento del balanceador |
+| Lenguaje | Python 3.11 |
+| Framework | Flask |
+| Plataforma de despliegue | AWS EKS multi-AZ |
+| Bases de datos | Amazon RDS PostgreSQL multi-AZ |
+| Librerías | psycopg · kafka-python |
+| Herramientas de análisis | AWS Fault Injection Service · CloudWatch · Apache JMeter 5.6 |
+
+---
+
+### 5.8 EXP-06 — Continuidad del cliente móvil sin conexión
+
+| Campo | Contenido |
+|---|---|
+| **Título** | Validación de operación offline y sincronización de pólizas en la aplicación móvil |
+| **Propósito del experimento** | Verificar que la billetera de pólizas es plenamente funcional sin red, que la sincronización posterior cumple el objetivo de tiempo y que el almacenamiento local no expone información en claro |
+| **Resultados esperados** | 100% de las consultas de póliza resueltas sin conexión, sincronización completa en ≤ 10 s al recuperar conectividad sin intervención del usuario, aviso de datos desactualizados al superar 24 horas y almacenamiento local ilegible fuera de la aplicación |
+| **Recursos requeridos** | Emulador o dispositivo Android, aplicación móvil, BFF Móvil, API de pólizas y control de conectividad del emulador |
+| **Elementos de arquitectura** | ASR-3.3. Vista funcional: aplicación móvil, almacenamiento local cifrado, BFF Móvil y módulo de sincronización |
+| **Esfuerzo estimado** | 10 horas-hombre |
+
+**Hipótesis de diseño**
+
+| Campo | Contenido |
+|---|---|
+| Puntos de sensibilidad | Protocolo de sincronización y resolución de conflictos entre el almacenamiento local y el servidor · cifrado del almacenamiento local |
+| Historias de arquitectura asociadas | SOL-44 (HU-ARQ-10) |
+| Nivel de incertidumbre | **Media.** El patrón offline-first está definido, pero no se conoce el costo real de la sincronización con el volumen de pólizas de un usuario típico ni cómo se comporta la resolución de conflictos cuando el dato cambió en ambos lados |
+| Patrones de arquitectura | **Offline-First** · **Deferred Synchronization** |
+| Descripción de los patrones | La aplicación trata el almacenamiento local como fuente de lectura y la red como mecanismo de actualización en segundo plano; las acciones ejecutadas sin conexión se encolan y se envían en orden al recuperar la red |
+| Tácticas de arquitectura | Mantener una copia local del estado · Sincronización diferida con reintento · Acotar la vigencia del dato replicado |
+| Descripción de las tácticas | La vigencia de 24 horas acota cuánto puede desviarse el dato local, y el aviso al vencer traslada al usuario la decisión de confiar o no en lo que ve |
+
+**Componentes involucrados**
+
+| Componente | Propósito y comportamiento esperado | Tecnología |
+|---|---|---|
+| Aplicación móvil | Sirve las pólizas desde el almacenamiento local sin requerir red | Kotlin nativo · Android |
+| Almacenamiento local cifrado | Conserva las pólizas cifradas y solo la información mínima necesaria para mostrarlas | Room con SQLCipher · EncryptedSharedPreferences |
+| Módulo de sincronización | Detecta la reconexión y sincroniza en 10 s o menos sin intervención | Kotlin · WorkManager |
+| BFF Móvil | Expone las pólizas en cargas compactas y resuelve conflictos con precedencia del servidor | Python 3.11 · Flask |
+
+**Conectores involucrados**
+
+| Conector | Comportamiento a probar | Tecnología |
+|---|---|---|
+| Aplicación → Almacenamiento local | Que la consulta se resuelva sin red y el contenido esté cifrado en reposo | Room · SQLCipher |
+| Aplicación → BFF Móvil | Que la carga útil sea compacta y tolere red intermitente | REST sobre TLS 1.3 · Retrofit · OkHttp |
+| Módulo de sincronización ↔ BFF | Que las acciones diferidas se envíen en el orden en que se ejecutaron | WorkManager con reintento y espera creciente |
+
+**Medición**
+
+| Métrica | Instrumento | Umbral |
+|---|---|---|
+| Consultas resueltas sin conexión | Suite de pruebas instrumentadas | 100% |
+| Tiempo de sincronización tras reconectar | Cronometraje instrumentado | ≤ 10 s |
+| Legibilidad del almacenamiento local | Inspección del dispositivo con depuración | Ilegible fuera de la aplicación |
+| Aviso de datos desactualizados | Prueba con reloj adelantado 24 h | Aviso visible, consulta no bloqueada |
+
+**Criterio de refutación.** Cualquier consulta de póliza que requiera red refuta la hipótesis. Una sincronización por encima de 10 s obliga a revisar el protocolo del BFF Móvil.
+
+**Decisión alternativa ante resultado adverso.** Se pasa de sincronización por instantánea completa a sincronización incremental por diferencias, enviando solo lo que cambió desde la última marca de sincronización.
+
+**Tecnología asociada**
+
+| Elemento | Detalle |
+|---|---|
+| Justificación | El experimento exige controlar la conectividad de forma determinista e inspeccionar el almacenamiento del dispositivo, lo que solo es viable en emulador con depuración habilitada |
+| Lenguajes | Kotlin (cliente) · Python 3.11 (BFF) |
+| Frameworks | Android SDK · Flask |
+| Plataforma de despliegue | Emulador Android API 34 · AWS EKS (BFF) |
+| Almacenamiento | Room con SQLCipher · EncryptedSharedPreferences |
+| Librerías | Retrofit · OkHttp · WorkManager · Kotlin Coroutines |
+| Herramientas de análisis | Espresso · JUnit 5 · MockK · control de conectividad del emulador · Android Debug Bridge |
+
+> **Corrección respecto de versiones anteriores de esta propuesta.** Versiones previas mencionaban `AsyncStorage` como almacenamiento local. `AsyncStorage` pertenece a React Native, stack que el equipo descartó el 19 de agosto al adoptar Kotlin nativo. El mecanismo correcto es Room con cifrado, complementado con `EncryptedSharedPreferences` para credenciales.
+
+---
+
+### 5.9 EXP-07 — Costo y hermeticidad de la tokenización de datos sensibles
+
+| Campo | Contenido |
+|---|---|
+| **Título** | Validación de confidencialidad y protección de información financiera Open Finance |
+| **Propósito del experimento** | Medir el costo en latencia de la tokenización centralizada y verificar empíricamente que no existe ninguna ruta por la cual el dato original escape del servicio custodio |
+| **Resultados esperados** | 100% de las transmisiones sobre TLS 1.3, 100% de los campos personales tokenizados antes de salir de Perfilamiento, cero datos personales en texto plano en tránsito ni en reposo, y latencia añadida por la tokenización inferior a 15 ms |
+| **Recursos requeridos** | Servicio de Tokenización, Perfilamiento, Consentimientos, adaptador Open Finance, AWS KMS, certificados TLS, OWASP ZAP, captura de tráfico y datos cebo |
+| **Elementos de arquitectura** | ASR-4.1. Vista funcional: Tokenización, Perfilamiento, Consentimientos & Auditoría, Adaptador Open Finance. Vista de información: clasificación de datos restringidos |
+| **Esfuerzo estimado** | 12 horas-hombre |
+
+**Hipótesis de diseño**
+
+| Campo | Contenido |
+|---|---|
+| Puntos de sensibilidad | Centralizar la custodia del dato sensible en un único servicio en lugar de cifrar por campo en cada servicio |
+| Historias de arquitectura asociadas | SOL-23 (HU-ARQ-03) · SOL-22 (HU-ARQ-04) |
+| Nivel de incertidumbre | **Alta.** La decisión tiene dos riesgos que no se resuelven en el papel. De rendimiento: el servicio custodio es un salto adicional y un punto único, y no se sabe cuánto añade al camino crítico. De hermeticidad: el diseño afirma que el dato original no sale del custodio, pero esa afirmación solo se sostiene inspeccionando lo que realmente circula y se persiste |
+| Patrones de arquitectura | **Tokenization** · **Defense in Depth** |
+| Descripción de los patrones | El dato sensible se sustituye por un token sin valor fuera del sistema y su original queda bajo custodia única; y la protección se aplica en capas, cifrando también el transporte y el reposo |
+| Tácticas de arquitectura | Limitar el acceso mediante custodia centralizada · Cifrar los datos en tránsito y en reposo · Registrar la auditoría de cada acceso al dato original |
+| Descripción de las tácticas | Revocar un consentimiento se convierte en invalidar la capacidad de destokenizar, lo que surte efecto de inmediato en todo el sistema sin tocar siete bases de datos |
+
+**Componentes involucrados**
+
+| Componente | Propósito y comportamiento esperado | Tecnología |
+|---|---|---|
+| Tokenización | Custodia el dato original y entrega tokens sin valor fuera del sistema. Tokeniza en menos de 15 ms y registra cada destokenización | Python 3.11 · Flask · cifrado con llave gestionada |
+| Gestión de llaves | Custodia y rota las llaves de cifrado; ningún servicio accede al material de la llave | AWS KMS |
+| Perfilamiento & Scoring | Opera solo sobre el perfil derivado; no solicita destokenización en el camino crítico | Python 3.11 · Flask |
+| Consentimientos & Auditoría | Registra el consentimiento y su revocación, con efecto en menos de 5 minutos | Python 3.11 · Flask · PostgreSQL 15 |
+| Adaptador Open Finance | Negocia TLS 1.3 con el proveedor y entrega los datos ya tokenizados aguas adentro | Python 3.11 · httpx |
+
+**Conectores involucrados**
+
+| Conector | Comportamiento a probar | Tecnología |
+|---|---|---|
+| Servicio a servicio | Que el 100% de las conexiones negocie TLS 1.3 y ninguna caiga a una versión anterior | TLS 1.3 entre contenedores |
+| Perfilamiento → Tokenización | Que el salto añada menos de 15 ms y no esté en el camino crítico de cotización | HTTP sobre TLS · httpx con depósito |
+| Tokenización → Gestión de llaves | Que el material de la llave nunca salga del servicio de llaves | AWS KMS · boto3 |
+| Servicios → Bus de eventos | Que ningún evento publicado contenga datos personales en texto plano | Kafka 3.x · consumidor de inspección |
+| Servicios → Base de datos | Que ninguna tabla persista datos personales en texto plano | psycopg · inspección de volcados |
+
+**Medición**
+
+| Métrica | Instrumento | Umbral |
+|---|---|---|
+| Coincidencias de datos cebo fuera del custodio | Búsqueda sobre volcados, tráfico capturado y mensajes del bus | 0 |
+| Versión de TLS negociada | OWASP ZAP · captura de tráfico | TLS 1.3 en el 100% |
 | Latencia añadida por la tokenización | Trazas distribuidas | < 15 ms |
-| Entradas de auditoría por destokenización | Consulta al registro de auditoría | Una por cada acceso, sin excepción |
+| Entradas de auditoría por destokenización | Consulta al registro de auditoría | Una por acceso, sin excepción |
+| Efecto de la revocación de consentimiento | Prueba de extremo a extremo cronometrada | < 5 minutos |
 
-**Resultado esperado y criterio de refutación**
+**Criterio de refutación.** Una sola coincidencia de dato cebo en un volcado, en un mensaje del bus o en el tráfico refuta la hipótesis e identifica el punto exacto de fuga, que es precisamente el valor del experimento.
 
-Se espera cero coincidencias fuera del servicio custodio. Una sola coincidencia en un volcado, en un mensaje del bus o en el tráfico refuta la hipótesis e identifica el punto exacto de fuga, que es precisamente el valor del experimento.
+**Decisión alternativa ante resultado adverso.** Si aparece una fuga por el bus de eventos, se adopta la publicación de eventos con referencia en lugar de con contenido: el evento transporta un identificador y el consumidor recupera lo que necesite sujeto a su propia autorización. Si la latencia añadida resulta inaceptable, se introduce un caché de tokens de corta vigencia en el consumidor, aceptando el aumento de superficie de exposición.
 
-**Decisión alternativa ante resultado adverso**
+**Tecnología asociada**
 
-Si aparece una fuga por el bus de eventos, se adopta la publicación de eventos con referencia en lugar de con contenido: el evento transporta un identificador y el consumidor recupera lo que necesite, sujeto a su propia autorización. Si la latencia añadida resulta inaceptable, se introduce un caché de tokens de corta vigencia dentro del servicio consumidor, aceptando explícitamente el aumento de superficie de exposición.
+| Elemento | Detalle |
+|---|---|
+| Justificación | La hermeticidad no se demuestra leyendo código: exige sembrar datos reconocibles y buscarlos en todo lo que el sistema transmite y persiste. De ahí el uso de datos cebo y de inspección directa de volcados y temas |
+| Lenguaje | Python 3.11 |
+| Framework | Flask |
+| Plataforma de despliegue | Docker Compose · AWS EKS |
+| Bases de datos | PostgreSQL 15 · Redis 7 |
+| Librerías | cryptography · boto3 · httpx · psycopg · kafka-python |
+| Herramientas de análisis | OWASP ZAP · captura de tráfico · consumidor de inspección de Kafka · consultas de verificación sobre PostgreSQL · datos cebo |
 
-**Esfuerzo:** 12 horas-hombre · **Prioridad:** Alta · **Sprint 1 de diseño, semana 6**
+> **Precisión respecto de versiones anteriores.** AWS KMS **no** es un servicio de tokenización: gestiona el ciclo de vida de las llaves. La tokenización la implementa un servicio propio de Solventa que usa KMS para custodiar la llave con la que cifra el dato original. Confundirlos dejaría el ASR-4.1 sin componente responsable.
 
-### 5.7 Ficha consolidada de tecnología
+---
 
-Esta es la tecnología completa requerida para ejecutar el Sprint 1 de diseño. La columna de familiaridad importa: donde el equipo no domina la herramienta, el esfuerzo estimado incluye el tiempo de aprendizaje.
+### 5.10 EXP-08 — Tiempo de detección de una alteración de póliza
 
-| Categoría | Tecnología | Uso en los experimentos | Familiaridad del equipo |
+| Campo | Contenido |
+|---|---|
+| **Título** | Validación de integridad y auditoría de pólizas emitidas |
+| **Propósito del experimento** | Verificar que un intento de alterar una póliza emitida con credenciales válidas es rechazado por la plataforma y, sobre todo, que **la ruta de auditoría propia lo detecta y registra en menos de 1 segundo** |
+| **Resultados esperados** | Escritura y borrado directos rechazados por el bloqueo de escritura, entrada en el registro de auditoría en menos de 1 s, verificación de firma detectando cualquier alteración y registro de auditoría inalterable |
+| **Recursos requeridos** | Servicio de Emisión & Pólizas, almacenamiento de objetos con bloqueo de escritura, AWS KMS, registro de auditoría, credenciales administrativas de prueba y CloudWatch |
+| **Elementos de arquitectura** | ASR-4.2. Vista funcional: Emisión & Pólizas, Object Storage, Consentimientos & Auditoría. Vista de información: datos confidenciales firmados |
+| **Esfuerzo estimado** | 8 horas-hombre |
+
+**Hipótesis de diseño**
+
+| Campo | Contenido |
+|---|---|
+| Puntos de sensibilidad | Tiempo de detección de la ruta de auditoría · verificación de firma en cada lectura |
+| Historias de arquitectura asociadas | SOL-45 (HU-ARQ-11) · SOL-23 (HU-ARQ-03) |
+| Nivel de incertidumbre | **Media.** El bloqueo de escritura es una garantía documentada de la plataforma y sobre eso no hay incertidumbre. La incertidumbre está en la ruta de auditoría propia: si el registro se escribe de forma asíncrona, el umbral de 1 segundo puede no cumplirse, y eso sí es una decisión de diseño del equipo |
+| Patrones de arquitectura | **Immutable Storage (WORM)** · **Audit Trail** · **Digital Signature** |
+| Descripción de los patrones | El almacenamiento rechaza toda modificación durante el periodo de retención incluso para cuentas administrativas; cada operación deja un registro inmutable; y la firma permite detectar alteración en cualquier lectura posterior |
+| Tácticas de arquitectura | Detección de intrusión mediante verificación de integridad · Registro no repudiable de las operaciones · Autorización mediante token de servicio |
+| Descripción de las tácticas | El control no depende de que el atacante carezca de permisos, sino de que la plataforma no acepte la operación: pasa de ser una política a ser una propiedad del sistema |
+
+**Componentes involucrados**
+
+| Componente | Propósito y comportamiento esperado | Tecnología |
+|---|---|---|
+| Emisión & Pólizas | Firma la póliza al emitirla y verifica la firma en cada lectura, bloqueando la operación ante firma inválida | Python 3.11 · Flask |
+| Almacenamiento de objetos | Rechaza modificación y borrado durante el periodo de retención, incluso con credenciales administrativas | Amazon S3 con Object Lock en modo cumplimiento |
+| Gestión de llaves | Firma el resumen del documento y custodia la llave | AWS KMS |
+| Consentimientos & Auditoría | Registra cada operación con servicio, momento, token y resumen antes y después, en menos de 1 s | Python 3.11 · Flask · S3 Object Lock |
+
+**Conectores involucrados**
+
+| Conector | Comportamiento a probar | Tecnología |
+|---|---|---|
+| Emisión → Almacenamiento | Que la escritura autorizada funcione y la directa sea rechazada | AWS SDK (boto3) |
+| Emisión → Gestión de llaves | Que la firma se genere y verifique sin exponer el material de la llave | AWS KMS · boto3 |
+| Cliente administrativo → Almacenamiento | Que el intento de sobrescritura y borrado sea rechazado por la plataforma | AWS CLI con credenciales administrativas |
+| Almacenamiento → Auditoría | Que el evento de intento llegue al registro en menos de 1 s | Notificaciones de evento de S3 · CloudTrail |
+
+**Medición**
+
+| Métrica | Instrumento | Umbral |
+|---|---|---|
+| Resultado del intento de sobrescritura y borrado | Cliente administrativo | Rechazado por la plataforma |
+| Latencia entre el intento y la entrada de auditoría | Marcas de tiempo comparadas | < 1 s |
+| Detección de alteración por verificación de firma | Prueba con documento modificado fuera de banda | 100% detectado |
+| Inmutabilidad del propio registro de auditoría | Intento de alteración del registro | Rechazado |
+
+**Criterio de refutación.** Si el registro de auditoría tarda más de 1 segundo, la ruta es demasiado lenta y debe pasar a un camino sincrónico. Si la sobrescritura tiene éxito, la configuración de retención está mal aplicada.
+
+**Decisión alternativa ante resultado adverso.** Se traslada el registro de auditoría del camino asíncrono al sincrónico dentro de la transacción de escritura, aceptando el costo en latencia de emisión a cambio de garantizar el umbral de detección.
+
+**Tecnología asociada**
+
+| Elemento | Detalle |
+|---|---|
+| Justificación | El experimento requiere credenciales administrativas reales para comprobar que ni siquiera ellas pueden alterar el documento; simularlo con permisos restringidos no probaría nada |
+| Lenguaje | Python 3.11 |
+| Framework | Flask |
+| Plataforma de despliegue | AWS EKS |
+| Almacenamiento | Amazon S3 con Object Lock · PostgreSQL 15 |
+| Librerías | boto3 · cryptography · psycopg |
+| Herramientas de análisis | AWS CLI · CloudTrail · CloudWatch · verificación de resúmenes SHA-256 |
+
+> **Precisión respecto de versiones anteriores.** El registro de auditoría **no** puede vivir solo en CloudWatch: CloudWatch es una plataforma de observabilidad, no un almacenamiento inmutable, y el ASR-4.2 exige que el registro sea inalterable durante 5 años por regulación. El almacén de auditoría es S3 con Object Lock; CloudWatch se usa para la observabilidad y la alerta.
+
+---
+
+### 5.11 Ficha consolidada de tecnología
+
+Tecnología completa del programa de experimentación. La columna de familiaridad importa: donde el equipo no domina la herramienta, el esfuerzo estimado incluye el tiempo de aprendizaje.
+
+| Categoría | Tecnología | Experimentos | Familiaridad |
 |---|---|---|---|
-| Lenguaje y marco | Python 3.11 · Flask | Implementación de los cuatro microservicios | Alta |
-| Servidor de aplicación | Gunicorn con trabajadores concurrentes | Servir los microservicios bajo carga | Media |
-| Base de datos | PostgreSQL 15 | Persistencia transaccional; fuente de respaldo en EXP-03 | Alta |
-| Caché | Redis 7 | Perfiles de riesgo; objeto de la falla inducida en EXP-03 | Media |
-| Bus de eventos | Kafka 3.x en modo sin coordinador externo | Inspección de mensajes en EXP-04 | Baja — se reserva tiempo de aprendizaje |
-| Cliente de base de datos | psycopg con depósito de conexiones | Conectores hacia PostgreSQL; aislamiento por mamparo | Alta |
-| Cliente de caché | redis-py con depósito | Conector hacia Redis | Media |
-| Cliente HTTP | httpx con depósito y tiempo de espera | Adaptadores hacia proveedores externos | Alta |
-| Interruptor de circuito | pybreaker | Mecanismo bajo prueba en EXP-02 | Baja — se reserva tiempo de aprendizaje |
-| Orquestación local | Docker · Docker Compose | Entorno completo de los experimentos | Alta |
-| Generación de carga | Apache JMeter | Carga y medición de percentiles en EXP-01, 02 y 03 | Media |
-| Simulación de dependencias | Simulador HTTP con latencia controlada | Open Finance degradado en EXP-01 y 02 | Media |
-| Trazas distribuidas | Instrumentación de trazas por salto | Atribución de latencia por componente | Baja — se reserva tiempo de aprendizaje |
-| Seguridad | OWASP ZAP | Verificación de TLS en EXP-04 | Media |
-| Inspección de datos | Consultas de verificación · consumidor de inspección de temas | Búsqueda de datos cebo en EXP-04 | Alta |
-| Cifrado y llaves | Servicio de gestión de llaves | Cifrado del dato custodiado en EXP-04 | Baja — se reserva tiempo de aprendizaje |
+| Lenguaje backend | Python 3.11 | Todos | Alta |
+| Lenguaje móvil | Kotlin | EXP-06 | Media |
+| Lenguaje web | TypeScript · Angular 17 | EXP-03 | Media |
+| Framework backend | Flask · Gunicorn | Todos | Alta |
+| Base de datos | PostgreSQL 15 | 01, 03, 04, 05, 07, 08 | Alta |
+| Caché | Redis 7 | 01, 02, 04, 07 | Media |
+| Bus de eventos | Kafka 3.x (KRaft) · Amazon MSK | 02, 05, 07 | Baja — se reserva tiempo de aprendizaje |
+| Almacenamiento de objetos | Amazon S3 con Object Lock | 08 | Baja — se reserva tiempo de aprendizaje |
+| Gestión de llaves | AWS KMS | 07, 08 | Baja — se reserva tiempo de aprendizaje |
+| Cliente de base de datos | psycopg con depósito | 01, 03, 04, 05, 07 | Alta |
+| Cliente de caché | redis-py con depósito | 01, 02, 04 | Media |
+| Cliente HTTP | httpx con depósito y tiempo de espera | 01, 02, 03, 07 | Alta |
+| Interruptor de circuito | pybreaker | 02, 04 | Baja — se reserva tiempo de aprendizaje |
+| Cliente de eventos | kafka-python | 02, 05, 07 | Baja |
+| SDK de nube | boto3 | 07, 08 | Media |
+| Criptografía | cryptography | 07, 08 | Media |
+| Validación de esquema | jsonschema | 03 | Alta |
+| Cliente móvil | Retrofit · OkHttp · WorkManager · Room con SQLCipher | EXP-06 | Media |
+| Orquestación local | Docker · Docker Compose | Todos | Alta |
+| Orquestación de nube | Amazon EKS · Horizontal Pod Autoscaler | 05 | Media |
+| Generación de carga | Apache JMeter 5.6 | 01, 02, 04, 05 | Media |
+| Simulación de dependencias | WireMock | 01, 02 | Media |
+| Inyección de fallas | Toxiproxy · `docker stop` · AWS Fault Injection Service | 02, 04, 05 | Baja — se reserva tiempo de aprendizaje |
+| Trazas distribuidas | Instrumentación de trazas por salto | 01, 02, 07 | Baja — se reserva tiempo de aprendizaje |
+| Seguridad | OWASP ZAP | 07 | Media |
+| Pruebas backend | pytest 8 · pytest-cov | 03 y pruebas residuales | Alta |
+| Pruebas móviles | Espresso · JUnit 5 · MockK | 06 | Media |
+| Pruebas de API | Postman · Newman | 03 | Alta |
+| Observabilidad | AWS CloudWatch · CloudTrail | 04, 05, 08 | Media |
+| Control de versiones | Git con registro de cambios por archivo | 03 | Alta |
 
-### 5.8 Distribución de actividades por integrante
+### 5.12 Distribución de actividades por integrante
 
-Las 42 horas del Sprint 1 de diseño se reparten de forma equitativa entre los cuatro integrantes, asignando a cada uno las actividades más cercanas a su rol pero sin dejar a nadie fuera de la construcción.
+Reparto equitativo de las 42 horas del Sprint 1 de diseño, que agrupa los cuatro experimentos de incertidumbre alta.
 
 | Integrante | Actividades asignadas | Experimentos | Horas |
 |---|---|---|---|
-| **Miguel Gómez** | Construir el servicio de Perfilamiento con su caché; instrumentar las trazas por salto; calibrar el interruptor de circuito recorriendo la rejilla de configuraciones; ejecutar la verificación de TLS y la búsqueda de datos cebo | EXP-01 · EXP-02 · EXP-04 | 11 h |
-| **Angie Arandio** | Construir el servicio de Cotización y el motor de rating; construir la ruta de respaldo hacia PostgreSQL y los depósitos separados por dependencia; ejecutar la falla inducida del caché y conciliar transacciones | EXP-01 · EXP-03 | 11 h |
-| **Juan Mejía** | Construir el adaptador Open Finance y el simulador con latencia controlada; construir el servicio de Tokenización e integrarlo al recorrido; configurar los conectores con sus depósitos y tiempos de espera | EXP-01 · EXP-02 · EXP-04 | 10 h |
-| **Jazmin Córdoba** | Preparar el entorno en contenedores; construir los planes de carga en JMeter; ejecutar las corridas y consolidar las mediciones; redactar el informe de resultados y la decisión que se toma con cada uno | EXP-01 · EXP-02 · EXP-03 | 10 h |
+| **Miguel Gómez** | Construir el servicio de Perfilamiento con su caché; instrumentar las trazas por salto; calibrar el interruptor recorriendo la rejilla de configuraciones; ejecutar la verificación de TLS y la búsqueda de datos cebo | 01 · 02 · 07 | 11 h |
+| **Angie Arandio** | Construir el servicio de Cotización y el motor de rating; construir la ruta de respaldo hacia PostgreSQL y los depósitos separados por dependencia; ejecutar la falla inducida del caché y conciliar transacciones | 01 · 04 | 11 h |
+| **Juan Mejía** | Construir el adaptador Open Finance y el simulador con retardo controlado; construir el servicio de Tokenización e integrarlo al recorrido; configurar los conectores con sus depósitos y tiempos de espera | 01 · 02 · 07 | 10 h |
+| **Jazmin Córdoba** | Preparar el entorno en contenedores; construir los planes de carga en JMeter; ejecutar las corridas y consolidar las mediciones; redactar el informe de resultados y la decisión que se toma con cada uno | 01 · 02 · 04 | 10 h |
 | | | **Total** | **42 h** |
 
-> El reparto asigna a cada integrante al menos dos experimentos y combina construcción con medición, de modo que nadie quede solo construyendo ni solo midiendo. La redacción del informe se asigna explícitamente porque un experimento cuyo resultado no se documenta no reduce la incertidumbre del equipo, solo la de quien lo ejecutó.
+> El reparto asigna a cada integrante al menos dos experimentos y combina construcción con medición, de modo que nadie quede solo construyendo ni solo midiendo. La redacción del informe se asigna explícitamente porque un experimento cuyo resultado no se documenta no reduce la incertidumbre del equipo, solo la de quien lo ejecutó. El reparto de los cuatro experimentos restantes se define al programarlos.
 
-### 5.9 Resumen de esfuerzo del programa
+### 5.13 Resumen del programa de experimentación
 
-| Experimento | Historia | ASR | Incertidumbre | Esfuerzo | Cuándo |
+| Experimento | ASR | Historia | Incertidumbre | Esfuerzo | Cuándo |
 |---|---|---|---|---|---|
-| EXP-01 Presupuesto de latencia | HU-ARQ-07 | ASR-1.1 | Alta | 10 h | Semana 5 |
-| EXP-02 Degradación elegante | HU-ARQ-08 | ASR-1.2 | Alta | 12 h | Semana 5 |
-| EXP-03 Caída del caché | HU-ARQ-06 | ASR-3.1 | Alta | 8 h | Semana 6 |
-| EXP-04 Tokenización | HU-ARQ-03 | ASR-4.1 | Alta | 12 h | Semana 6 |
-| **Total del Sprint 1 de diseño** | | | | **42 h** | **Semanas 5–6** |
+| EXP-01 Presupuesto de latencia | ASR-1.1 | SOL-28 | Alta | 10 h | Semana 5 |
+| EXP-02 Degradación elegante | ASR-1.2 | SOL-37 | Alta | 12 h | Semana 5 |
+| EXP-04 Caída del caché | ASR-3.1 | SOL-29 | Alta | 8 h | Semana 6 |
+| EXP-07 Tokenización | ASR-4.1 | SOL-23 | Alta | 12 h | Semana 6 |
+| **Sprint 1 de diseño** | | | | **42 h** | **Semanas 5–6** |
+| EXP-03 Modificabilidad | ASR-2.1 · ASR-2.2 | SOL-20 · SOL-21 | Media | 10 h | Programado |
+| EXP-05 Pérdida de zona | ASR-3.2 | SOL-43 | Media-alta | 12 h | Programado |
+| EXP-06 Continuidad offline | ASR-3.3 | SOL-44 | Media | 10 h | Programado |
+| EXP-08 Integridad de pólizas | ASR-4.2 | SOL-45 | Media | 8 h | Programado |
+| **Programa completo** | **9 ASR** | | | **82 h** | |
 
-Las 42 horas del Sprint 1 equivalen a 21 puntos de historia con la convención del equipo de 1 punto igual a 2 horas, y están contenidas dentro de los 42 puntos asignados a las historias de arquitectura en el alcance del Proyecto Final 1: construir el mecanismo y ejecutar el experimento que lo valida son parte de la misma historia.
-
-La propuesta se limita a cuatro experimentos por decisión explícita. Se descartó el de integridad de pólizas porque su punto de sensibilidad, el bloqueo de escritura del almacenamiento, es una garantía de plataforma y no genera incertidumbre. Los cuatro restantes —pasarela de pagos, continuidad offline, ramo nuevo por configuración y pérdida de zona— corresponden a puntos de sensibilidad de incertidumbre media cuyo resultado adverso obligaría a ajustar una abstracción y no a rehacer estructura; se difieren al Proyecto Final 2. Experimentar los nueve habría repartido las mismas 42 horas entre el doble de frentes, produciendo mediciones superficiales en todos en lugar de conclusiones firmes en los críticos.
+Los ocho experimentos quedan **diseñados** en esta entrega, que es lo que corresponde a la semana 4. Su **ejecución** se escalona: las 42 horas del Sprint 1 caben exactamente en la capacidad comprometida para el Proyecto Final 1 y equivalen a 21 puntos de historia con la convención de 1 punto igual a 2 horas, contenidos dentro de los 42 puntos asignados a las historias de arquitectura. Los cuatro restantes se ejecutan según disponibilidad y en el Proyecto Final 2, por depender de infraestructura de nube con costo —EXP-05 y EXP-08— o por tener incertidumbre menor —EXP-03 y EXP-06—.
 
 ---
 

@@ -89,19 +89,21 @@ Documentamos también lo que descartamos y por qué. Un monolito modular nos hab
 
 [Pantalla: sección 5.1, marco de experimentación]
 
-Diseñamos cuatro experimentos. Y quiero detenerme en por qué son cuatro y no nueve, porque esa fue la decisión más importante de esta sección. Partimos de una distinción: una prueba verifica que el sistema hace lo especificado; un experimento verifica que una decisión de diseño produce la propiedad que le atribuimos.
+Diseñamos ocho experimentos que cubren los nueve escenarios de calidad. Partimos de una distinción: una prueba verifica que el sistema hace lo especificado; un experimento verifica que una decisión de diseño produce la propiedad que le atribuimos.
 
 Por eso cada experimento está formulado como una hipótesis falsable, y cada uno tiene un criterio de refutación explícito. Definimos de antemano qué resultado nos obligaría a cambiar el diseño, porque un experimento que no puede fracasar no aporta información.
 
-[Pantalla: sección 5.3, EXP-02]
+[Pantalla: sección 5.4, EXP-02]
 
 Este es el de degradación elegante. La hipótesis: con el proveedor respondiendo por encima de setecientos milisegundos y diez veces la carga normal, el interruptor de circuito abre en menos de diez segundos y el sistema mantiene el percentil noventa y cinco bajo doscientos milisegundos sirviendo desde caché, sin perder ninguna petición.
 
 Y el criterio de refutación: si perdemos peticiones por agotamiento del depósito de conexiones, eso nos diría que los tiempos de espera están mal calibrados frente al presupuesto de latencia. Sabemos de antemano qué aprenderíamos si sale mal.
 
-[Pantalla: sección 5.11, resumen de esfuerzo]
+[Pantalla: sección 5.13, resumen del programa]
 
-Evaluamos la incertidumbre de los once puntos de sensibilidad del diseño y solo cuatro resultaron de incertidumbre alta. El resto los diferimos. Un caso concreto: la integridad de las pólizas no la experimentamos, porque el bloqueo de escritura del almacenamiento es una garantía de la plataforma. Ahí no tenemos incertidumbre sobre si funciona, sino sobre si lo configuramos bien, y eso es una prueba de configuración, no un experimento. Las cuarenta y dos horas del Sprint 1 se reparten equitativamente entre los cuatro: once, once, diez y diez horas por integrante.
+Calificamos la incertidumbre de cada punto de sensibilidad y eso define cuándo se ejecuta cada uno. Cuatro resultaron de incertidumbre alta y forman el Sprint 1 de diseño, en las semanas cinco y seis. Un ejemplo de cómo esa calificación cambió un experimento: en integridad de pólizas, el bloqueo de escritura del almacenamiento es una garantía de la plataforma, así que ahí no tenemos incertidumbre. La incertidumbre está en si nuestra propia ruta de auditoría detecta el intento en menos de un segundo. Reenfocamos el experimento hacia eso.
+
+El programa completo son ochenta y dos horas. Cuarenta y dos las comprometemos en el Sprint 1, que es exactamente nuestra capacidad, repartidas entre los cuatro integrantes: once, once, diez y diez horas.
 
 [Pantalla: sección 6, refinamiento de estrategia de pruebas]
 

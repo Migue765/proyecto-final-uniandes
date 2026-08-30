@@ -30,7 +30,7 @@ Esta entrega tiene dos partes. La primera es el entregable propio de la semana 4
 
 | # | Documento | Contenido | Enlace |
 |---|---|---|---|
-| 1 | hoja_trabajo_semana4.docx | Vista funcional, de despliegue y de información · 12 patrones con su razonamiento frente a cada ASR · 8 decisiones de arquitectura con alternativas descartadas · 4 experimentos con punto de sensibilidad, tácticas, microservicios, conectores y esfuerzo · refinamiento de la estrategia de pruebas · plan por sprint | *(pegar enlace)* |
+| 1 | hoja_trabajo_semana4.docx | Vista funcional, de despliegue y de información · 12 patrones con su razonamiento frente a cada ASR · 8 decisiones de arquitectura con alternativas descartadas · 8 experimentos que cubren los 9 ASR, cada uno con punto de sensibilidad, nivel de incertidumbre justificado, patrones y tácticas, componentes, conectores, criterio de refutación y ficha de tecnología · refinamiento de la estrategia de pruebas · plan por sprint | *(pegar enlace)* |
 | 2 | historias_de_usuario_v2.docx | Backlog completo de 62 historias con criterios de aceptación · cálculo de capacidad del equipo paso a paso · priorización y corte de alcance entre Proyecto Final 1 y 2 · trazabilidad entre ASR e historias | *(pegar enlace)* |
 
 Ambos documentos están además versionados en el repositorio, en `documentos/semana-4/`, junto con las fuentes de los diagramas en formato `.dot`, que se regeneran con un solo comando.
@@ -51,6 +51,7 @@ Ambos documentos están además versionados en el repositorio, en `documentos/se
 |---|---|
 | `FE-01` … `FE-10` | Función a la que pertenece la historia. Función e Historia son tipos del mismo nivel en Jira, así que la relación se expresa con esta etiqueta y no con la jerarquía |
 | `funcion` | Marca los diez ítems de tipo Función |
+| `EXP-01` … `EXP-08` | Historia de arquitectura que lleva ese experimento |
 | `canal-web` · `canal-movil` · `canal-api` | Canal donde se implementa |
 | `prioridad-alta` · `prioridad-media` · `prioridad-baja` | Prioridad asignada |
 | `proyecto-1` · `proyecto-2` | Si entra en el alcance del Proyecto Final 1 o se difiere al 2 |

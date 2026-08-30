@@ -49,7 +49,8 @@ Ambos documentos están además versionados en el repositorio, en `documentos/se
 
 | Etiqueta | Significado |
 |---|---|
-| `FE-01` … `FE-10` | Función a la que pertenece la historia |
+| `FE-01` … `FE-10` | Función a la que pertenece la historia. Función e Historia son tipos del mismo nivel en Jira, así que la relación se expresa con esta etiqueta y no con la jerarquía |
+| `funcion` | Marca los diez ítems de tipo Función |
 | `canal-web` · `canal-movil` · `canal-api` | Canal donde se implementa |
 | `prioridad-alta` · `prioridad-media` · `prioridad-baja` | Prioridad asignada |
 | `proyecto-1` · `proyecto-2` | Si entra en el alcance del Proyecto Final 1 o se difiere al 2 |

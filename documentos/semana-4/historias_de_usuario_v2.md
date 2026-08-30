@@ -117,11 +117,21 @@ El backlog completo del producto **triplica** la capacidad disponible del equipo
 
 ### 3.1 Estructura jerárquica del backlog
 
-El tablero del proyecto usa cuatro niveles de jerarquía: **Épica → Función → Historia → Subtarea**. La revisión del tablero durante esta corrección reveló el origen preciso del hallazgo: las ocho funcionalidades web y móvil que se presentaron como historias de usuario en la semana 3 están tipadas en Jira como **Función**, no como Historia, y ninguna tenía historias hijas. El backlog v1.1 contenía en realidad 12 historias y 8 funciones sin descomponer.
+La revisión del tablero durante esta corrección reveló el origen preciso del hallazgo: las ocho funcionalidades web y móvil que se presentaron como historias de usuario en la semana 3 están tipadas en Jira como **Función**, no como Historia, y ninguna tenía historias asociadas. El backlog v1.1 contenía en realidad 12 historias y 8 funciones sin descomponer.
 
-La corrección consiste en poblar el nivel que faltaba: 51 historias nuevas bajo las funciones existentes.
+El tablero es un proyecto gestionado por el equipo, cuya jerarquía tiene tres niveles y no cuatro:
 
-| Épica | Función | Historias | SP |
+| Nivel | Tipos de incidencia |
+|---|---|
+| Superior | Épica |
+| Intermedio | **Función** y **Historia**, que son tipos hermanos del mismo nivel |
+| Inferior | Subtarea |
+
+Función e Historia comparten nivel, de modo que una historia no puede colgar de una función: ambas cuelgan de la épica. La relación entre una historia y su función se expresa mediante una etiqueta (`FE-01` a `FE-10`), que permite filtrar en el tablero todas las historias de una función. Las funciones se distinguen además con la etiqueta `funcion`.
+
+Por esa misma razón, y para que el total del backlog no quede inflado, la estimación en puntos de historia vive únicamente en las historias: las funciones quedaron sin puntos. Si ambas los llevaran, el tablero sumaría dos veces el mismo trabajo y mostraría 298 SP donde el backlog real son 229.
+
+| Épica | Función | Historias (etiqueta) | SP |
 |---|---|---|---|
 | **EP-01** Gestión de seguros Web (SOL-1) | FE-01 Cotización de seguros (SOL-3) | FE-01.1 a FE-01.6 | 15 |
 | | FE-02 Suscripción y emisión (SOL-4) | FE-02.1 a FE-02.6 | 16 |

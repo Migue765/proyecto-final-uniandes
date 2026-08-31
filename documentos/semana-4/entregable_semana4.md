@@ -969,7 +969,49 @@ Las 32 historias diferidas —administración de pólizas, gestión completa de 
 
 El Sprint 1 concentra historias de arquitectura porque son prerrequisito de todo lo demás: sin persistencia, caché y bus no hay dónde apoyar los recorridos funcionales. El Sprint 3 es más largo y absorbe más puntos, lo que da margen para el ajuste que casi siempre exige el cierre.
 
-### 7.7 Viabilidad: ¿es construible esta arquitectura?
+### 7.7 Margen para atrasos: sensibilidad de la velocidad y válvula de escape
+
+Los 133 puntos comprometidos equivalen a la capacidad completa del equipo. Eso significa que **no hay holgura por construcción**, y conviene ser explícito sobre qué protege ese plan y qué no.
+
+**Lo que el factor de carga sí cubre.** El descuento del 20 % aplicado en §7.2 absorbe el trabajo conocido que no produce historias terminadas: ceremonias, coordinación y revisión entre pares. Sobre las siete semanas son unos 38 puntos de esfuerzo ya descontados. Pero eso es **overhead previsible**, no reserva para lo imprevisto.
+
+**Lo que no cubre.** La velocidad de 19 puntos por semana descansa en dos supuestos que el equipo todavía no ha medido: que un punto de historia equivale a dos horas, y que el factor de carga real es del 80 %. Si cualquiera se corre, la capacidad cae:
+
+| Escenario | Supuestos | Velocidad | Capacidad en 7 semanas |
+|---|---|---|---|
+| **A** — el plan actual | 2 h/SP · factor 80 % | 19 SP/semana | **133 SP** |
+| **B** — factor más conservador | 2 h/SP · factor 70 % | 17 SP/semana | 119 SP |
+| **C** — subestimamos el tamaño | 2,5 h/SP · factor 80 % | 15 SP/semana | 107 SP |
+| **D** — ambos a la vez | 2,5 h/SP · factor 70 % | 13 SP/semana | **94 SP** |
+
+El compromiso de 133 puntos corresponde al escenario A, que es el más favorable de los cuatro. Tres factores empujan hacia abajo: tres tecnologías con familiaridad baja declarada en §5.8 —bus de eventos, gestión de llaves y almacenamiento inmutable—, el rendimiento típicamente menor del primer sprint mientras se montan entornos, y el tamaño de las dos historias de arquitectura de 13 puntos.
+
+**La válvula de escape.** En lugar de descubrir el desvío a mitad del Sprint 3, el equipo declara **desde ahora** qué historias salen primero si la velocidad medida resulta menor que la estimada. Son 18 puntos, el 13,5 % del compromiso, elegidas porque su ausencia degrada la experiencia sin romper ningún recorrido crítico ni dejar un ASR sin cobertura:
+
+| Orden de corte | Historia | SP | Qué se pierde si sale |
+|---|---|---|---|
+| 1 | FE-01.5 Comparar planes de cobertura | 3 | El cliente ve una sola opción de cobertura en lugar de tres; el recorrido de cotización sigue completo |
+| 2 | FE-10.4 Cerrar sesión y expirar por inactividad | 2 | La sesión expira solo del lado del navegador; el ingreso sigue protegido |
+| 3 | FE-01.6 Guardar y recuperar cotización | 2 | La cotización no se puede retomar más tarde; se recotiza |
+| 4 | FE-10.3 Recuperar el acceso a la cuenta | 2 | El restablecimiento de contraseña pasa a soporte manual |
+| 5 | FE-05.5 Iniciar sesión con biometría del dispositivo | 3 | El acceso móvil queda solo con contraseña; el onboarding biométrico no se toca |
+| 6 | FE-06.4 Sincronizar al recuperar conectividad | 3 | La sincronización pasa a ser manual; la consulta sin conexión del ASR-3.3 se conserva |
+| 7 | FE-02.3 Firmar electrónicamente la solicitud | 3 | La firma se simula en el prototipo; la emisión y su firma digital se conservan |
+| | **Total** | **18** | |
+
+Ninguna de las siete es prerrequisito de otra historia comprometida, y ninguna deja un escenario de calidad sin mecanismo. Se cortan **en ese orden**, no por conveniencia del momento.
+
+**Punto de recalibración obligatorio.** Al cerrar el Sprint 1 el equipo tendrá por primera vez velocidad *medida* en lugar de estimada. Ese es el momento de revisar la equivalencia de dos horas por punto y el factor de carga, y de decidir si se activa la válvula. La regla que el equipo adopta:
+
+```
+Si la velocidad medida del Sprint 1  <  16 SP/semana
+   →  se activa la válvula de escape en el orden declarado
+   →  se recalcula el compromiso de los Sprints 2 y 3 con la velocidad real
+```
+
+Este mecanismo es la respuesta concreta a la advertencia recibida sobre los dolores de cabeza en el Proyecto Final 2: el riesgo de sobrecompromiso no se elimina declarando que no existe, sino decidiendo de antemano qué se sacrifica y con qué criterio.
+
+### 7.8 Viabilidad: ¿es construible esta arquitectura?
 
 La arquitectura del Proyecto Final 1 no es un documento que se archiva: es el compromiso que el equipo debe cumplir en el Proyecto Final 2, y los tutores validarán que el código se conforme a ella. Por eso el equipo verificó explícitamente que lo propuesto sea construible en siete semanas por cuatro personas a doce horas semanales.
 
@@ -987,7 +1029,7 @@ La arquitectura del Proyecto Final 1 no es un documento que se archiva: es el co
 
 **Riesgo declarado.** El elemento de mayor riesgo de cronograma no es la arquitectura sino el cliente móvil nativo, seguido de las pruebas. Son las dos actividades que el curso identifica como principales causas de retraso. Por eso el onboarding móvil y la billetera entran en el Sprint 3, con las tres semanas de mayor holgura, y por eso la estrategia de pruebas se revisa en cada entrega en lugar de darse por cerrada.
 
-### 7.8 Plan del Proyecto Final 1
+### 7.9 Plan del Proyecto Final 1
 
 | Semana | Foco | Estado |
 |---|---|---|
@@ -1002,7 +1044,7 @@ La arquitectura del Proyecto Final 1 no es un documento que se archiva: es el co
 
 > **Esta entrega es un avance, no la versión final.** El bloque de arquitectura y experimentos abarca las semanas 4 y 5, y se cierra en la semana 5. Lo que la semana 5 puede modificar: el ajuste de los modelos si el diseño detallado revela una carencia, la versión final de las tres fichas de experimento, y la incorporación de los wireframes.
 
-### 7.9 Tablero
+### 7.10 Tablero
 
 El tablero del proyecto en Jira refleja el backlog descompuesto, con épicas, estimación en puntos de historia, prioridad y la asociación de cada historia de arquitectura con su ASR y su experimento.
 
@@ -1012,7 +1054,7 @@ El tablero del proyecto en Jira refleja el backlog descompuesto, con épicas, es
 | Jira — Backlog | Backlog descompuesto de 62 historias ordenado por prioridad | https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/backlog |
 | Repositorio | Documentos, fuentes de los diagramas y registro de cambios | https://github.com/Migue765/proyecto-final-uniandes |
 
-### 7.10 Estado del tablero tras la actualización
+### 7.11 Estado del tablero tras la actualización
 
 | Tipo de incidencia | Cantidad | Puntos de historia |
 |---|---|---|
@@ -1023,7 +1065,7 @@ El tablero del proyecto en Jira refleja el backlog descompuesto, con épicas, es
 
 El tablero es un proyecto gestionado por el equipo, cuya jerarquía tiene tres niveles: **Épica** en el nivel superior; **Función** e **Historia** como tipos hermanos en el nivel intermedio; y **Subtarea** en el inferior. Como Función e Historia comparten nivel, una historia no puede colgar de una función: ambas cuelgan de la épica, y la relación entre ellas se expresa con etiquetas. Por la misma razón la estimación vive únicamente en las historias; si las funciones también la llevaran, el tablero sumaría dos veces el mismo trabajo y mostraría 298 puntos donde el backlog real son 229.
 
-### 7.11 Cómo leer el tablero
+### 7.12 Cómo leer el tablero
 
 | Etiqueta | Significado |
 |---|---|

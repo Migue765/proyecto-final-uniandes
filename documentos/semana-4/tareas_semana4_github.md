@@ -180,9 +180,13 @@ Seguir el guion de §8.3. Verificar antes que las diez figuras se vean nítidas 
 **Estado:** PENDIENTE
 Subir con acceso por enlace y pegarlo en §8.1 y §10.1 del entregable.
 
-### T-35 · Alinear el campo nativo de prioridad con las etiquetas
+### T-35 · Cargar la prioridad nativa en los cinco niveles
 **Estado:** Hecho
-El campo `priority` de Jira contradecía la etiqueta `prioridad-*` en 33 historias: las creadas hoy quedaron todas con el valor por defecto Medium y las de arquitectura con High heredado. Como Jira ordena el backlog por el campo nativo y no por la etiqueta, el tablero mostraba un orden que contradecía la priorización documentada en §7.5. Se alinean los dos.
+El campo `priority` estaba en el valor por defecto Medium en las 51 historias creadas hoy y en High heredado en las de arquitectura, sin relación con la priorización documentada. Se carga en la escala completa de cinco niveles, de modo que ordenar el backlog por prioridad reproduzca el orden real de ejecución: Highest para el Sprint 1, High para el 2, Medium para el 3, y Low y Lowest para lo diferido según su importancia. Las 62 historias, verificadas por consulta JQL en cada nivel.
+
+### T-36 · Documentar las dos dimensiones de prioridad
+**Estado:** Hecho
+El campo nativo pasa a expresar orden de ejecución y la etiqueta `prioridad-*` conserva la importancia intrínseca, que es el criterio con que se hizo el corte de alcance. Son dimensiones distintas y por eso no siempre coinciden: una historia puede ser importante y aun así quedar en Lowest porque no se construye en este proyecto. Se documenta la distinción en la guía del tablero para que no se lea como una inconsistencia.
 
 ---
 
@@ -206,7 +210,7 @@ Push de `feature/semana-4` y crear el PR manualmente:
 | Documentación | T-01 a T-09 | 9 | 0 |
 | Corrección semana 3 | T-10 a T-13 | 4 | 0 |
 | Diagramas | T-14 a T-23 | 10 | 0 |
-| Tablero Jira | T-24 a T-29, T-35 | 7 | 0 |
+| Tablero Jira | T-24 a T-29, T-35, T-36 | 8 | 0 |
 | Video | T-30 a T-32 | 1 | 2 |
 | Cierre | T-33 a T-34 | 0 | 2 |
-| **Total** | **35** | **31** | **4** |
+| **Total** | **36** | **32** | **4** |

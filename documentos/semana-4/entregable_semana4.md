@@ -1075,11 +1075,30 @@ El tablero es un proyecto gestionado por el equipo, cuya jerarquía tiene tres n
 | `funcion` | Marca los diez ítems de tipo Función |
 | `arquitectura` | Marca las once historias de arquitectura |
 | `canal-web` · `canal-movil` · `canal-api` | Canal donde se implementa |
-| `prioridad-alta` · `prioridad-media` · `prioridad-baja` | Prioridad asignada |
+| `prioridad-alta` · `prioridad-media` · `prioridad-baja` | **Importancia intrínseca** de la historia, que es el criterio con que se hizo el corte de alcance de §7.5 |
 | `sprint-1` · `sprint-2` · `sprint-3` | Sprint del Proyecto Final 2 en que se construye |
 | `diferido` | Fuera del alcance comprometido |
 | `valvula-escape` | Historia declarada como primera en salir ante un atraso (§7.7) |
 | `EXP-01` … `EXP-03` | Historia de arquitectura que lleva ese experimento |
+
+**Dos dimensiones distintas, y conviene no confundirlas.** El campo nativo *Prioridad* de Jira y la etiqueta `prioridad-*` no significan lo mismo, y por eso no siempre coinciden:
+
+| | Qué expresa | Para qué sirve |
+|---|---|---|
+| Campo nativo **Prioridad** | **Orden de ejecución** | Ordenar el backlog reproduce la secuencia real de construcción |
+| Etiqueta `prioridad-*` | **Importancia intrínseca** | Es el criterio con que se decidió qué entra y qué se difiere |
+
+El campo nativo usa los cinco niveles así:
+
+| Prioridad | Agrupa | Historias |
+|---|---|---|
+| Highest | Sprint 1 — los cimientos de arquitectura y el acceso web | 9 |
+| High | Sprint 2 — el recorrido de cotización, latencia y tolerancia a fallos | 9 |
+| Medium | Sprint 3 — emisión, pagos y móvil | 12 |
+| Low | Diferidas de importancia media | 16 |
+| Lowest | Diferidas de importancia baja | 16 |
+
+Una historia puede ser importante y aun así quedar en `Lowest`: significa que no se construye en este proyecto, no que no importe. Por eso ambas dimensiones se conservan por separado.
 
 Para ver el alcance comprometido, filtrar por `sprint-1`, `sprint-2` y `sprint-3`: devuelve 30 historias y 133 puntos, exactamente el compromiso de §7.6. Filtrando por `diferido` se obtienen las 32 restantes con sus 96 puntos.
 

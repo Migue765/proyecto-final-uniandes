@@ -21,7 +21,7 @@ Este documento contiene **la totalidad de los entregables de la semana 4**. Cada
 | # | Ítem de la rúbrica | Puntos | Dónde está en este documento |
 |---|---|---|---|
 | 1 | **Hoja de trabajo: modelos de arquitectura, patrones detallados y experimentos** | **70** | |
-| 1a | Modelos de arquitectura — vista funcional, de despliegue y de información | 20 | §2.1 declara el estilo de arquitectura y lo justifica; §2.2 a §2.5 desarrollan cinco modelos: contexto, funcional, despliegue, información y dominio |
+| 1a | Modelos de arquitectura — vista funcional, de despliegue y de información | 20 | §2.1 declara el estilo de arquitectura y lo justifica; §2.2 a §2.5 desarrollan seis modelos: contexto, funcional, componente-conector en notación UML, despliegue, información y dominio |
 | 1b | Diseño detallado con patrones y razonamiento, en relación con los ASR | 30 | §3: vista de asignación de patrones, matriz de trazabilidad patrón→táctica→componente→ASR, estructura de los patrones críticos y los doce patrones en detalle. §4: decisiones y alternativas descartadas |
 | 1c | Propuesta de experimentos — propósito, respuesta esperada, tecnologías y esfuerzo | 20 | §5: criterio para decidir cuántos experimentos, tres fichas completas y las cinco alternativas evaluadas y descartadas con su razón |
 | 2 | **Refinamiento de la estrategia de pruebas** | **10** | §6 |
@@ -85,7 +85,7 @@ Antes de presentar las vistas conviene declarar el **estilo** que gobierna la so
 
 Antes de descomponer el sistema conviene fijar su frontera: quién lo usa, de qué terceros depende y qué intercambia con cada uno.
 
-![Figura 1. Diagrama de contexto: actores, sistemas externos y qué intercambia Solventa con cada uno](diagramas/imagenes/diagrama_contexto.png)
+![Figura 1. Figura 1. Diagrama de contexto: actores, sistemas externos y qué intercambia Solventa con cada uno](diagramas/imagenes/diagrama_contexto.png)
 
 **Seis actores.** El cliente asegurado es el usuario principal, pero no el único que impone requisitos: el regulador exige reportes trazables, el perito necesita acceso acotado a la evidencia de un siniestro, y el socio de distribución consume la plataforma por API sin pasar nunca por la interfaz. Ese último es el que obliga a que la API B2B sea un canal de primera clase y no un añadido.
 
@@ -97,7 +97,7 @@ Antes de descomponer el sistema conviene fijar su frontera: quién lo usa, de qu
 
 La vista funcional muestra cómo se descompone el sistema en componentes y cómo colaboran para atender los recorridos de negocio. La estructura es de cuatro capas más una plataforma de datos transversal.
 
-![Figura 2. Vista funcional: capas Edge, BFF, núcleo de negocio y adaptadores externos](diagramas/imagenes/vista_funcional.png)
+![Figura 2. Figura 2. Vista funcional: capas Edge, BFF, núcleo de negocio y adaptadores externos](diagramas/imagenes/vista_funcional.png)
 
 **Capa de canales.** Tres consumidores con necesidades distintas: el portal web en Angular, la aplicación móvil nativa en Kotlin y los sistemas de socios distribuidores que consumen la API B2B. Son deliberadamente delgados: no contienen reglas de negocio, porque una regla que vive en el canal debe reimplementarse en cada canal nuevo.
 
@@ -111,11 +111,31 @@ La vista funcional muestra cómo se descompone el sistema en componentes y cómo
 
 **Adaptadores externos.** Cada proveedor externo —Open Finance, Open Data, KYC/AML, pasarelas de pago y firma electrónica— se alcanza exclusivamente a través de un adaptador que traduce entre el modelo del proveedor y el modelo de dominio de Solventa. Ningún servicio del núcleo conoce el formato de un proveedor.
 
+
+#### El mismo nivel funcional como modelo componente-conector
+
+La vista anterior sirve para orientarse, pero sus flechas no dicen si una interacción es síncrona o asíncrona ni cuál es el contrato que se usa. El modelo siguiente expresa la misma estructura en **notación UML de componente-conector**, donde cada símbolo tiene significado definido.
+
+![Figura 3. Figura 3. Vista funcional como modelo componente-conector en notación UML, con puertos e interfaces provistas y requeridas](diagramas/imagenes/vista_funcional_uml.png)
+
+| Símbolo | Qué es | Qué comunica |
+|---|---|---|
+| Cuadrado sobre el borde | **Puerto** | Punto de interacción con nombre propio; aísla el interior del componente de su exterior |
+| Círculo | **Interfaz provista** | Lo que el componente ofrece |
+| Semicírculo | **Interfaz requerida** | Lo que el componente necesita |
+| Círculo encajado en semicírculo | **Conector de ensamblaje** | El contrato concreto entre dos componentes |
+| Conector marcado con **M** | Conector de mensajería | Comunicación asíncrona por el bus de eventos |
+| Nombre precedido de dos puntos | Instancia de componente | Algo que se ejecuta, no un tipo |
+
+**Por qué esta notación y no cajas genéricas.** Los puertos y las interfaces son exactamente donde vive el argumento de modificabilidad del ASR-2.1. El componente `:Pagos` declara el puerto `CobrarPrima` en lenguaje de dominio —autorizar, confirmar, reversar— y no conoce ninguna pasarela concreta; los adaptadores implementan `PasarelaPago`. Integrar una pasarela nueva no puede obligar a modificar el núcleo porque no existe ninguna arista que salga de él hacia afuera. Con cajas genéricas eso hay que afirmarlo en prosa; en notación UML se lee en el diagrama.
+
+**Los ocho contratos del sistema.** El modelo nombra las interfaces que constituyen la frontera entre componentes: `APICliente`, `Cotizar`, `Scoring`, `Tokenizar`, `CobrarPrima`, `EmitirPoliza`, `PerfilExterno`, `PasarelaPago` y `VerificarIdentidad`. Esa lista es el contrato que el Proyecto Final 2 debe respetar: los tutores validarán que el código se conforme a esta arquitectura, y estas interfaces son la parte verificable de ese compromiso.
+
 ### 2.4 Vista de despliegue
 
 La vista de despliegue muestra dónde se ejecuta cada componente y qué mecanismos de redundancia lo protegen.
 
-![Figura 3. Vista de despliegue en AWS con redundancia multi-zona y región de recuperación](diagramas/imagenes/vista_despliegue.png)
+![Figura 4. Figura 3. Vista de despliegue en AWS con redundancia multi-zona y región de recuperación](diagramas/imagenes/vista_despliegue.png)
 
 **Distribución activo-activo.** Los nodos de EKS están repartidos entre dos zonas de disponibilidad y ambas reciben tráfico simultáneamente. No es una configuración activo-pasivo: si una zona cae, la capacidad de la otra ya está caliente y sirviendo peticiones, lo que hace que el tiempo de recuperación dependa del tiempo de detección del balanceador y no del tiempo de arranque de instancias. Esta es la decisión que hace alcanzable el RTO de 10 minutos del ASR-3.2.
 
@@ -129,7 +149,7 @@ La vista de despliegue muestra dónde se ejecuta cada componente y qué mecanism
 
 La vista de información muestra las entidades de dominio, cómo se clasifican sus datos según sensibilidad y dónde se persiste cada clase.
 
-![Figura 4. Vista de información: entidades, clasificación de datos y almacenamiento](diagramas/imagenes/vista_informacion.png)
+![Figura 5. Figura 4. Vista de información: entidades, clasificación de datos y almacenamiento](diagramas/imagenes/vista_informacion.png)
 
 **Entidades de dominio.** El cliente es la entidad raíz. De él dependen su perfil de riesgo, sus consentimientos y sus cotizaciones. Una cotización origina una póliza; una póliza ampara siniestros y genera pagos. Los socios distribuidores originan cotizaciones por el canal B2B, lo que significa que el modelo debe soportar una cotización sin cliente registrado previamente.
 
@@ -147,7 +167,7 @@ Esta clasificación es la que hace verificable el ASR-4.1: la afirmación «cero
 
 La vista anterior resume las entidades para poder relacionarlas con su clasificación. El modelo siguiente las desarrolla con sus atributos y cardinalidades, que es lo que se traduce en esquema de base de datos.
 
-![Figura 5. Modelo de dominio: entidades, atributos y cardinalidades](diagramas/imagenes/modelo_dominio.png)
+![Figura 6. Figura 5. Modelo de dominio: entidades, atributos y cardinalidades](diagramas/imagenes/modelo_dominio.png)
 
 Tres decisiones del modelo merecen explicación:
 
@@ -199,7 +219,7 @@ La cadena de razonamiento que sigue este documento es siempre la misma: **un ASR
 
 Esta vista muestra dónde vive cada patrón dentro de la arquitectura. Las anotaciones entre llaves indican el patrón que gobierna ese componente o esa capa.
 
-![Figura 6. Asignación de los doce patrones sobre los componentes de la arquitectura](diagramas/imagenes/vista_patrones.png)
+![Figura 7. Figura 6. Asignación de los doce patrones sobre los componentes de la arquitectura](diagramas/imagenes/vista_patrones.png)
 
 Tres observaciones sobre la asignación:
 
@@ -236,19 +256,19 @@ Los tres patrones siguientes se detallan estructuralmente porque son los que sos
 
 Los cuatro patrones del camino crítico no actúan por separado sino como una cadena de decisiones. Este diagrama muestra el recorrido completo de una solicitud de cotización y dónde interviene cada uno.
 
-![Figura 7. Composición de los patrones Cache-Aside, Interruptor de circuito, Timeout y Mamparo en el camino de cotización](diagramas/imagenes/patron_latencia.png)
+![Figura 8. Figura 7. Composición de los patrones Cache-Aside, Interruptor de circuito, Timeout y Mamparo en el camino de cotización](diagramas/imagenes/patron_latencia.png)
 
 La lectura importante es que **hay tres salidas distintas hacia una respuesta válida** y ninguna es un error: acierto de caché en menos de 20 ms, respuesta del proveedor dentro del presupuesto de 150 ms, o prima preliminar en modo degradado. El sistema nunca se queda esperando, que es precisamente lo que exige la medida de «0% de solicitudes perdidas» del ASR-1.2.
 
 #### La modificabilidad: P5 + P6 y la dirección de las dependencias
 
-![Figura 8. Puertos, adaptadores y configuración externalizada: ninguna flecha sale del núcleo](diagramas/imagenes/patron_puertos_adaptadores.png)
+![Figura 9. Figura 8. Puertos, adaptadores y configuración externalizada: ninguna flecha sale del núcleo](diagramas/imagenes/patron_puertos_adaptadores.png)
 
 Lo relevante de este diagrama no son las cajas sino **el sentido de las flechas**. El núcleo define los puertos `PasarelaDePago` y `ReglaDeRamo` y no depende de nada externo; los adaptadores y los archivos de configuración apuntan *hacia* el núcleo. Por eso la afirmación del ASR-2.1 —«cero cambios en servicios del núcleo»— no es una promesa de disciplina del equipo sino una propiedad estructural: agregar `AdaptadorSPEI` no puede obligar a modificar el núcleo porque no existe ninguna arista que vaya en esa dirección.
 
 #### La confidencialidad: P9 y la frontera de custodia
 
-![Figura 9. Tokenización con custodia única: aguas adentro solo circulan tokens](diagramas/imagenes/patron_tokenizacion.png)
+![Figura 10. Figura 9. Tokenización con custodia única: aguas adentro solo circulan tokens](diagramas/imagenes/patron_tokenizacion.png)
 
 El diagrama define una **frontera de custodia**. A su izquierda existe el dato original; a su derecha solo existen tokens, que no tienen valor si se filtran. Esa frontera es lo que convierte el ASR-4.1 en algo verificable: para comprobar que no hay datos personales en texto plano basta con inspeccionar todo lo que hay a la derecha y comprobar que solo aparecen tokens. Sin la frontera, la verificación tendría que ser exhaustiva sobre los siete servicios del núcleo.
 
@@ -1025,154 +1045,163 @@ Para ver únicamente el alcance comprometido de este proyecto, filtrar por `proy
 
 | Descripción | Duración | Presentadores | Enlace |
 |---|---|---|---|
-| Correcciones de la semana 3, modelos de arquitectura, patrones de diseño, propuesta de experimentos y recorrido por el tablero | 8 minutos | Jazmin Córdoba · Miguel Gómez · Juan Mejía · Angie Arandio | *(pegar enlace del video)* |
+| Corrección de la semana 3, estilo y modelos de arquitectura, patrones, propuesta de experimentos, capacidad del equipo y recorrido por el tablero | 10 minutos | Jazmin Córdoba · Miguel Gómez · Juan Mejía · Angie Arandio | *(pegar enlace del video)* |
 
-### 8.2 Contenido del video por bloque
+### 8.2 Contenido por bloque
 
 | Bloque | Presentador | Minuto | Contenido |
 |---|---|---|---|
-| 0 | Jazmin Córdoba | 0:00 – 0:45 | Apertura y qué contiene la entrega |
-| 1 | Jazmin Córdoba | 0:45 – 2:15 | Corrección de la semana 3: descomposición del backlog y cálculo de capacidad |
-| 2 | Miguel Gómez | 2:15 – 4:00 | Los tres modelos de arquitectura |
-| 3 | Juan Mejía | 4:00 – 5:45 | Patrones de diseño y su razonamiento frente a los ASR |
-| 4 | Angie Arandio | 5:45 – 7:15 | Propuesta de experimentos y criterio de selección por incertidumbre |
-| 5 | Jazmin Córdoba | 7:15 – 8:00 | Tablero actualizado y compromiso por sprint |
+| 0 | Jazmin | 0:00 – 0:40 | Apertura y qué contiene la entrega |
+| 1 | Jazmin | 0:40 – 2:10 | Corrección de la semana 3: descomposición del backlog y cálculo de capacidad |
+| 2 | Miguel | 2:10 – 3:30 | Estilo de arquitectura y por qué se eligió |
+| 3 | Miguel | 3:30 – 5:20 | Los seis modelos, con foco en el componente-conector UML |
+| 4 | Juan | 5:20 – 7:00 | Patrones, tácticas y trazabilidad con los ASR |
+| 5 | Angie | 7:00 – 8:40 | Propuesta de experimentos y criterio de cuántos |
+| 6 | Jazmin | 8:40 – 10:00 | Capacidad, plan por sprint, tablero y cierre |
 
 ### 8.3 Guion de la sustentación
 
-> El texto en párrafos es lo que se dice; el texto entre corchetes es lo que se muestra en pantalla. Los tiempos son orientativos.
+> El texto en párrafos es lo que se dice; el texto entre corchetes es lo que se muestra en pantalla. Conviene grabar por bloques y unirlos.
 
-### Bloque 0 — Apertura · Jazmin · 0:00 – 0:45
+#### Bloque 0 — Apertura · Jazmin · 0:00 – 0:40
 
-[Pantalla: portada de la hoja de trabajo de la semana 4]
+[Pantalla: portada del entregable]
 
 Buenas tardes. Somos el Grupo 2 y este es el avance de la semana 4 del proyecto Solventa, nuestra aseguradora digital construida sobre Finanzas Abiertas.
 
-Esta semana tenemos dos cosas para mostrar. La primera es la corrección de la entrega de la semana 3: recibimos una retroalimentación clara sobre el documento de historias de usuario y la trabajamos a fondo. La segunda es el entregable propio de esta semana: los modelos de arquitectura, el diseño detallado con patrones y la propuesta de experimentos.
+Esta semana el foco estuvo en la arquitectura, que es lo que el curso pide priorizar en este bloque. Traemos cuatro cosas: la corrección de la entrega de la semana 3, el estilo y los modelos de arquitectura, el diseño detallado con patrones, y la propuesta de experimentos. Empezamos por la corrección, porque cambia la base sobre la que está construido todo lo demás.
 
-Empezamos por la corrección, porque cambia la base sobre la que está construido todo lo demás.
+#### Bloque 1 — Corrección de la semana 3 · Jazmin · 0:40 – 2:10
 
----
-
-### Bloque 1 — Corrección de la semana 3 · Jazmin · 0:45 – 2:15
-
-[Pantalla: documento de historias de usuario v2.0, sección 1 «Correcciones aplicadas»]
+[Pantalla: sección 9, tabla de correcciones]
 
 La retroalimentación nos señaló tres cosas y las tomamos todas.
 
-La primera: se esperaba la lista completa de historias del proyecto y nosotros entregamos veinte. Al revisarlo entendimos que el problema de fondo no era el número sino la granularidad. Teníamos ciento cincuenta y dos puntos de historia repartidos en veinte historias, es decir un promedio de siete coma seis puntos por historia. Un promedio así significa que lo que llamábamos historias eran en realidad features.
+La primera: se esperaba la lista completa de historias y nosotros entregamos veinte. Al revisar el tablero encontramos el origen exacto del problema, y es más revelador de lo que pensábamos: **ocho de esas veinte estaban tipadas en Jira como Función, no como Historia**, y ninguna tenía historias asociadas. O sea que el backlog tenía en realidad doce historias y ocho funciones sin descomponer. El tablero ya nos estaba diciendo lo mismo que el profesor.
 
-[Pantalla: anexo de mapeo, mostrando SOL-3 descompuesta en seis historias]
+[Pantalla: anexo de mapeo, SOL-3 descompuesta]
 
-Por ejemplo, «Cotización de seguros en tiempo real» parecía una historia, pero adentro tenía el consentimiento de Open Finance, la captura de datos, el cálculo de la prima, la comparación de planes y la recuperación de la cotización. Son seis historias distintas, cada una verificable por separado.
+Descompusimos todo. Pasamos de veinte a sesenta y dos historias, y el promedio bajó de siete coma seis a tres coma siete puntos por historia. En el ejercicio encontramos algo que no teníamos: la autenticación web era un recorrido crítico sin una sola historia asociada.
 
-Descompusimos todo el backlog y pasamos de veinte a sesenta y dos historias. El promedio bajó de siete coma seis a tres coma siete puntos por historia, y ninguna historia funcional supera cinco puntos. En el ejercicio encontramos además algo que no teníamos: la autenticación web era un recorrido crítico sin una sola historia asociada. Ahora es una épica propia.
+[Pantalla: sección 7.2, cálculo de capacidad]
 
-[Pantalla: sección 2, cálculo de capacidad]
+La segunda observación fue que no se encontró la evidencia del cálculo de capacidad. Y tenía razón: el cálculo existía, pero lo habíamos dejado en un archivo del repositorio en vez de ponerlo dentro del documento que se entrega. Esa fue nuestra lección de la semana, y por eso este entregable es un documento único donde todo lo calificable está adentro.
 
-La segunda observación fue que no se encontró la evidencia del cálculo de capacidad. Y tenía razón: el cálculo existía, pero lo habíamos dejado en un archivo del repositorio en vez de ponerlo dentro del documento que se entrega. Esa fue nuestra lección de la semana. Ahora el cálculo está completo dentro del entregable, paso a paso: cuatro personas por doce horas son cuarenta y ocho horas semanales; a dos horas por punto son veinticuatro puntos; aplicando un factor de carga del ochenta por ciento quedan diecinueve puntos por semana.
+#### Bloque 2 — Estilo de arquitectura · Miguel · 2:10 – 3:30
 
-[Pantalla: tabla de capacidad frente al backlog]
+[Pantalla: sección 2.1, tabla de estilos]
 
-Y la tercera observación, la advertencia sobre el proyecto final dos, la respondimos de frente. Al re-estimar de abajo hacia arriba el backlog subió a doscientos veintinueve puntos. Nuestra capacidad para las semanas cinco a ocho es de setenta y seis. No forzamos las cifras para que cuadraran: declaramos explícitamente qué entra en el Proyecto Final 1 y qué se difiere al 2.
+Paso a la arquitectura. Antes de mostrar modelos quiero declarar el estilo, porque es la decisión de la que dependen todas las demás.
 
----
+Solventa no adopta un estilo puro sino una combinación de tres. **Microservicios** en el núcleo, **capas** por encima y **orientado a eventos** para lo asíncrono. Cada uno resuelve algo que los otros no.
 
-### Bloque 2 — Modelos de arquitectura · Miguel · 2:15 – 4:00
+Y quiero justificar el primero, porque es el más discutible. Un monolito modular nos habría simplificado estas ocho semanas, y era una alternativa seria. Lo descartamos por una razón concreta: el servicio de Perfilamiento es el único con exigencia de latencia de doscientos milisegundos y el único que enfrenta picos de diez veces el tráfico. En un monolito, escalar ese componente obliga a replicar todo el sistema. La independencia de despliegue no es un fin en sí: es lo que hace económicamente viable el escenario de latencia.
 
-[Pantalla: Figura 1, vista funcional]
+[Pantalla: último párrafo de 2.1]
 
-Paso al entregable de esta semana. Definimos tres vistas de la arquitectura.
+También documentamos lo que dejamos fuera. No adoptamos arquitectura sin servidor pese a que encajaría con los picos, porque los arranques en frío son incompatibles con un presupuesto de doscientos milisegundos. Y no adoptamos malla de servicios porque su costo de operación no se justifica con siete servicios y cuatro personas.
 
-Esta es la vista funcional. Son cuatro capas más una plataforma de datos. Arriba los canales: web en Angular, móvil en Kotlin nativo y los sistemas de socios. Después la capa Edge, donde ocurre todo lo que debe pasar antes de tocar lógica de negocio. Luego un backend por canal, y en el centro el núcleo de negocio con siete servicios delimitados por contexto de dominio.
+#### Bloque 3 — Los modelos · Miguel · 3:30 – 5:20
 
-Lo importante de este diagrama está abajo a la izquierda: los adaptadores externos. Ningún servicio del núcleo conoce el formato de un proveedor. Todo pasa por un adaptador. Esa decisión es la que sostiene el escenario de modificabilidad.
+[Pantalla: Figura 1, contexto]
 
-[Pantalla: Figura 2, vista de despliegue]
+Hicimos seis modelos. Este es el de contexto: seis actores y cinco sistemas externos. Lo importante acá es que distinguimos qué integramos de verdad y qué simulamos: Open Finance, pagos y KYC se integran realmente porque son los que traen incertidumbre; Open Data y firma electrónica se simulan.
 
-Esta es la vista de despliegue. Dos zonas de disponibilidad en configuración activo-activo, no activo-pasivo. La diferencia importa: si una zona cae, la capacidad de la otra ya está caliente, así que el tiempo de recuperación depende de la detección y no del arranque de instancias. Eso es lo que hace alcanzable el objetivo de diez minutos.
+[Pantalla: Figura 2, vista funcional]
 
-[Pantalla: Figura 3, vista de información]
+Esta es la vista funcional: cuatro capas más la plataforma de datos.
 
-Y esta es la vista de información. Además de las entidades, clasificamos los datos en tres niveles, y el nivel determina el tratamiento. Esto es lo que vuelve verificable el escenario de confidencialidad: la afirmación «cero datos personales en texto plano» solo se puede comprobar si antes se declaró qué cuenta como dato personal.
+[Pantalla: Figura 3, componente-conector UML]
 
----
+Y esta es la misma estructura en notación UML de componente-conector. Quiero detenerme porque el cambio no es estético.
 
-### Bloque 3 — Patrones y su razonamiento · Juan · 4:00 – 5:45
+En el diagrama anterior una flecha no dice si la interacción es síncrona o asíncrona, ni cuál es el contrato. Acá sí. Los cuadraditos son **puertos**, los círculos son **interfaces provistas**, los semicírculos son **interfaces requeridas**, y donde encajan hay un **contrato**.
 
-[Pantalla: sección 3.1, tabla resumen de patrones]
+Y esto es lo que hace que valga la pena: el componente Pagos declara el puerto **CobrarPrima** en lenguaje de dominio y no conoce ninguna pasarela concreta. Los adaptadores implementan PasarelaPago. Por eso integrar una pasarela nueva no puede obligar a modificar el núcleo: no hay ninguna arista que salga de él hacia afuera. Antes eso teníamos que afirmarlo en prosa; ahora se lee en el diagrama.
 
-Documentamos doce patrones. Lo que quiero destacar no es la lista sino cómo la construimos: cada patrón está aquí porque hay un escenario de calidad que lo exige, y de cada uno declaramos qué sacrificamos al adoptarlo.
+[Pantalla: Figura 4, despliegue]
 
-[Pantalla: sección 3.2, caché de perfiles]
+El despliegue es activo-activo en dos zonas, no activo-pasivo. La diferencia importa: si una zona cae, la capacidad de la otra ya está caliente, así que la recuperación depende de la detección y no del arranque de instancias.
 
-Un ejemplo. El escenario de latencia pide percentil noventa y cinco por debajo de doscientos milisegundos. El perfil de riesgo requiere consultar a Open Finance, que tarda cientos de milisegundos. Ese objetivo es inalcanzable por construcción si la cotización espera esa llamada. Por eso el caché de perfiles no es una optimización: es lo que hace posible el escenario.
+[Pantalla: Figuras 5 y 6, información y dominio]
 
-Y declaramos la contrapartida: un perfil cacheado puede estar hasta quince minutos desactualizado. Para un scoring de seguro es tolerable. No lo sería para un saldo de cuenta, y por eso el caché se aplica al perfil derivado y nunca al dato financiero crudo.
+Y la vista de información, donde clasificamos los datos en tres niveles. Esto es lo que vuelve verificable el escenario de confidencialidad: la afirmación «cero datos personales en texto plano» solo se puede comprobar si antes se declaró qué cuenta como dato personal.
 
-[Pantalla: sección 3.6, puertos y adaptadores]
+#### Bloque 4 — Patrones y tácticas · Juan · 5:20 – 7:00
 
-Otro ejemplo. El escenario de modificabilidad pide integrar una pasarela de pagos nueva en menos de cuatro horas-hombre, sin tocar el núcleo. Con puertos y adaptadores, el núcleo define una interfaz en lenguaje de dominio y no conoce ninguna implementación. Integrar una pasarela nueva es escribir una clase y agregar una línea de configuración. Cero archivos modificados en el núcleo. Y eso no es una promesa: es una propiedad del grafo de dependencias, porque la flecha apunta al revés.
+[Pantalla: sección 3.2, marco]
 
-[Pantalla: sección 4, decisiones descartadas]
+Documentamos doce patrones. Antes de mostrarlos quiero aclarar tres conceptos que operan en niveles distintos, porque es fácil confundirlos.
 
-Documentamos también lo que descartamos y por qué. Un monolito modular nos habría simplificado estas ocho semanas, pero impide escalar de forma independiente el servicio de scoring, que es justamente el único con exigencia de latencia y el único con picos de diez veces el tráfico.
+El **atributo de calidad** es la propiedad que el sistema debe exhibir. La **táctica** es una decisión de diseño elemental que influye sobre esa propiedad. El **patrón** es una composición de tácticas con estructura conocida y contrapartidas documentadas. La cadena que seguimos siempre es la misma: un ASR exige una propiedad, unas tácticas la consiguen, un patrón las materializa, se asigna a componentes, y un experimento mide si funcionó.
 
----
+[Pantalla: Figura 7, asignación de patrones]
 
-### Bloque 4 — Propuesta de experimentos · Angie · 5:45 – 7:15
+Esta vista muestra dónde vive cada patrón. Fíjense que el mamparo y el multi-zona se anotan sobre la capa y no sobre una caja: no son componentes, son políticas transversales.
 
-[Pantalla: sección 5.1, marco de experimentación]
+[Pantalla: sección 3.4, matriz de trazabilidad]
 
-Diseñamos ocho experimentos que cubren los nueve escenarios de calidad. Partimos de una distinción: una prueba verifica que el sistema hace lo especificado; un experimento verifica que una decisión de diseño produce la propiedad que le atribuimos.
+Y esta es la matriz completa: patrón, tácticas que materializa, componentes donde vive, ASR que lo justifica y experimento que lo valida. Lo que demuestra es que **no hay patrones huérfanos** —ninguno adoptado sin un requisito que lo exija— ni ASR sin mecanismo asignado.
 
-Por eso cada experimento está formulado como una hipótesis falsable, y cada uno tiene un criterio de refutación explícito. Definimos de antemano qué resultado nos obligaría a cambiar el diseño, porque un experimento que no puede fracasar no aporta información.
+[Pantalla: sección 3.6, cache-aside]
 
-[Pantalla: sección 5.4, EXP-02]
+Un ejemplo del razonamiento. El escenario de latencia pide percentil noventa y cinco bajo doscientos milisegundos. El perfil de riesgo requiere consultar Open Finance, que tarda cientos de milisegundos. Ese objetivo es inalcanzable por construcción si la cotización espera esa llamada. Por eso el caché no es una optimización: es lo que hace posible el escenario.
 
-Este es el de degradación elegante. La hipótesis: con el proveedor respondiendo por encima de setecientos milisegundos y diez veces la carga normal, el interruptor de circuito abre en menos de diez segundos y el sistema mantiene el percentil noventa y cinco bajo doscientos milisegundos sirviendo desde caché, sin perder ninguna petición.
+Y de cada patrón declaramos qué sacrificamos. Acá: un perfil cacheado puede estar hasta quince minutos desactualizado. Para un scoring de seguro es tolerable. No lo sería para un saldo de cuenta, y por eso el caché se aplica al perfil derivado y nunca al dato financiero crudo.
 
-Y el criterio de refutación: si perdemos peticiones por agotamiento del depósito de conexiones, eso nos diría que los tiempos de espera están mal calibrados frente al presupuesto de latencia. Sabemos de antemano qué aprenderíamos si sale mal.
+#### Bloque 5 — Experimentos · Angie · 7:00 – 8:40
 
-[Pantalla: sección 5.13, resumen del programa]
+[Pantalla: sección 5.1]
 
-Calificamos la incertidumbre de cada punto de sensibilidad y eso define cuándo se ejecuta cada uno. Cuatro resultaron de incertidumbre alta y forman el Sprint 1 de diseño, en las semanas cinco y seis. Un ejemplo de cómo esa calificación cambió un experimento: en integridad de pólizas, el bloqueo de escritura del almacenamiento es una garantía de la plataforma, así que ahí no tenemos incertidumbre. La incertidumbre está en si nuestra propia ruta de auditoría detecta el intento en menos de un segundo. Reenfocamos el experimento hacia eso.
+Diseñamos tres experimentos. Y quiero explicar por qué son tres, porque esa fue la decisión más importante de esta sección.
 
-El programa completo son ochenta y dos horas. Cuarenta y dos las comprometemos en el Sprint 1, que es exactamente nuestra capacidad, repartidas entre los cuatro integrantes: once, once, diez y diez horas.
+Partimos de una distinción: una prueba verifica que el sistema hace lo especificado; un experimento valida una hipótesis de diseño sobre la que tenemos incertidumbre, construyendo una porción real del diseño.
 
-[Pantalla: sección 6, refinamiento de estrategia de pruebas]
+[Pantalla: sección 5.3, criterio]
 
-Refinamos también la estrategia de pruebas. El cambio principal es que incorporamos la prueba de arquitectura como nivel propio, distinto de la prueba de integración, porque su criterio de éxito es una medida y no una aserción.
+El número sale de dos restricciones. La primera es de calendario: los experimentos se construyen en las semanas seis y siete, que son las mismas dos semanas de toda la experiencia de usuario. Haciendo la cuenta, quedan unas treinta y seis horas para experimentos. Los tres nuestros suman treinta y cuatro.
 
----
+La segunda es de utilidad: solo se experimenta donde hay incertidumbre real. Evaluamos los nueve puntos de sensibilidad y solo cuatro resultaron de incertidumbre alta, y de esos uno queda cubierto por otro.
 
-### Bloque 5 — Tablero y cierre · Jazmin · 7:15 – 8:00
+[Pantalla: sección 5.7, descartados]
 
-[Pantalla: tablero de Jira con el backlog descompuesto]
+Los cinco que descartamos quedan documentados con su razón. Un caso que ilustra el criterio: la integridad de las pólizas. El bloqueo de escritura del almacenamiento es una garantía de la plataforma, así que ahí no tenemos incertidumbre. La incertidumbre está en si nuestra propia ruta de auditoría detecta el intento en menos de un segundo, y eso es una prueba de configuración, no un experimento.
 
-Este es el tablero con el backlog ya descompuesto. Se ven las épicas, la estimación en puntos, la prioridad de cada historia y la asociación de cada historia de arquitectura con su escenario de calidad.
+[Pantalla: sección 5.5, EXP-02]
 
-[Pantalla: sección 7.2, compromiso por sprint]
+Cada experimento tiene criterio de refutación. Este es el de degradación elegante. Si perdemos peticiones por agotamiento del depósito de conexiones, eso nos diría que los tiempos de espera están mal calibrados frente al presupuesto de latencia. Sabemos de antemano qué aprenderíamos si sale mal, y qué decisión cambiaríamos.
 
-Y este es el compromiso por sprint para las cuatro semanas que quedan: dieciocho, dieciocho, diecinueve y veintiún puntos, setenta y seis en total, que es exactamente nuestra capacidad. No dejamos holgura, y lo asumimos de forma explícita: si aparece un imprevisto, sacamos alcance en vez de extender horas.
+#### Bloque 6 — Capacidad, plan y tablero · Jazmin · 8:40 – 10:00
 
-En la semana cinco arrancamos con los experimentos de latencia y de degradación elegante, junto con la construcción del núcleo de cotización.
+[Pantalla: sección 7.2]
 
-Gracias.
+Cierro con la capacidad, que es lo que nos costó puntos la semana pasada y ahora está completo dentro del entregable.
 
----
+Cuatro personas por doce horas son cuarenta y ocho horas semanales. A dos horas por punto son veinticuatro puntos. Con un factor de carga del ochenta por ciento quedan **diecinueve puntos por semana**.
 
-### Lista de verificación antes de grabar
+[Pantalla: sección 7.5]
 
-- [ ] Los tres diagramas se ven nítidos a pantalla completa
-- [ ] El tablero de Jira está actualizado con las 62 historias antes de grabar el bloque 5
-- [ ] Los documentos están publicados y sus enlaces funcionan
+Y acá está la parte importante. En el Proyecto Final 1 no construimos historias de usuario: construimos arquitectura, experimentos y experiencia de usuario. Las historias se implementan en los tres sprints del Proyecto Final 2, que son siete semanas. Diecinueve por siete son **ciento treinta y tres puntos**.
+
+Nuestro backlog son doscientos veintinueve. No caben. Y lo decimos sin rodeos: forzar los números habría exigido reducir las estimaciones a la mitad, produciendo un plan que se incumple en el primer sprint. Comprometemos treinta historias, ciento treinta y tres puntos, holgura cero. Ante un imprevisto sacamos alcance, no extendemos horas.
+
+[Pantalla: sección 7.7, viabilidad]
+
+Verificamos además que la arquitectura sea construible, porque los tutores validarán que el código del Proyecto Final 2 se conforme a ella. Construimos cinco de los siete servicios del núcleo y tres de los cinco adaptadores; el resto se simula o se difiere, y está declarado.
+
+[Pantalla: tablero de Jira filtrado]
+
+Y este es el tablero, con las sesenta y dos historias, sus estimaciones y sus etiquetas.
+
+En la semana cinco cerramos la arquitectura, terminamos el diseño de los experimentos y arrancamos los wireframes. Gracias.
+
+### 8.4 Lista de verificación antes de grabar
+
+- [ ] Las diez figuras se ven nítidas a pantalla completa
+- [ ] El tablero de Jira está actualizado antes de grabar el bloque 6
 - [ ] Cada presentador probó su bloque en voz alta y cabe en su tiempo
-- [ ] La grabación tiene audio de un solo canal y volumen parejo entre presentadores
-- [ ] El video queda subido con acceso por enlace y ese enlace está pegado en el documento de entregables
-
-
----
+- [ ] Audio de un solo canal y volumen parejo entre presentadores
+- [ ] El video queda subido con acceso por enlace y ese enlace está pegado en §8.1 y §10.1
 
 ## 9. Corrección de la entrega de la semana 3
 

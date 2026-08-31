@@ -962,10 +962,12 @@ Las 32 historias diferidas —administración de pólizas, gestión completa de 
 
 | Sprint | Semanas | Foco | Historias | Puntos |
 |---|---|---|---|---|
-| **Sprint 1** | 2 | Cimientos de arquitectura: persistencia, caché, bus de eventos y tokenización. Autenticación web | 8 | 38 |
-| **Sprint 2** | 2 | Recorrido de cotización completo con Open Finance. Latencia y degradación elegante | 10 | 38 |
-| **Sprint 3** | 3 | Suscripción, emisión y pagos. Onboarding móvil y billetera. Tolerancia a fallos e integridad | 12 | 57 |
+| **Sprint 1** | 2 | Cimientos de arquitectura: persistencia, caché, bus de eventos, tokenización y consentimientos. Autenticación web completa | 9 | 38 |
+| **Sprint 2** | 2 | Recorrido de cotización completo con Open Finance. Latencia del scoring y tolerancia a fallos | 9 | 38 |
+| **Sprint 3** | 3 | Suscripción, emisión y pagos. Onboarding móvil y billetera. Parametrización, pasarelas, integridad y sincronización offline | 12 | 57 |
 | **Total** | **7** | | **30** | **133** |
+
+Cada sprint se llena hasta su capacidad exacta. El detalle historia por historia está en el tablero: filtrando por `sprint-1`, `sprint-2` o `sprint-3` se obtiene el contenido de cada uno, y por `valvula-escape` las siete historias declaradas en §7.7.
 
 El Sprint 1 concentra historias de arquitectura porque son prerrequisito de todo lo demás: sin persistencia, caché y bus no hay dónde apoyar los recorridos funcionales. El Sprint 3 es más largo y absorbe más puntos, lo que da margen para el ajuste que casi siempre exige el cierre.
 
@@ -1074,10 +1076,12 @@ El tablero es un proyecto gestionado por el equipo, cuya jerarquía tiene tres n
 | `arquitectura` | Marca las once historias de arquitectura |
 | `canal-web` · `canal-movil` · `canal-api` | Canal donde se implementa |
 | `prioridad-alta` · `prioridad-media` · `prioridad-baja` | Prioridad asignada |
-| `proyecto-1` · `proyecto-2` | Si entra en el alcance del Proyecto Final 1 o se difiere al 2 |
+| `sprint-1` · `sprint-2` · `sprint-3` | Sprint del Proyecto Final 2 en que se construye |
+| `diferido` | Fuera del alcance comprometido |
+| `valvula-escape` | Historia declarada como primera en salir ante un atraso (§7.7) |
 | `EXP-01` … `EXP-03` | Historia de arquitectura que lleva ese experimento |
 
-Para ver únicamente el alcance comprometido de este proyecto, filtrar por `proyecto-1`: devuelve 17 historias y 76 puntos, que es exactamente el compromiso por sprint de §7.7.
+Para ver el alcance comprometido, filtrar por `sprint-1`, `sprint-2` y `sprint-3`: devuelve 30 historias y 133 puntos, exactamente el compromiso de §7.6. Filtrando por `diferido` se obtienen las 32 restantes con sus 96 puntos.
 
 ---
 

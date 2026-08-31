@@ -159,9 +159,9 @@ Etiquetas de función (`FE-01` a `FE-10`), canal, prioridad, alcance y experimen
 **Estado:** Hecho
 El artefacto del ASR-3.3 decía AsyncStorage, que pertenece a React Native. Se reemplaza por Room con SQLCipher, acorde al stack Kotlin nativo adoptado el 19 de agosto.
 
-### T-29 · Reetiquetar el alcance de las historias funcionales
-**Estado:** PENDIENTE
-Las 51 historias funcionales conservan las etiquetas `proyecto-1` / `proyecto-2` del encuadre anterior. Con el marco actual deberían ser `sprint-1` / `sprint-2` / `sprint-3` / `diferido`. Las once de arquitectura ya están corregidas.
+### T-29 · Reetiquetar el alcance de todo el backlog
+**Estado:** Hecho
+Reemplazar las etiquetas `proyecto-1` / `proyecto-2` del encuadre anterior por `sprint-1`, `sprint-2`, `sprint-3` y `diferido`, en las 62 historias. Cada sprint queda lleno hasta su capacidad exacta: 38, 38 y 57 puntos. Se agrega además la etiqueta `valvula-escape` a las siete historias declaradas en §7.7 como primeras en salir ante un atraso.
 
 ---
 
@@ -202,7 +202,7 @@ Push de `feature/semana-4` y crear el PR manualmente:
 | Documentación | T-01 a T-09 | 9 | 0 |
 | Corrección semana 3 | T-10 a T-13 | 4 | 0 |
 | Diagramas | T-14 a T-23 | 10 | 0 |
-| Tablero Jira | T-24 a T-29 | 5 | 1 |
+| Tablero Jira | T-24 a T-29 | 6 | 0 |
 | Video | T-30 a T-32 | 1 | 2 |
 | Cierre | T-33 a T-34 | 0 | 2 |
-| **Total** | **34** | **29** | **5** |
+| **Total** | **34** | **30** | **4** |

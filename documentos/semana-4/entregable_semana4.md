@@ -1,43 +1,22 @@
 ---portada
-institucion: Universidad de los Andes
-facultad: Facultad de Ingeniería · Departamento de Ingeniería de Sistemas y Computación
-programa: Maestría en Ingeniería de Software
-curso: MISW4501 — Proyecto Final
-titulo: Avance Semana 4
-subtitulo: Modelos de arquitectura, patrones de diseño, experimentos, estrategia de pruebas y plan de trabajo
-proyecto: Proyecto Solventa — Aseguradora digital sobre Finanzas Abiertas
-entrega: Avance de entrega  ·  el bloque de arquitectura y experimentos cierra en la semana 5
-grupo: Grupo 2
-integrantes: Jazmin Natalia Córdoba Puerto ~ Gerente del proyecto — Usabilidad y entrega|Juan Esteban Mejía Izasa ~ Web front, integración de APIs y pagos|Miguel Alejandro Gómez Alarcón ~ Arquitectura, Open Finance, KYC, rendimiento y seguridad|Angie Natalia Arandio Niño ~ Dominio, web back, móvil y pruebas unitarias
+institucion: Solventa
+facultad: Aseguradora digital sobre Finanzas Abiertas y Datos Abiertos
+programa: Dirección de Arquitectura
+curso: Documento de Arquitectura de Software
+titulo: Arquitectura de Solventa
+subtitulo: Estilo, modelos, patrones de diseño, programa de experimentación y plan de construcción
+proyecto: Versión 1.0
+entrega: Documento técnico
+grupo: Equipo de arquitectura
+integrantes: Jazmin Natalia Córdoba Puerto ~ Gerencia de proyecto, usabilidad y entrega|Juan Esteban Mejía Izasa ~ Web front, integración de APIs y pagos|Miguel Alejandro Gómez Alarcón ~ Arquitectura, Open Finance, KYC, rendimiento y seguridad|Angie Natalia Arandio Niño ~ Dominio, web back, móvil y pruebas
 fecha: Bogotá D.C. · 30 de agosto de 2026
----
-
-## Mapa de la entrega
-
-Este documento contiene **la totalidad de los entregables de la semana 4**. Cada ítem de la rúbrica se encuentra completo dentro de estas páginas; no se remite a archivos externos para ningún contenido calificable.
-
-**Sobre el alcance de esta entrega.** Las semanas 4 y 5 forman un solo bloque de trabajo cuyo entregable final es la semana 5. Este documento es el **avance de la semana 4**, y su foco está donde el curso indica que debe estar esta semana: la arquitectura. El diseño de los experimentos se presenta ya completo en su estructura, y la semana 5 se reserva para ajustar la arquitectura si el diseño detallado revela una carencia, cerrar la versión final de las fichas de experimento e incorporar los wireframes. Lo que se detalla en §7.8.
-
-| # | Ítem de la rúbrica | Puntos | Dónde está en este documento |
-|---|---|---|---|
-| 1 | **Hoja de trabajo: modelos de arquitectura, patrones detallados y experimentos** | **70** | |
-| 1a | Modelos de arquitectura — vista funcional, de despliegue y de información | 20 | §2.1 declara el estilo de arquitectura y lo justifica; §2.2 a §2.5 desarrollan seis modelos: contexto, funcional, componente-conector en notación UML, despliegue, información y dominio |
-| 1b | Diseño detallado con patrones y razonamiento, en relación con los ASR | 30 | §3: vista de asignación de patrones, matriz de trazabilidad patrón→táctica→componente→ASR, estructura de los patrones críticos y los doce patrones en detalle. §4: decisiones y alternativas descartadas |
-| 1c | Propuesta de experimentos — propósito, respuesta esperada, tecnologías y esfuerzo | 20 | §5: criterio para decidir cuántos experimentos, tres fichas completas y las cinco alternativas evaluadas y descartadas con su razón |
-| 2 | **Refinamiento de la estrategia de pruebas** | **10** | §6 |
-| 3 | **Actualización del plan de trabajo y tablero** | **10** | §7: qué es un punto de historia, cálculo de la capacidad del equipo, dónde se gasta en el Proyecto Final 1, compromiso del backlog contra los tres sprints del Proyecto Final 2, viabilidad de construcción y estado del tablero |
-| 4 | **Video con evidencias** | **10** | §8, con el enlace y el guion completo por presentador |
-| — | *Corrección de la entrega de la semana 3* | *Reentrega* | §9, con remisión al documento de historias de usuario v2.0 |
-
-**Documento que acompaña esta entrega.** El backlog completo de 62 historias de usuario con sus criterios de aceptación, el cálculo de la capacidad del equipo y el corte de alcance entre Proyecto Final 1 y 2 están en `historias_de_usuario_v2.docx`, que constituye la corrección del entregable de la semana 3. En §9 se resume qué se corrigió y dónde verificarlo.
-
 ---
 
 ## 1. Contexto y atributos de calidad que dirigen el diseño
 
 Solventa es una aseguradora digital nativa en la nube construida sobre Finanzas Abiertas y Datos Abiertos. Su promesa de negocio —cotizar, suscribir, emitir y pagar siniestros de forma casi instantánea, embebiendo el seguro en el punto de necesidad del cliente— impone exigencias que no se resuelven eligiendo bien un framework, sino decidiendo bien la estructura del sistema.
 
-El diseño que se presenta en este documento no parte de una preferencia tecnológica sino de los nueve escenarios de calidad (ASR) definidos en la semana 3. Cada decisión estructural que se documenta a continuación existe porque hay al menos un ASR que la exige.
+El diseño que se presenta en este documento no parte de una preferencia tecnológica sino de los nueve escenarios de calidad (ASR) definidos para Solventa. Cada decisión estructural que se documenta a continuación existe porque hay al menos un ASR que la exige.
 
 | ASR | Atributo | Medida de respuesta | Consecuencia arquitectural |
 |---|---|---|---|
@@ -89,7 +68,7 @@ Antes de descomponer el sistema conviene fijar su frontera: quién lo usa, de qu
 
 **Seis actores.** El cliente asegurado es el usuario principal, pero no el único que impone requisitos: el regulador exige reportes trazables, el perito necesita acceso acotado a la evidencia de un siniestro, y el socio de distribución consume la plataforma por API sin pasar nunca por la interfaz. Ese último es el que obliga a que la API B2B sea un canal de primera clase y no un añadido.
 
-**Cinco sistemas externos, con distinto grado de compromiso.** La distinción importa para el alcance: en el Proyecto Final 2 se integran realmente Open Finance, las pasarelas de pago y KYC/AML, porque son los que introducen incertidumbre arquitectural. Open Data y firma electrónica se simulan: su integración real no aporta información de diseño nueva y su costo compite con el recorrido crítico.
+**Cinco sistemas externos, con distinto grado de compromiso.** La distinción importa para el alcance: en la fase de construcción se integran realmente Open Finance, las pasarelas de pago y KYC/AML, porque son los que introducen incertidumbre arquitectural. Open Data y firma electrónica se simulan: su integración real no aporta información de diseño nueva y su costo compite con el recorrido crítico.
 
 **Lo que salió del contexto.** Las versiones anteriores incluían reaseguradoras e IoT/telemetría como sistemas externos. Se retiran porque no aparecen en ninguna historia del backlog comprometido, y un contexto que muestra integraciones que nadie va a construir describe un sistema que no existe.
 
@@ -129,7 +108,7 @@ La vista anterior sirve para orientarse, pero sus flechas no dicen si una intera
 
 **Por qué esta notación y no cajas genéricas.** Los puertos y las interfaces son exactamente donde vive el argumento de modificabilidad del ASR-2.1. El componente `:Pagos` declara el puerto `CobrarPrima` en lenguaje de dominio —autorizar, confirmar, reversar— y no conoce ninguna pasarela concreta; los adaptadores implementan `PasarelaPago`. Integrar una pasarela nueva no puede obligar a modificar el núcleo porque no existe ninguna arista que salga de él hacia afuera. Con cajas genéricas eso hay que afirmarlo en prosa; en notación UML se lee en el diagrama.
 
-**Los ocho contratos del sistema.** El modelo nombra las interfaces que constituyen la frontera entre componentes: `APICliente`, `Cotizar`, `Scoring`, `Tokenizar`, `CobrarPrima`, `EmitirPoliza`, `PerfilExterno`, `PasarelaPago` y `VerificarIdentidad`. Esa lista es el contrato que el Proyecto Final 2 debe respetar: los tutores validarán que el código se conforme a esta arquitectura, y estas interfaces son la parte verificable de ese compromiso.
+**Los ocho contratos del sistema.** El modelo nombra las interfaces que constituyen la frontera entre componentes: `APICliente`, `Cotizar`, `Scoring`, `Tokenizar`, `CobrarPrima`, `EmitirPoliza`, `PerfilExterno`, `PasarelaPago` y `VerificarIdentidad`. Esa lista es el contrato que la fase de construcción debe respetar: la revisión de arquitectura validará que el código se conforme a esta arquitectura, y estas interfaces son la parte verificable de ese compromiso.
 
 ### 2.4 Vista de despliegue
 
@@ -141,7 +120,7 @@ La vista de despliegue muestra dónde se ejecuta cada componente y qué mecanism
 
 **Datos.** RDS PostgreSQL opera en configuración multi-AZ con réplica en espera y promoción automática. La replicación síncrona hacia la zona B es lo que sostiene el RPO de 30 segundos. Redis y los brokers de Kafka también están replicados entre zonas.
 
-**Región de recuperación.** Una réplica de lectura entre regiones hacia us-west-2 y replicación entre regiones del almacenamiento de objetos cubren el escenario de pérdida completa de la región principal. Este escenario está fuera del alcance de los experimentos del Proyecto Final 1, pero se documenta porque condiciona decisiones de diseño que sí se toman ahora, como no depender de identificadores generados localmente por instancia.
+**Región de recuperación.** Una réplica de lectura entre regiones hacia us-west-2 y replicación entre regiones del almacenamiento de objetos cubren el escenario de pérdida completa de la región principal. Este escenario está fuera del alcance de los experimentos de la fase de diseño, pero se documenta porque condiciona decisiones de diseño que sí se toman ahora, como no depender de identificadores generados localmente por instancia.
 
 **Servicios regionales.** El servicio de gestión de llaves cifra los datos en reposo y firma las pólizas emitidas; el almacenamiento de objetos con bloqueo de escritura garantiza que un registro de auditoría no pueda alterarse ni siquiera con credenciales administrativas; la observabilidad centralizada recoge métricas y trazas distribuidas de todos los servicios.
 
@@ -203,18 +182,6 @@ Esta sección documenta cada patrón estructural adoptado. Para cada uno se indi
 | P11 | Cliente con prioridad al modo desconectado | ASR-3.3 | App móvil · BFF Móvil |
 | P12 | Autoescalado con comprobaciones de salud | ASR-3.2 | EKS |
 
-### 3.2 Marco: patrón, táctica y su relación con el ASR
-
-Los tres conceptos operan en niveles distintos y conviene no confundirlos, porque el profesor evalúa la relación entre ellos:
-
-| Concepto | Qué es | Ejemplo en Solventa |
-|---|---|---|
-| **Atributo de calidad (ASR)** | La propiedad que el sistema debe exhibir, expresada como escenario medible | ASR-1.1: p95 < 200 ms con 500 req/min |
-| **Táctica** | Una decisión de diseño elemental que influye sobre un atributo de calidad. Es el «qué se hace» | Mantener múltiples copias de datos computados |
-| **Patrón** | Una composición de tácticas con una estructura conocida y contrapartidas documentadas. Es el «cómo se materializa» | Cache-Aside, que compone esa táctica con una política de vencimiento y una de escritura |
-
-La cadena de razonamiento que sigue este documento es siempre la misma: **un ASR exige una propiedad → esa propiedad se consigue con una o varias tácticas → esas tácticas se materializan en un patrón → ese patrón se asigna a componentes concretos → un experimento mide si funcionó.**
-
 ### 3.3 Vista de asignación de patrones
 
 Esta vista muestra dónde vive cada patrón dentro de la arquitectura. Las anotaciones entre llaves indican el patrón que gobierna ese componente o esa capa.
@@ -244,7 +211,7 @@ Cada fila se lee así: el patrón materializa esas tácticas, vive en esos compo
 | **P9** Tokenización | Limitar el acceso por custodia centralizada · Cifrar en tránsito y reposo · Auditar cada acceso | Tokenización · Perfilamiento · Consentimientos | ASR-4.1 | EXP-03 |
 | **P10** Almacenamiento inmutable con firma | Verificar integridad · Registro no repudiable · Autorizar por token de servicio | Pólizas · Object Storage · Auditoría | ASR-4.2 | Prueba de configuración |
 | **P11** Cliente offline-first | Mantener copia local · Sincronización diferida · Acotar la vigencia del dato replicado | App móvil · BFF Móvil | ASR-3.3 | Prototipo móvil |
-| **P12** Multi-AZ con autoescalado | Redundancia activa · Replicación síncrona · Detección por comprobación de salud | EKS · RDS · MSK | ASR-3.2 | Proyecto Final 2 |
+| **P12** Multi-AZ con autoescalado | Redundancia activa · Replicación síncrona · Detección por comprobación de salud | EKS · RDS · MSK | ASR-3.2 | fase de construcción |
 
 **Cobertura.** Los nueve ASR quedan cubiertos por al menos un patrón, y los doce patrones tienen al menos un ASR que los justifica. No hay patrones huérfanos —adoptados sin un requisito que los exija— ni ASR sin mecanismo asignado.
 
@@ -413,18 +380,13 @@ Documentar lo que se descartó y por qué es tan informativo como documentar lo 
 
 ---
 
-## 5. Propuesta de experimentos de arquitectura
+## 5. Programa de experimentación de arquitectura
 
-### 5.1 Qué es un experimento de arquitectura y qué no lo es
+### 5.1 Alcance del programa de experimentación
 
-Un experimento de arquitectura no es una prueba de software. Una prueba verifica que el sistema hace lo que se especificó. Un experimento **valida una hipótesis de diseño sobre la cual el equipo tiene incertidumbre**, construyendo una porción real del diseño para evaluar su viabilidad y medir si la decisión tomada permite cumplir el requisito de calidad objetivo.
+Un experimento de arquitectura valida una hipótesis de diseño sobre la cual el equipo tiene incertidumbre, construyendo una porción real del diseño para medir si la decisión tomada produce la propiedad de calidad que se le atribuyó. No sustituye a las pruebas: las antecede.
 
-De esa definición se desprenden cuatro consecuencias que gobiernan el diseño de esta sección:
-
-1. **El experimento construye una porción del diseño, no un banco de pruebas desechable.** Los microservicios y conectores que se levantan son los mismos que quedan en el producto. Lo que se recorta es el alcance funcional, no la fidelidad arquitectural.
-2. **El experimento debe medir de forma precisa.** Una conclusión del tipo «funcionó bien» no reduce incertidumbre. Cada experimento define de antemano la métrica, el instrumento que la captura y el umbral que separa el éxito del fracaso.
-3. **Si el análisis no es favorable, se cambia la decisión de diseño y se experimenta de nuevo.** Por eso cada ficha declara cuál es la decisión alternativa que se adoptaría ante un resultado adverso. Un experimento sin plan B no es un experimento: es una demostración.
-4. **Solo se experimenta donde hay incertidumbre.** Si el punto de sensibilidad no genera incertidumbre en el equipo, experimentarlo consume esfuerzo sin producir información.
+Tres reglas gobiernan este programa. La porción que se construye es código de producción, no un banco de pruebas desechable. Cada experimento define de antemano la métrica, el instrumento y el umbral que separa el éxito del fracaso. Y cada uno declara la decisión alternativa que se adoptaría ante un resultado adverso, porque un experimento sin plan B es una demostración.
 
 ### 5.2 Puntos de sensibilidad, incertidumbre y selección
 
@@ -437,21 +399,21 @@ Un **punto de sensibilidad** es una decisión de arquitectura de la que depende 
 | ASR-2.1 | Que la definición del puerto de pagos sea lo bastante general para absorber una pasarela con contrato distinto | SOL-20 | Media | Verificación estática |
 | ASR-2.2 | Que el motor de rating sea genuinamente agnóstico al ramo | SOL-21 | Media | Verificación estática |
 | ASR-3.1 | Que la ruta de respaldo hacia PostgreSQL absorba el tráfico del caché caído sin propagar la saturación | SOL-29 | **Alta** | Instrumentado dentro de EXP-02 |
-| ASR-3.2 | Que el esquema multi-zona opere de hecho como activo-activo y no como activo-pasivo encubierto | SOL-43 | Media-alta | Diferido a Proyecto Final 2 |
+| ASR-3.2 | Que el esquema multi-zona opere de hecho como activo-activo y no como activo-pasivo encubierto | SOL-43 | Media-alta | Diferido a fase de construcción |
 | ASR-3.3 | El protocolo de sincronización y la resolución de conflictos entre almacenamiento local y servidor | SOL-44 | Media | Prototipo móvil, semanas 6–7 |
 | ASR-4.1 | Que la tokenización centralizada no introduzca latencia inaceptable ni deje rutas por donde el dato original se filtre | SOL-23 | **Alta** | EXP-03 |
 | ASR-4.2 | Que la ruta de auditoría detecte y registre una alteración en menos de 1 segundo | SOL-45 | Media | Prueba de configuración |
 
-**Cobertura sin experimentar todo.** Los nueve puntos de sensibilidad quedan atendidos, pero por mecanismos distintos y proporcionados a su incertidumbre: tres con experimento propio, uno instrumentado dentro de otro experimento, dos por verificación estática del grafo de dependencias, uno con el prototipo móvil, uno con una prueba de configuración y uno diferido al Proyecto Final 2. El criterio que decide cuál va a cada categoría se explica en §5.3.
+**Cobertura sin experimentar todo.** Los nueve puntos de sensibilidad quedan atendidos, pero por mecanismos distintos y proporcionados a su incertidumbre: tres con experimento propio, uno instrumentado dentro de otro experimento, dos por verificación estática del grafo de dependencias, uno con el prototipo móvil, uno con una prueba de configuración y uno diferido a la fase de construcción. El criterio que decide cuál va a cada categoría se explica en §5.3.
 
 ### 5.3 Cuántos experimentos y con qué criterio
 
-El curso no fija un número de experimentos: cada equipo debe justificar el suyo. El criterio del equipo combina una restricción de calendario con una regla de utilidad.
+El número de experimentos no está fijado de antemano: el equipo lo justifica. El criterio combina una restricción de calendario con una regla de utilidad.
 
-**La restricción de calendario.** El diseño de los experimentos ocurre en las semanas 4 y 5, pero su **construcción y ejecución** ocurre en las semanas 6 y 7, que son las mismas dos semanas en que debe construirse toda la experiencia de usuario del prototipo web y móvil. No son dos semanas dedicadas a experimentar: son dos semanas compartidas.
+**La restricción de calendario.** El diseño de los experimentos se cierra el 6 de septiembre, pero su **construcción y ejecución** ocurre entre el 7 y el 20 de septiembre, que son las mismas dos semanas en que debe construirse toda la experiencia de usuario del prototipo web y móvil. No son dos semanas dedicadas a experimentar: son dos semanas compartidas.
 
 ```
-Capacidad del equipo, semanas 6 y 7   2 semanas × 19 pts   =  38 pts  ≈  76 h
+Capacidad del equipo, 7 al 20 de septiembre   2 semanas × 19 pts  =  38 pts  ≈  76 h
 Reserva para experiencia de usuario   (mockups, wireframes, prototipo)  ≈  40 h
 ──────────────────────────────────────────────────────────────────────────────
 Disponible para construir experimentos                                 ≈  36 h
@@ -687,11 +649,11 @@ Se diseñaron y evaluaron cinco experimentos adicionales que finalmente no se pr
 |---|---|---|
 | **Caída del caché** — verificar que la ruta de respaldo hacia PostgreSQL absorba el tráfico sin propagar la saturación | ASR-3.1 | Se cubre parcialmente en el EXP-02: el interruptor de circuito y el mamparo que se calibran ahí son los mismos mecanismos que operan ante la caída de Redis. Se instrumenta el EXP-02 para registrar también ese escenario, en lugar de montar un experimento propio. Ahorra 8 horas |
 | **Modificabilidad de los puntos de extensión** — medir el costo de integrar una pasarela nueva | ASR-2.1 · ASR-2.2 | Su medida es el conjunto de archivos que cambian, y eso se comprueba revisando el grafo de dependencias y el registro del control de versiones. No requiere montaje ni ejecución: es una verificación estática que se hace durante la revisión de código |
-| **Pérdida de una zona de disponibilidad** | ASR-3.2 | Requiere infraestructura multi-zona en la nube con costo real y un servicio de inyección de fallas. El presupuesto del curso no lo cubre. Se difiere al Proyecto Final 2, donde la infraestructura ya estará provisionada |
-| **Continuidad del cliente móvil sin conexión** | ASR-3.3 | El prototipo móvil que se construye en las semanas 6 y 7 como parte de la experiencia de usuario ya ejercita este escenario. Validarlo ahí evita duplicar el montaje del emulador |
+| **Pérdida de una zona de disponibilidad** | ASR-3.2 | Requiere infraestructura multi-zona en la nube con costo real y un servicio de inyección de fallas. El presupuesto de esta fase no lo cubre. Se difiere a la fase de construcción, donde la infraestructura ya estará provisionada |
+| **Continuidad del cliente móvil sin conexión** | ASR-3.3 | El prototipo móvil que se construye como parte de la experiencia de usuario ya ejercita este escenario. Validarlo ahí evita duplicar el montaje del emulador |
 | **Integridad de pólizas emitidas** | ASR-4.2 | El bloqueo de escritura del almacenamiento de objetos es una garantía documentada de la plataforma y sobre eso el equipo no tiene incertidumbre. Lo que sí es incierto —el tiempo de detección de la ruta de auditoría propia— se verifica con una prueba de configuración dentro de la suite de seguridad, no con un experimento |
 
-> Esta tabla responde a una distinción que el curso subraya: **un experimento valida una hipótesis de diseño, no el funcionamiento de una herramienta.** Ninguno de los tres experimentos propuestos prueba si una tecnología hace lo que promete; los tres prueban si una decisión del equipo produce la propiedad de calidad que se le atribuyó.
+> Esta tabla responde a una distinción fundamental: **un experimento valida una hipótesis de diseño, no el funcionamiento de una herramienta.** Ninguno de los tres experimentos propuestos prueba si una tecnología hace lo que promete; los tres prueban si una decisión del equipo produce la propiedad de calidad que se le atribuyó.
 
 ### 5.8 Ficha consolidada de tecnología
 
@@ -732,7 +694,7 @@ Tecnología completa del programa de experimentación. La columna de familiarida
 
 ### 5.9 Distribución de actividades por integrante
 
-Reparto de las 34 horas de construcción y ejecución de los tres experimentos, durante las semanas 6 y 7.
+Reparto de las 34 horas de construcción y ejecución de los tres experimentos, entre el 7 y el 20 de septiembre.
 
 | Integrante | Actividades asignadas | Experimentos | Horas |
 |---|---|---|---|
@@ -744,22 +706,22 @@ Reparto de las 34 horas de construcción y ejecución de los tres experimentos, 
 
 > Cada integrante participa en al menos dos experimentos y combina construcción con medición, de modo que nadie quede solo construyendo ni solo midiendo. La redacción del informe se asigna explícitamente porque un experimento cuyo resultado no se documenta no reduce la incertidumbre del equipo, solo la de quien lo ejecutó.
 >
-> Estas 34 horas conviven en las semanas 6 y 7 con la construcción de la experiencia de usuario, para la que se reservan unas 40 horas. La suma se aproxima a las 76 horas efectivas de esas dos semanas, sin holgura.
+> Estas 34 horas conviven con la construcción de la experiencia de usuario, para la que se reservan unas 40 horas. La suma se aproxima a las 76 horas efectivas de esas dos semanas, sin holgura.
 
 ### 5.10 Resumen y calendario del programa
 
 | Experimento | ASR | Historia | Incertidumbre | Esfuerzo | Diseño | Construcción y ejecución |
 |---|---|---|---|---|---|---|
-| EXP-01 Presupuesto de latencia | ASR-1.1 | SOL-28 | Alta | 10 h | Semanas 4–5 | Semana 6 |
-| EXP-02 Degradación elegante | ASR-1.2 · ASR-3.1 | SOL-37 · SOL-29 | Alta | 12 h | Semanas 4–5 | Semanas 6–7 |
-| EXP-03 Tokenización | ASR-4.1 | SOL-23 | Alta | 12 h | Semanas 4–5 | Semana 7 |
+| EXP-01 Presupuesto de latencia | ASR-1.1 | SOL-28 | Alta | 10 h | hasta 6 sep | 7 – 13 sep |
+| EXP-02 Degradación elegante | ASR-1.2 · ASR-3.1 | SOL-37 · SOL-29 | Alta | 12 h | hasta 6 sep | 7 – 20 sep |
+| EXP-03 Tokenización | ASR-4.1 | SOL-23 | Alta | 12 h | hasta 6 sep | 14 – 20 sep |
 | **Total** | | | | **34 h** | | |
 
-**Cómo se reparte el calendario.** El diseño de los tres experimentos ocurre en las semanas 4 y 5 —esta entrega contiene la versión de avance y la semana 5 cierra la versión final—. La construcción y ejecución ocurre en las semanas 6 y 7, compartidas con la experiencia de usuario. Los resultados y el ajuste de las decisiones de diseño que se deriven de ellos se consolidan en la semana 8.
+**Cómo se reparte el calendario.** El diseño de los tres experimentos se cierra el 6 de septiembre. La construcción y ejecución ocurre entre el 7 y el 20 de septiembre, compartida con la construcción de la experiencia de usuario. Los resultados y el ajuste de las decisiones de diseño que se deriven de ellos se consolidan en la última semana de la fase.
 
 | Semana | Experimentos | Experiencia de usuario |
 |---|---|---|
-| 4 | Diseño — versión de avance *(esta entrega)* | — |
+| 4 | Diseño — versión de avance  | — |
 | 5 | Diseño — versión final | Definición de recorridos y wireframes de baja fidelidad |
 | 6 | Construcción y ejecución de EXP-01 y EXP-02 | Mockups de alta fidelidad del recorrido web |
 | 7 | Ejecución de EXP-02 y EXP-03 | Prototipo móvil, incluida la consulta sin conexión |
@@ -768,17 +730,9 @@ Reparto de las 34 horas de construcción y ejecución de los tres experimentos, 
 
 ---
 
-## 6. Refinamiento de la estrategia de pruebas
+## 6. Estrategia de pruebas
 
-La estrategia de pruebas versión 2.0, entregada en la semana 3, se refina en tres puntos como consecuencia del diseño detallado de este documento.
-
-### 6.1 Cambios respecto a la versión 2.0
-
-| # | Cambio | Motivo |
-|---|---|---|
-| 1 | Se incorpora el nivel de **prueba de arquitectura** como categoría propia, distinta de la prueba de integración | Un experimento de arquitectura valida una propiedad de calidad, no una funcionalidad; mezclarlo con las pruebas de integración oculta que su criterio de éxito es una medida y no una aserción de igualdad |
-| 2 | Se alinean los objetivos de cobertura con el backlog descompuesto de 62 historias | La versión 2.0 se escribió contra un backlog de 20 historias; los umbrales por componente se redistribuyen según el nuevo reparto |
-| 3 | Se elimina toda referencia residual al stack anterior en los documentos fuente | Los entregables ya se migraron a Angular y Kotlin nativo, pero los archivos fuente en el repositorio conservan referencias al stack descartado, lo que arrastra el error a cada versión nueva |
+La estrategia de pruebas se refina en dos puntos como consecuencia del diseño detallado de este documento.
 
 ### 6.2 Niveles de prueba consolidados
 
@@ -787,7 +741,7 @@ La estrategia de pruebas versión 2.0, entregada en la semana 3, se refina en tr
 | Unitaria | Lógica de una unidad aislada | pytest (backend) · Jasmine y Karma (web) · JUnit 5 y MockK (móvil) | 80% de líneas en backend · 70% en clientes |
 | Módulo | Un servicio completo con sus dependencias simuladas | pytest con dobles de prueba | Todos los criterios de aceptación de las historias del servicio |
 | Integración | Colaboración real entre servicios | pytest con contenedores de prueba · Postman | Recorridos de cotización, emisión y siniestro completos |
-| Extremo a extremo | Recorrido de usuario en el cliente real | Playwright (web) · Espresso (móvil) | Los dos recorridos críticos del alcance del Proyecto Final 1 |
+| Extremo a extremo | Recorrido de usuario en el cliente real | Playwright (web) · Espresso (móvil) | Los dos recorridos críticos del alcance de la fase de diseño |
 | **Arquitectura** | Que una decisión de diseño produce la propiedad de calidad atribuida | JMeter · OWASP ZAP · inyección de fallas | La medida de respuesta del ASR correspondiente |
 | Rendimiento | Comportamiento bajo carga | JMeter | Objetivos de percentil de los ASR de latencia |
 | Seguridad | Ausencia de vulnerabilidades conocidas y de fuga de datos | OWASP ZAP · inspección de volcados | 0 hallazgos críticos · 0 datos personales en texto plano |
@@ -799,524 +753,8 @@ Los experimentos de la sección §5 no reemplazan a las pruebas: las anteceden. 
 
 ---
 
-## 7. Capacidad del equipo, esfuerzo y plan de trabajo
+## 7. Plan de construcción
 
-### 7.1 Qué es un punto de historia
+El alcance comprometido, el cálculo de la capacidad del equipo, la distribución por sprint y el seguimiento del backlog se detallan en el documento de Capacidad, Esfuerzo y Plan de Trabajo.
 
-Un **punto de historia** es una medida **relativa** del esfuerzo que cuesta completar una historia. No es una unidad de tiempo. Mide tamaño, considerando tres cosas a la vez: cuánto trabajo hay, cuánta complejidad tiene y cuánta incertidumbre queda.
-
-**Por qué el equipo no estima directamente en horas.** Una misma historia le toma tiempos distintos a personas distintas, de modo que una estimación en horas depende de quién la haga y deja de ser comparable. En cambio, el juicio de que «esta historia es del doble de tamaño que aquella» es estable entre personas. Por eso se estima el tamaño relativo y solo después se convierte a tiempo usando la velocidad observada del equipo.
-
-**Escala usada.** Se emplea la sucesión de Fibonacci —1, 2, 3, 5, 8, 13— porque los saltos crecientes reflejan que la incertidumbre aumenta con el tamaño: distinguir entre 1 y 2 puntos es razonable, pero pretender distinguir entre 20 y 21 es falsa precisión.
-
-| Puntos | Significado en este proyecto | Ejemplo del backlog |
-|---|---|---|
-| **1** | Cambio trivial, sin lógica nueva | — |
-| **2** | Una pantalla o un endpoint simple, sin integración externa | FE-01.1 Iniciar cotización seleccionando ramo |
-| **3** | Lógica propia o una integración conocida | FE-01.2 Autorizar consulta Open Finance |
-| **5** | Varios componentes o una integración con incertidumbre | FE-05.2 Verificar identidad con prueba de vida |
-| **8** | Mecanismo transversal que toca varios servicios | HU-ARQ-07 Optimización de latencia del scoring |
-| **13** | Mecanismo transversal con alta incertidumbre; candidato a dividirse | HU-ARQ-06 Tolerancia a fallos y failover |
-
-**Regla de tamaño.** Ninguna historia funcional del backlog supera 5 puntos. Las dos historias de 13 puntos son de arquitectura y se conservan sin dividir porque su validación es un experimento único e indivisible.
-
-**Conversión a horas.** Para poder contrastar el backlog contra un calendario fijo de ocho semanas, el equipo adoptó una equivalencia de referencia:
-
-```
-1 punto de historia  =  2 horas de trabajo efectivo
-```
-
-Esta equivalencia se fijó calibrando contra historias ya conocidas del proyecto y **se recalibrará al cerrar el primer sprint**, cuando exista velocidad medida en lugar de estimada. La conversión se usa solo para planear capacidad; la estimación de cada historia sigue siendo relativa.
-
-### 7.2 Cálculo de la capacidad del equipo
-
-**Paso 1 — Horas comprometidas por semana**
-
-Cada integrante se comprometió en el acta de constitución a dedicar 12 horas semanales al proyecto.
-
-```
-4 integrantes  ×  12 horas/semana  =  48 horas/semana
-```
-
-**Paso 2 — Convertir esas horas a puntos**
-
-```
-48 horas/semana  ÷  2 horas/punto  =  24 puntos/semana  (capacidad bruta)
-```
-
-**Paso 3 — Descontar el trabajo que no es construcción**
-
-No todas las horas comprometidas producen historias terminadas. Se van en reuniones de coordinación, revisión entre pares, preparación de entregas e imprevistos. El equipo aplica un **factor de carga del 80 %**, valor conservador estándar para equipos sin velocidad histórica medida.
-
-```
-24 puntos/semana  ×  0,80  =  19,2  ≈  19 puntos/semana
-```
-
-> **Velocidad efectiva del equipo: 19 puntos de historia por semana.**
-
-**Paso 4 — Capacidad total del proyecto**
-
-```
-19 puntos/semana  ×  8 semanas  =  152 puntos
-```
-
-**Paso 5 — Capacidad realmente disponible para construir**
-
-Las semanas 1 a 4 se dedicaron a acta de constitución, EDT, visión de arquitectura, escenarios de calidad, estrategia de pruebas y diseño de experimentos. Ese trabajo era necesario, pero no produjo historias del backlog de producto. Esa capacidad ya está consumida.
-
-```
-Capacidad total del proyecto            8 semanas × 19 pts  =  152 pts
-Consumida en semanas 1–4 (arquitectura)  4 semanas × 19 pts  =   76 pts
-──────────────────────────────────────────────────────────────────────
-Disponible para construcción (semanas 5–8)  4 semanas × 19 pts  =  76 pts
-```
-
-> **Capacidad disponible para construir historias: 76 puntos.**
-
-### 7.3 Capacidad por integrante
-
-La misma cuenta, vista por persona, muestra cuánto aporta cada integrante a esos 76 puntos:
-
-| Paso | Cálculo | Resultado |
-|---|---|---|
-| Horas comprometidas por persona, semanas 5 a 8 | 12 h/semana × 4 semanas | 48 h |
-| Convertidas a puntos | 48 h ÷ 2 h/punto | 24 pts brutos |
-| Aplicando el factor de carga del 80 % | 24 pts × 0,80 | **19 pts efectivos** |
-| Multiplicado por los cuatro integrantes | 19 pts × 4 personas | **76 pts** |
-
-| Integrante | Horas comprometidas | Puntos efectivos | Foco según su rol |
-|---|---|---|---|
-| Jazmin Córdoba | 48 h | 19 pts | Gerencia, usabilidad y entrega |
-| Juan Mejía | 48 h | 19 pts | Web front, integración de APIs y pagos |
-| Miguel Gómez | 48 h | 19 pts | Arquitectura, Open Finance, KYC, rendimiento y seguridad |
-| Angie Arandio | 48 h | 19 pts | Dominio, web back, móvil y pruebas unitarias |
-| **Total** | **192 h** | **76 pts** | |
-
-Las 192 horas brutas equivalen a 154 horas efectivas tras el factor de carga; las 38 horas restantes son las que absorben coordinación, revisión e imprevistos.
-
-### 7.4 Dónde se gasta la capacidad del Proyecto Final 1
-
-Conviene distinguir dos cosas que es fácil confundir: la capacidad del equipo y aquello en lo que se gasta.
-
-**En el Proyecto Final 1 no se construyen las historias de usuario del producto.** Se construye la arquitectura, se diseñan y ejecutan los experimentos que la validan, y se construye la experiencia de usuario del prototipo. Las historias del backlog se implementan en el Proyecto Final 2.
-
-| Semanas | En qué se gasta la capacidad | Puntos |
-|---|---|---|
-| 1–3 | Acta de constitución, EDT, visión de arquitectura, escenarios de calidad, estrategia de pruebas, backlog | 57 |
-| 4–5 | Diseño de la arquitectura y de los experimentos | 38 |
-| 6–7 | Construcción y ejecución de los experimentos (34 h) + experiencia de usuario: mockups, wireframes y prototipo (≈40 h) | 38 |
-| 8 | Análisis de resultados, ajuste del diseño y preparación del backlog del Sprint 1 | 19 |
-| **Total Proyecto Final 1** | | **152** |
-
-Los 152 puntos son exactamente la capacidad calculada en §7.2 para las ocho semanas. Ninguno de ellos produce historias del backlog de producto terminadas, y eso es lo esperado en esta fase.
-
-### 7.5 Capacidad del Proyecto Final 2 y compromiso del backlog
-
-El Proyecto Final 2 tiene una estructura fija que no se negocia: **tres sprints, de dos, dos y tres semanas**, siete semanas en total. Con la misma velocidad de 19 puntos por semana:
-
-```
-19 puntos/semana  ×  7 semanas  =  133 puntos
-```
-
-| Sprint | Duración | Capacidad |
-|---|---|---|
-| Sprint 1 | 2 semanas | 38 pts |
-| Sprint 2 | 2 semanas | 38 pts |
-| Sprint 3 | 3 semanas | 57 pts |
-| **Total** | **7 semanas** | **133 pts** |
-
-**El backlog frente a esa capacidad:**
-
-| Concepto | Puntos | Historias |
-|---|---|---|
-| Backlog total del producto | 229 | 62 |
-| Capacidad del Proyecto Final 2 | 133 | — |
-| **Comprometido** | **133** | **30** |
-| **Diferido a una fase posterior** | **96** | **32** |
-
-El backlog completo no cabe: sobran 96 puntos. Forzar los números para que cuadraran habría exigido reducir las estimaciones a poco más de la mitad, produciendo un plan que se incumple en el primer sprint. La respuesta correcta es **declarar el alcance**: se comprometen las 30 historias de mayor prioridad, que suman exactamente los 133 puntos disponibles.
-
-**Criterio de priorización, en este orden:**
-
-1. **¿Valida un ASR que el sistema debe demostrar?** Las historias de arquitectura ligadas a los escenarios de calidad entran primero: sin ellas no hay atributos de calidad, solo funcionalidad.
-2. **¿Pertenece al recorrido crítico?** *Cotizar → suscribir → emitir* en web y *onboarding → consultar póliza* en móvil es lo que hace que el producto exista.
-3. **¿Es prerrequisito de algo ya comprometido?** Hereda la prioridad de aquello que habilita.
-
-| Bloque comprometido | Historias | Puntos |
-|---|---|---|
-| Historias de arquitectura que sostienen los ASR *(las once menos HU-ARQ-09, cuyo escenario multi-zona se difiere)* | 10 | 79 |
-| Cotización web completa — FE-01 | 6 | 15 |
-| Suscripción y emisión web — FE-02, recorrido mínimo | 4 | 11 |
-| Autenticación web completa — FE-10 | 4 | 9 |
-| Onboarding móvil — FE-05, recorrido mínimo | 3 | 11 |
-| Billetera móvil — FE-06, incluida la consulta sin conexión | 3 | 8 |
-| **Total comprometido** | **30** | **133** |
-| **Capacidad del Proyecto Final 2** | | **133** |
-| **Holgura** | | **0** |
-
-> El alcance se ajustó a la capacidad exacta y el equipo asume ese compromiso de forma explícita: **ante un imprevisto se saca alcance, no se extienden horas.** Cualquier historia adicional que entre desplaza a otra.
-
-Las 32 historias diferidas —administración de pólizas, gestión completa de siniestros, portal de socios y la mayor parte de la autogestión móvil— quedan documentadas, estimadas y priorizadas en el backlog. Su detalle está en `historias_de_usuario_v2.docx`.
-
-### 7.6 Distribución por sprint del Proyecto Final 2
-
-| Sprint | Semanas | Foco | Historias | Puntos |
-|---|---|---|---|---|
-| **Sprint 1** | 2 | Cimientos de arquitectura: persistencia, caché, bus de eventos, tokenización y consentimientos. Autenticación web completa | 9 | 38 |
-| **Sprint 2** | 2 | Recorrido de cotización completo con Open Finance. Latencia del scoring y tolerancia a fallos | 9 | 38 |
-| **Sprint 3** | 3 | Suscripción, emisión y pagos. Onboarding móvil y billetera. Parametrización, pasarelas, integridad y sincronización offline | 12 | 57 |
-| **Total** | **7** | | **30** | **133** |
-
-Cada sprint se llena hasta su capacidad exacta. El detalle historia por historia está en el tablero: filtrando por `sprint-1`, `sprint-2` o `sprint-3` se obtiene el contenido de cada uno, y por `valvula-escape` las siete historias declaradas en §7.7.
-
-El Sprint 1 concentra historias de arquitectura porque son prerrequisito de todo lo demás: sin persistencia, caché y bus no hay dónde apoyar los recorridos funcionales. El Sprint 3 es más largo y absorbe más puntos, lo que da margen para el ajuste que casi siempre exige el cierre.
-
-### 7.7 Margen para atrasos: sensibilidad de la velocidad y válvula de escape
-
-Los 133 puntos comprometidos equivalen a la capacidad completa del equipo. Eso significa que **no hay holgura por construcción**, y conviene ser explícito sobre qué protege ese plan y qué no.
-
-**Lo que el factor de carga sí cubre.** El descuento del 20 % aplicado en §7.2 absorbe el trabajo conocido que no produce historias terminadas: ceremonias, coordinación y revisión entre pares. Sobre las siete semanas son unos 38 puntos de esfuerzo ya descontados. Pero eso es **overhead previsible**, no reserva para lo imprevisto.
-
-**Lo que no cubre.** La velocidad de 19 puntos por semana descansa en dos supuestos que el equipo todavía no ha medido: que un punto de historia equivale a dos horas, y que el factor de carga real es del 80 %. Si cualquiera se corre, la capacidad cae:
-
-| Escenario | Supuestos | Velocidad | Capacidad en 7 semanas |
-|---|---|---|---|
-| **A** — el plan actual | 2 h/SP · factor 80 % | 19 SP/semana | **133 SP** |
-| **B** — factor más conservador | 2 h/SP · factor 70 % | 17 SP/semana | 119 SP |
-| **C** — subestimamos el tamaño | 2,5 h/SP · factor 80 % | 15 SP/semana | 107 SP |
-| **D** — ambos a la vez | 2,5 h/SP · factor 70 % | 13 SP/semana | **94 SP** |
-
-El compromiso de 133 puntos corresponde al escenario A, que es el más favorable de los cuatro. Tres factores empujan hacia abajo: tres tecnologías con familiaridad baja declarada en §5.8 —bus de eventos, gestión de llaves y almacenamiento inmutable—, el rendimiento típicamente menor del primer sprint mientras se montan entornos, y el tamaño de las dos historias de arquitectura de 13 puntos.
-
-**La válvula de escape.** En lugar de descubrir el desvío a mitad del Sprint 3, el equipo declara **desde ahora** qué historias salen primero si la velocidad medida resulta menor que la estimada. Son 18 puntos, el 13,5 % del compromiso, elegidas porque su ausencia degrada la experiencia sin romper ningún recorrido crítico ni dejar un ASR sin cobertura:
-
-| Orden de corte | Historia | SP | Qué se pierde si sale |
-|---|---|---|---|
-| 1 | FE-01.5 Comparar planes de cobertura | 3 | El cliente ve una sola opción de cobertura en lugar de tres; el recorrido de cotización sigue completo |
-| 2 | FE-10.4 Cerrar sesión y expirar por inactividad | 2 | La sesión expira solo del lado del navegador; el ingreso sigue protegido |
-| 3 | FE-01.6 Guardar y recuperar cotización | 2 | La cotización no se puede retomar más tarde; se recotiza |
-| 4 | FE-10.3 Recuperar el acceso a la cuenta | 2 | El restablecimiento de contraseña pasa a soporte manual |
-| 5 | FE-05.5 Iniciar sesión con biometría del dispositivo | 3 | El acceso móvil queda solo con contraseña; el onboarding biométrico no se toca |
-| 6 | FE-06.4 Sincronizar al recuperar conectividad | 3 | La sincronización pasa a ser manual; la consulta sin conexión del ASR-3.3 se conserva |
-| 7 | FE-02.3 Firmar electrónicamente la solicitud | 3 | La firma se simula en el prototipo; la emisión y su firma digital se conservan |
-| | **Total** | **18** | |
-
-Ninguna de las siete es prerrequisito de otra historia comprometida, y ninguna deja un escenario de calidad sin mecanismo. Se cortan **en ese orden**, no por conveniencia del momento.
-
-**Punto de recalibración obligatorio.** Al cerrar el Sprint 1 el equipo tendrá por primera vez velocidad *medida* en lugar de estimada. Ese es el momento de revisar la equivalencia de dos horas por punto y el factor de carga, y de decidir si se activa la válvula. La regla que el equipo adopta:
-
-```
-Si la velocidad medida del Sprint 1  <  16 SP/semana
-   →  se activa la válvula de escape en el orden declarado
-   →  se recalcula el compromiso de los Sprints 2 y 3 con la velocidad real
-```
-
-Este mecanismo es la respuesta concreta a la advertencia recibida sobre los dolores de cabeza en el Proyecto Final 2: el riesgo de sobrecompromiso no se elimina declarando que no existe, sino decidiendo de antemano qué se sacrifica y con qué criterio.
-
-### 7.8 Viabilidad: ¿es construible esta arquitectura?
-
-La arquitectura del Proyecto Final 1 no es un documento que se archiva: es el compromiso que el equipo debe cumplir en el Proyecto Final 2, y los tutores validarán que el código se conforme a ella. Por eso el equipo verificó explícitamente que lo propuesto sea construible en siete semanas por cuatro personas a doce horas semanales.
-
-**Lo que efectivamente se construye:**
-
-| Elemento de la arquitectura | Se construye en Proyecto Final 2 | Justificación |
-|---|---|---|
-| Servicios del núcleo | **5 de 7** | Cotización & Rating, Perfilamiento, Suscripción & Emisión, Pólizas y Tokenización. Siniestros y Consentimientos quedan como interfaz mínima, porque sus recorridos completos están diferidos |
-| Capa BFF | **2 de 2** | El BFF Móvil es indispensable para el ASR-3.3; el BFF Web para el recorrido de cotización |
-| Adaptadores externos | **3 de 5** | Open Finance, pasarela de pagos y KYC. Open Data y firma electrónica se simulan, porque su integración real no aporta información arquitectural nueva |
-| Plataforma de datos | **Completa** | PostgreSQL, Redis y Kafka son prerrequisito de tres ASR |
-| Despliegue multi-zona | **No** | Se despliega en una sola zona. El ASR-3.2 se difiere: su validación exige infraestructura con costo que el curso no cubre |
-
-**Por qué el estilo elegido no infla el costo de construcción.** La preocupación razonable con microservicios es que cinco servicios cuesten cinco veces más que uno. En este caso no ocurre, por tres razones: los cinco comparten un mismo esqueleto de proyecto y las mismas bibliotecas de acceso a datos y de cliente HTTP; se ejecutan con un único archivo de composición de contenedores, de modo que levantar el sistema completo es un comando; y la frontera entre ellos coincide con la frontera de responsabilidad entre integrantes, lo que reduce el costo de coordinación en lugar de aumentarlo.
-
-**Riesgo declarado.** El elemento de mayor riesgo de cronograma no es la arquitectura sino el cliente móvil nativo, seguido de las pruebas. Son las dos actividades que el curso identifica como principales causas de retraso. Por eso el onboarding móvil y la billetera entran en el Sprint 3, con las tres semanas de mayor holgura, y por eso la estrategia de pruebas se revisa en cada entrega en lugar de darse por cerrada.
-
-### 7.9 Plan del Proyecto Final 1
-
-| Semana | Foco | Estado |
-|---|---|---|
-| 1 (3–9 ago) | Acta de constitución y backlog inicial | Completada |
-| 2 (10–16 ago) | Visión de arquitectura, EDT y estrategia de pruebas | Completada |
-| 3 (17–23 ago) | Escenarios de calidad, historias de usuario y frameworks | Completada · corregida en esta entrega |
-| 4 (24–30 ago) | **Arquitectura detallada y diseño de experimentos — versión de avance** | **Esta entrega** |
-| 5 (31 ago–6 sep) | Cierre de la arquitectura y versión final del diseño de experimentos · wireframes | Planificada |
-| 6 (7–13 sep) | Construcción y ejecución de EXP-01 y EXP-02 · mockups del recorrido web | Planificada |
-| 7 (14–20 sep) | Ejecución de EXP-02 y EXP-03 · prototipo móvil | Planificada |
-| 8 (21–27 sep) | Análisis de resultados, ajuste del diseño y preparación del backlog del Sprint 1 | Planificada |
-
-> **Esta entrega es un avance, no la versión final.** El bloque de arquitectura y experimentos abarca las semanas 4 y 5, y se cierra en la semana 5. Lo que la semana 5 puede modificar: el ajuste de los modelos si el diseño detallado revela una carencia, la versión final de las tres fichas de experimento, y la incorporación de los wireframes.
-
-### 7.10 Tablero
-
-El tablero del proyecto en Jira refleja el backlog descompuesto, con épicas, estimación en puntos de historia, prioridad y la asociación de cada historia de arquitectura con su ASR y su experimento.
-
-| Tablero | Qué muestra | Enlace |
-|---|---|---|
-| Jira — Tablero | Épicas, funciones e historias con estimación, prioridad y etiquetas | https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/boards |
-| Jira — Backlog | Backlog descompuesto de 62 historias ordenado por prioridad | https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/backlog |
-| Repositorio | Documentos, fuentes de los diagramas y registro de cambios | https://github.com/Migue765/proyecto-final-uniandes |
-
-### 7.11 Estado del tablero tras la actualización
-
-| Tipo de incidencia | Cantidad | Puntos de historia |
-|---|---|---|
-| Épica | 10 | — |
-| Función | 10 | — |
-| Historia | 62 | 229 |
-| Subtarea | 25 | — |
-
-El tablero es un proyecto gestionado por el equipo, cuya jerarquía tiene tres niveles: **Épica** en el nivel superior; **Función** e **Historia** como tipos hermanos en el nivel intermedio; y **Subtarea** en el inferior. Como Función e Historia comparten nivel, una historia no puede colgar de una función: ambas cuelgan de la épica, y la relación entre ellas se expresa con etiquetas. Por la misma razón la estimación vive únicamente en las historias; si las funciones también la llevaran, el tablero sumaría dos veces el mismo trabajo y mostraría 298 puntos donde el backlog real son 229.
-
-### 7.12 Cómo leer el tablero
-
-| Etiqueta | Significado |
-|---|---|
-| `FE-01` … `FE-10` | Función a la que pertenece la historia |
-| `funcion` | Marca los diez ítems de tipo Función |
-| `arquitectura` | Marca las once historias de arquitectura |
-| `canal-web` · `canal-movil` · `canal-api` | Canal donde se implementa |
-| `prioridad-alta` · `prioridad-media` · `prioridad-baja` | **Importancia intrínseca** de la historia, que es el criterio con que se hizo el corte de alcance de §7.5 |
-| `sprint-1` · `sprint-2` · `sprint-3` | Sprint del Proyecto Final 2 en que se construye |
-| `diferido` | Fuera del alcance comprometido |
-| `valvula-escape` | Historia declarada como primera en salir ante un atraso (§7.7) |
-| `EXP-01` … `EXP-03` | Historia de arquitectura que lleva ese experimento |
-
-**Dos dimensiones distintas, y conviene no confundirlas.** El campo nativo *Prioridad* de Jira y la etiqueta `prioridad-*` no significan lo mismo, y por eso no siempre coinciden:
-
-| | Qué expresa | Para qué sirve |
-|---|---|---|
-| Campo nativo **Prioridad** | **Orden de ejecución** | Ordenar el backlog reproduce la secuencia real de construcción |
-| Etiqueta `prioridad-*` | **Importancia intrínseca** | Es el criterio con que se decidió qué entra y qué se difiere |
-
-El campo nativo usa los cinco niveles así:
-
-| Prioridad | Agrupa | Historias |
-|---|---|---|
-| Highest | Sprint 1 — los cimientos de arquitectura y el acceso web | 9 |
-| High | Sprint 2 — el recorrido de cotización, latencia y tolerancia a fallos | 9 |
-| Medium | Sprint 3 — emisión, pagos y móvil | 12 |
-| Low | Diferidas de importancia media | 16 |
-| Lowest | Diferidas de importancia baja | 16 |
-
-Una historia puede ser importante y aun así quedar en `Lowest`: significa que no se construye en este proyecto, no que no importe. Por eso ambas dimensiones se conservan por separado.
-
-Para ver el alcance comprometido, filtrar por `sprint-1`, `sprint-2` y `sprint-3`: devuelve 30 historias y 133 puntos, exactamente el compromiso de §7.6. Filtrando por `diferido` se obtienen las 32 restantes con sus 96 puntos.
-
----
-
-## 8. Video con evidencias
-
-### 8.1 Enlace al video
-
-| Descripción | Duración | Presentadores | Enlace |
-|---|---|---|---|
-| Corrección de la semana 3, estilo y modelos de arquitectura, patrones, propuesta de experimentos, capacidad del equipo y recorrido por el tablero | 10 minutos | Jazmin Córdoba · Miguel Gómez · Juan Mejía · Angie Arandio | *(pegar enlace del video)* |
-
-### 8.2 Contenido por bloque
-
-| Bloque | Presentador | Minuto | Contenido |
-|---|---|---|---|
-| 0 | Jazmin | 0:00 – 0:40 | Apertura y qué contiene la entrega |
-| 1 | Jazmin | 0:40 – 2:10 | Corrección de la semana 3: descomposición del backlog y cálculo de capacidad |
-| 2 | Miguel | 2:10 – 3:30 | Estilo de arquitectura y por qué se eligió |
-| 3 | Miguel | 3:30 – 5:20 | Los seis modelos, con foco en el componente-conector UML |
-| 4 | Juan | 5:20 – 7:00 | Patrones, tácticas y trazabilidad con los ASR |
-| 5 | Angie | 7:00 – 8:40 | Propuesta de experimentos y criterio de cuántos |
-| 6 | Jazmin | 8:40 – 10:00 | Capacidad, plan por sprint, tablero y cierre |
-
-### 8.3 Guion de la sustentación
-
-> El texto en párrafos es lo que se dice; el texto entre corchetes es lo que se muestra en pantalla. Conviene grabar por bloques y unirlos.
-
-#### Bloque 0 — Apertura · Jazmin · 0:00 – 0:40
-
-[Pantalla: portada del entregable]
-
-Buenas tardes. Somos el Grupo 2 y este es el avance de la semana 4 del proyecto Solventa, nuestra aseguradora digital construida sobre Finanzas Abiertas.
-
-Esta semana el foco estuvo en la arquitectura, que es lo que el curso pide priorizar en este bloque. Traemos cuatro cosas: la corrección de la entrega de la semana 3, el estilo y los modelos de arquitectura, el diseño detallado con patrones, y la propuesta de experimentos. Empezamos por la corrección, porque cambia la base sobre la que está construido todo lo demás.
-
-#### Bloque 1 — Corrección de la semana 3 · Jazmin · 0:40 – 2:10
-
-[Pantalla: sección 9, tabla de correcciones]
-
-La retroalimentación nos señaló tres cosas y las tomamos todas.
-
-La primera: se esperaba la lista completa de historias y nosotros entregamos veinte. Al revisar el tablero encontramos el origen exacto del problema, y es más revelador de lo que pensábamos: **ocho de esas veinte estaban tipadas en Jira como Función, no como Historia**, y ninguna tenía historias asociadas. O sea que el backlog tenía en realidad doce historias y ocho funciones sin descomponer. El tablero ya nos estaba diciendo lo mismo que el profesor.
-
-[Pantalla: anexo de mapeo, SOL-3 descompuesta]
-
-Descompusimos todo. Pasamos de veinte a sesenta y dos historias, y el promedio bajó de siete coma seis a tres coma siete puntos por historia. En el ejercicio encontramos algo que no teníamos: la autenticación web era un recorrido crítico sin una sola historia asociada.
-
-[Pantalla: sección 7.2, cálculo de capacidad]
-
-La segunda observación fue que no se encontró la evidencia del cálculo de capacidad. Y tenía razón: el cálculo existía, pero lo habíamos dejado en un archivo del repositorio en vez de ponerlo dentro del documento que se entrega. Esa fue nuestra lección de la semana, y por eso este entregable es un documento único donde todo lo calificable está adentro.
-
-#### Bloque 2 — Estilo de arquitectura · Miguel · 2:10 – 3:30
-
-[Pantalla: sección 2.1, tabla de estilos]
-
-Paso a la arquitectura. Antes de mostrar modelos quiero declarar el estilo, porque es la decisión de la que dependen todas las demás.
-
-Solventa no adopta un estilo puro sino una combinación de tres. **Microservicios** en el núcleo, **capas** por encima y **orientado a eventos** para lo asíncrono. Cada uno resuelve algo que los otros no.
-
-Y quiero justificar el primero, porque es el más discutible. Un monolito modular nos habría simplificado estas ocho semanas, y era una alternativa seria. Lo descartamos por una razón concreta: el servicio de Perfilamiento es el único con exigencia de latencia de doscientos milisegundos y el único que enfrenta picos de diez veces el tráfico. En un monolito, escalar ese componente obliga a replicar todo el sistema. La independencia de despliegue no es un fin en sí: es lo que hace económicamente viable el escenario de latencia.
-
-[Pantalla: último párrafo de 2.1]
-
-También documentamos lo que dejamos fuera. No adoptamos arquitectura sin servidor pese a que encajaría con los picos, porque los arranques en frío son incompatibles con un presupuesto de doscientos milisegundos. Y no adoptamos malla de servicios porque su costo de operación no se justifica con siete servicios y cuatro personas.
-
-#### Bloque 3 — Los modelos · Miguel · 3:30 – 5:20
-
-[Pantalla: Figura 1, contexto]
-
-Hicimos seis modelos. Este es el de contexto: seis actores y cinco sistemas externos. Lo importante acá es que distinguimos qué integramos de verdad y qué simulamos: Open Finance, pagos y KYC se integran realmente porque son los que traen incertidumbre; Open Data y firma electrónica se simulan.
-
-[Pantalla: Figura 2, vista funcional]
-
-Esta es la vista funcional: cuatro capas más la plataforma de datos.
-
-[Pantalla: Figura 3, componente-conector UML]
-
-Y esta es la misma estructura en notación UML de componente-conector. Quiero detenerme porque el cambio no es estético.
-
-En el diagrama anterior una flecha no dice si la interacción es síncrona o asíncrona, ni cuál es el contrato. Acá sí. Los cuadraditos son **puertos**, los círculos son **interfaces provistas**, los semicírculos son **interfaces requeridas**, y donde encajan hay un **contrato**.
-
-Y esto es lo que hace que valga la pena: el componente Pagos declara el puerto **CobrarPrima** en lenguaje de dominio y no conoce ninguna pasarela concreta. Los adaptadores implementan PasarelaPago. Por eso integrar una pasarela nueva no puede obligar a modificar el núcleo: no hay ninguna arista que salga de él hacia afuera. Antes eso teníamos que afirmarlo en prosa; ahora se lee en el diagrama.
-
-[Pantalla: Figura 4, despliegue]
-
-El despliegue es activo-activo en dos zonas, no activo-pasivo. La diferencia importa: si una zona cae, la capacidad de la otra ya está caliente, así que la recuperación depende de la detección y no del arranque de instancias.
-
-[Pantalla: Figuras 5 y 6, información y dominio]
-
-Y la vista de información, donde clasificamos los datos en tres niveles. Esto es lo que vuelve verificable el escenario de confidencialidad: la afirmación «cero datos personales en texto plano» solo se puede comprobar si antes se declaró qué cuenta como dato personal.
-
-#### Bloque 4 — Patrones y tácticas · Juan · 5:20 – 7:00
-
-[Pantalla: sección 3.2, marco]
-
-Documentamos doce patrones. Antes de mostrarlos quiero aclarar tres conceptos que operan en niveles distintos, porque es fácil confundirlos.
-
-El **atributo de calidad** es la propiedad que el sistema debe exhibir. La **táctica** es una decisión de diseño elemental que influye sobre esa propiedad. El **patrón** es una composición de tácticas con estructura conocida y contrapartidas documentadas. La cadena que seguimos siempre es la misma: un ASR exige una propiedad, unas tácticas la consiguen, un patrón las materializa, se asigna a componentes, y un experimento mide si funcionó.
-
-[Pantalla: Figura 7, asignación de patrones]
-
-Esta vista muestra dónde vive cada patrón. Fíjense que el mamparo y el multi-zona se anotan sobre la capa y no sobre una caja: no son componentes, son políticas transversales.
-
-[Pantalla: sección 3.4, matriz de trazabilidad]
-
-Y esta es la matriz completa: patrón, tácticas que materializa, componentes donde vive, ASR que lo justifica y experimento que lo valida. Lo que demuestra es que **no hay patrones huérfanos** —ninguno adoptado sin un requisito que lo exija— ni ASR sin mecanismo asignado.
-
-[Pantalla: sección 3.6, cache-aside]
-
-Un ejemplo del razonamiento. El escenario de latencia pide percentil noventa y cinco bajo doscientos milisegundos. El perfil de riesgo requiere consultar Open Finance, que tarda cientos de milisegundos. Ese objetivo es inalcanzable por construcción si la cotización espera esa llamada. Por eso el caché no es una optimización: es lo que hace posible el escenario.
-
-Y de cada patrón declaramos qué sacrificamos. Acá: un perfil cacheado puede estar hasta quince minutos desactualizado. Para un scoring de seguro es tolerable. No lo sería para un saldo de cuenta, y por eso el caché se aplica al perfil derivado y nunca al dato financiero crudo.
-
-#### Bloque 5 — Experimentos · Angie · 7:00 – 8:40
-
-[Pantalla: sección 5.1]
-
-Diseñamos tres experimentos. Y quiero explicar por qué son tres, porque esa fue la decisión más importante de esta sección.
-
-Partimos de una distinción: una prueba verifica que el sistema hace lo especificado; un experimento valida una hipótesis de diseño sobre la que tenemos incertidumbre, construyendo una porción real del diseño.
-
-[Pantalla: sección 5.3, criterio]
-
-El número sale de dos restricciones. La primera es de calendario: los experimentos se construyen en las semanas seis y siete, que son las mismas dos semanas de toda la experiencia de usuario. Haciendo la cuenta, quedan unas treinta y seis horas para experimentos. Los tres nuestros suman treinta y cuatro.
-
-La segunda es de utilidad: solo se experimenta donde hay incertidumbre real. Evaluamos los nueve puntos de sensibilidad y solo cuatro resultaron de incertidumbre alta, y de esos uno queda cubierto por otro.
-
-[Pantalla: sección 5.7, descartados]
-
-Los cinco que descartamos quedan documentados con su razón. Un caso que ilustra el criterio: la integridad de las pólizas. El bloqueo de escritura del almacenamiento es una garantía de la plataforma, así que ahí no tenemos incertidumbre. La incertidumbre está en si nuestra propia ruta de auditoría detecta el intento en menos de un segundo, y eso es una prueba de configuración, no un experimento.
-
-[Pantalla: sección 5.5, EXP-02]
-
-Cada experimento tiene criterio de refutación. Este es el de degradación elegante. Si perdemos peticiones por agotamiento del depósito de conexiones, eso nos diría que los tiempos de espera están mal calibrados frente al presupuesto de latencia. Sabemos de antemano qué aprenderíamos si sale mal, y qué decisión cambiaríamos.
-
-#### Bloque 6 — Capacidad, plan y tablero · Jazmin · 8:40 – 10:00
-
-[Pantalla: sección 7.2]
-
-Cierro con la capacidad, que es lo que nos costó puntos la semana pasada y ahora está completo dentro del entregable.
-
-Cuatro personas por doce horas son cuarenta y ocho horas semanales. A dos horas por punto son veinticuatro puntos. Con un factor de carga del ochenta por ciento quedan **diecinueve puntos por semana**.
-
-[Pantalla: sección 7.5]
-
-Y acá está la parte importante. En el Proyecto Final 1 no construimos historias de usuario: construimos arquitectura, experimentos y experiencia de usuario. Las historias se implementan en los tres sprints del Proyecto Final 2, que son siete semanas. Diecinueve por siete son **ciento treinta y tres puntos**.
-
-Nuestro backlog son doscientos veintinueve. No caben. Y lo decimos sin rodeos: forzar los números habría exigido reducir las estimaciones a la mitad, produciendo un plan que se incumple en el primer sprint. Comprometemos treinta historias, ciento treinta y tres puntos, holgura cero. Ante un imprevisto sacamos alcance, no extendemos horas.
-
-[Pantalla: sección 7.7, viabilidad]
-
-Verificamos además que la arquitectura sea construible, porque los tutores validarán que el código del Proyecto Final 2 se conforme a ella. Construimos cinco de los siete servicios del núcleo y tres de los cinco adaptadores; el resto se simula o se difiere, y está declarado.
-
-[Pantalla: tablero de Jira filtrado]
-
-Y este es el tablero, con las sesenta y dos historias, sus estimaciones y sus etiquetas.
-
-En la semana cinco cerramos la arquitectura, terminamos el diseño de los experimentos y arrancamos los wireframes. Gracias.
-
-### 8.4 Lista de verificación antes de grabar
-
-- [ ] Las diez figuras se ven nítidas a pantalla completa
-- [ ] El tablero de Jira está actualizado antes de grabar el bloque 6
-- [ ] Cada presentador probó su bloque en voz alta y cabe en su tiempo
-- [ ] Audio de un solo canal y volumen parejo entre presentadores
-- [ ] El video queda subido con acceso por enlace y ese enlace está pegado en §8.1 y §10.1
-
-## 9. Corrección de la entrega de la semana 3
-
-El documento de historias de usuario de la semana 3 obtuvo 10 de 40 puntos. Se corrigieron los tres hallazgos señalados y se detectaron dos adicionales por cuenta del equipo.
-
-### 9.1 Hallazgos señalados y su corrección
-
-| Observación recibida | Corrección aplicada | Dónde verificarla |
-|---|---|---|
-| *"Se esperaba la lista completa de historias de usuario del proyecto, no solo 20"* | El backlog se descompuso de 20 a **62 historias**. La revisión del tablero mostró el origen preciso del problema: ocho de las veinte estaban tipadas en Jira como **Función** y no como Historia, y ninguna tenía historias asociadas. El backlog tenía en realidad 12 historias y 8 funciones sin descomponer. El promedio pasó de 7,6 a 3,7 SP por historia | `historias_de_usuario_v2.docx` §3 y §4 · tablero Jira |
-| *"No se encontró la evidencia de cálculo de la capacidad del equipo"* | El cálculo está ahora **dentro del entregable**, con la aritmética paso a paso: 4 personas × 12 h = 48 h/semana → 24 SP → factor de carga 80% → 19 SP/semana → 76 SP disponibles para las semanas 5 a 8. En la versión anterior el cálculo existía, pero en un archivo del repositorio que no se entregaba | `historias_de_usuario_v2.docx` §2 |
-| *"Un backlog de 152 puntos de historia con sólo 20 HUs... le puede generar dolores de cabeza en el proyecto final 2"* | Se re-estimó de abajo hacia arriba: el backlog subió a **229 SP**. Frente a una capacidad de 76 SP se declara explícitamente qué entra en el Proyecto Final 1 y qué se difiere al Proyecto Final 2, con el criterio de corte documentado | `historias_de_usuario_v2.docx` §5 |
-
-### 9.2 Hallazgos detectados por el equipo
-
-| Hallazgo | Corrección |
-|---|---|
-| La **autenticación web** figuraba como recorrido crítico en la definición de alcance pero no tenía ninguna historia asociada en el backlog | Se creó la épica EP-06 y la función FE-10 con cuatro historias (9 SP) |
-| Las historias **no eran legibles sin abrir Jira**: el documento solo listaba identificador, nombre y enlace | Cada historia aparece ahora completa en el documento, con enunciado *Como / Quiero / Para*, criterios de aceptación, estimación, prioridad, canal y ASR relacionado |
-
-### 9.3 Resultado
-
-| Métrica | Semana 3 | Corrección |
-|---|---|---|
-| Historias en el backlog | 20 | 62 |
-| Promedio de puntos por historia | 7,6 SP | 3,7 SP |
-| Historia funcional más grande | 8 SP | 5 SP |
-| Story points totales | 152 SP | 229 SP |
-| Alcance declarado para el Proyecto Final 1 | — | 76 SP · 17 historias |
-| Diferido al Proyecto Final 2 | — | 153 SP · 45 historias |
-| Recorridos críticos sin historias | 1 (autenticación web) | 0 |
-
----
-
-## 10. Enlaces y pendientes
-
-### 10.1 Enlaces de la entrega
-
-| Recurso | Enlace |
-|---|---|
-| Este documento | *(pegar enlace)* |
-| Historias de usuario v2.0 — corrección de la semana 3 | *(pegar enlace)* |
-| Video de sustentación | *(pegar enlace)* |
-| Jira — Tablero | https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/boards |
-| Jira — Backlog | https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/backlog |
-| Repositorio | https://github.com/Migue765/proyecto-final-uniandes |
-
-### 10.2 Pendientes antes de enviar
-
-- [ ] Publicar este documento y el de historias de usuario, y pegar sus enlaces en §10.1
-- [ ] Grabar el video siguiendo el guion de §8.3 y pegar su enlace en §8.1 y §10.1
-- [ ] Verificar que el tablero muestre las 62 historias antes de grabar el bloque 5 del video
-- [ ] Confirmar que las tres figuras de §2 se ven nítidas en la versión publicada
+El resumen es el siguiente: con una velocidad efectiva de 19 puntos de historia por semana, la fase de construcción dispone de 133 puntos repartidos en tres sprints de dos, dos y tres semanas. De las 62 historias del backlog se comprometen 30, que suman exactamente esos 133 puntos; las 32 restantes, con 96 puntos, quedan documentadas y priorizadas en el tablero para una fase posterior.

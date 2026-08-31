@@ -21,7 +21,7 @@ Este documento contiene **la totalidad de los entregables de la semana 4**. Cada
 | # | Ítem de la rúbrica | Puntos | Dónde está en este documento |
 |---|---|---|---|
 | 1 | **Hoja de trabajo: modelos de arquitectura, patrones detallados y experimentos** | **70** | |
-| 1a | Modelos de arquitectura — vista funcional, de despliegue y de información | 20 | §2.1 declara el estilo de arquitectura y lo justifica; §2.2 a §2.4 desarrollan las tres vistas con sus figuras embebidas |
+| 1a | Modelos de arquitectura — vista funcional, de despliegue y de información | 20 | §2.1 declara el estilo de arquitectura y lo justifica; §2.2 a §2.5 desarrollan cinco modelos: contexto, funcional, despliegue, información y dominio |
 | 1b | Diseño detallado con patrones y razonamiento, en relación con los ASR | 30 | §3: vista de asignación de patrones, matriz de trazabilidad patrón→táctica→componente→ASR, estructura de los patrones críticos y los doce patrones en detalle. §4: decisiones y alternativas descartadas |
 | 1c | Propuesta de experimentos — propósito, respuesta esperada, tecnologías y esfuerzo | 20 | §5: criterio para decidir cuántos experimentos, tres fichas completas y las cinco alternativas evaluadas y descartadas con su razón |
 | 2 | **Refinamiento de la estrategia de pruebas** | **10** | §6 |
@@ -81,11 +81,23 @@ Antes de presentar las vistas conviene declarar el **estilo** que gobierna la so
 
 **Lo que el estilo deja fuera.** No se adopta arquitectura sin servidor para el núcleo, pese a que encajaría con los picos de tráfico, porque los arranques en frío son incompatibles con un presupuesto de 200 ms y porque el equipo no tiene experiencia previa que permita estimar su comportamiento con confianza. Tampoco se adopta una malla de servicios: aportaría observabilidad y control de tráfico, pero su costo de operación no se justifica con siete servicios y un equipo de cuatro personas.
 
-### 2.2 Vista funcional
+### 2.2 Vista de contexto
+
+Antes de descomponer el sistema conviene fijar su frontera: quién lo usa, de qué terceros depende y qué intercambia con cada uno.
+
+![Figura 1. Diagrama de contexto: actores, sistemas externos y qué intercambia Solventa con cada uno](diagramas/imagenes/diagrama_contexto.png)
+
+**Seis actores.** El cliente asegurado es el usuario principal, pero no el único que impone requisitos: el regulador exige reportes trazables, el perito necesita acceso acotado a la evidencia de un siniestro, y el socio de distribución consume la plataforma por API sin pasar nunca por la interfaz. Ese último es el que obliga a que la API B2B sea un canal de primera clase y no un añadido.
+
+**Cinco sistemas externos, con distinto grado de compromiso.** La distinción importa para el alcance: en el Proyecto Final 2 se integran realmente Open Finance, las pasarelas de pago y KYC/AML, porque son los que introducen incertidumbre arquitectural. Open Data y firma electrónica se simulan: su integración real no aporta información de diseño nueva y su costo compite con el recorrido crítico.
+
+**Lo que salió del contexto.** Las versiones anteriores incluían reaseguradoras e IoT/telemetría como sistemas externos. Se retiran porque no aparecen en ninguna historia del backlog comprometido, y un contexto que muestra integraciones que nadie va a construir describe un sistema que no existe.
+
+### 2.3 Vista funcional
 
 La vista funcional muestra cómo se descompone el sistema en componentes y cómo colaboran para atender los recorridos de negocio. La estructura es de cuatro capas más una plataforma de datos transversal.
 
-![Figura 1. Vista funcional de la arquitectura de Solventa](diagramas/imagenes/vista_funcional.png)
+![Figura 2. Vista funcional: capas Edge, BFF, núcleo de negocio y adaptadores externos](diagramas/imagenes/vista_funcional.png)
 
 **Capa de canales.** Tres consumidores con necesidades distintas: el portal web en Angular, la aplicación móvil nativa en Kotlin y los sistemas de socios distribuidores que consumen la API B2B. Son deliberadamente delgados: no contienen reglas de negocio, porque una regla que vive en el canal debe reimplementarse en cada canal nuevo.
 
@@ -99,11 +111,11 @@ La vista funcional muestra cómo se descompone el sistema en componentes y cómo
 
 **Adaptadores externos.** Cada proveedor externo —Open Finance, Open Data, KYC/AML, pasarelas de pago y firma electrónica— se alcanza exclusivamente a través de un adaptador que traduce entre el modelo del proveedor y el modelo de dominio de Solventa. Ningún servicio del núcleo conoce el formato de un proveedor.
 
-### 2.3 Vista de despliegue
+### 2.4 Vista de despliegue
 
 La vista de despliegue muestra dónde se ejecuta cada componente y qué mecanismos de redundancia lo protegen.
 
-![Figura 2. Vista de despliegue en AWS con redundancia multi-zona y región de recuperación](diagramas/imagenes/vista_despliegue.png)
+![Figura 3. Vista de despliegue en AWS con redundancia multi-zona y región de recuperación](diagramas/imagenes/vista_despliegue.png)
 
 **Distribución activo-activo.** Los nodos de EKS están repartidos entre dos zonas de disponibilidad y ambas reciben tráfico simultáneamente. No es una configuración activo-pasivo: si una zona cae, la capacidad de la otra ya está caliente y sirviendo peticiones, lo que hace que el tiempo de recuperación dependa del tiempo de detección del balanceador y no del tiempo de arranque de instancias. Esta es la decisión que hace alcanzable el RTO de 10 minutos del ASR-3.2.
 
@@ -113,11 +125,11 @@ La vista de despliegue muestra dónde se ejecuta cada componente y qué mecanism
 
 **Servicios regionales.** El servicio de gestión de llaves cifra los datos en reposo y firma las pólizas emitidas; el almacenamiento de objetos con bloqueo de escritura garantiza que un registro de auditoría no pueda alterarse ni siquiera con credenciales administrativas; la observabilidad centralizada recoge métricas y trazas distribuidas de todos los servicios.
 
-### 2.4 Vista de información
+### 2.5 Vista de información
 
 La vista de información muestra las entidades de dominio, cómo se clasifican sus datos según sensibilidad y dónde se persiste cada clase.
 
-![Figura 3. Vista de información: entidades, clasificación de datos y almacenamiento](diagramas/imagenes/vista_informacion.png)
+![Figura 4. Vista de información: entidades, clasificación de datos y almacenamiento](diagramas/imagenes/vista_informacion.png)
 
 **Entidades de dominio.** El cliente es la entidad raíz. De él dependen su perfil de riesgo, sus consentimientos y sus cotizaciones. Una cotización origina una póliza; una póliza ampara siniestros y genera pagos. Los socios distribuidores originan cotizaciones por el canal B2B, lo que significa que el modelo debe soportar una cotización sin cliente registrado previamente.
 
@@ -130,6 +142,21 @@ La vista de información muestra las entidades de dominio, cómo se clasifican s
 | Interno | Catálogos de ramos, tarifas, parámetros de configuración | Sin cifrado especial; su exposición no genera daño |
 
 Esta clasificación es la que hace verificable el ASR-4.1: la afirmación «cero datos personales en texto plano» solo se puede comprobar si antes se declaró qué cuenta como dato personal.
+
+#### Modelo de dominio detallado
+
+La vista anterior resume las entidades para poder relacionarlas con su clasificación. El modelo siguiente las desarrolla con sus atributos y cardinalidades, que es lo que se traduce en esquema de base de datos.
+
+![Figura 5. Modelo de dominio: entidades, atributos y cardinalidades](diagramas/imagenes/modelo_dominio.png)
+
+Tres decisiones del modelo merecen explicación:
+
+**Los campos marcados como tokenizados no se almacenan en claro en ninguna tabla.** La entidad guarda un token y el valor original vive únicamente en el servicio de Tokenización. Por eso `Cliente.documento` y `Pago.medio` aparecen anotados: son los dos puntos por donde entra información personal al modelo.
+
+**El registro de auditoría es una entidad de primera clase, no un efecto secundario.** Aparece con sus atributos y su relación con Póliza porque el ASR-4.2 exige que sea inmutable y retenido cinco años; tratarlo como una tabla de log accesoria llevaría a diseñarlo sin esa garantía.
+
+**Ramo es una entidad de configuración, no de código.** Sus factores y coberturas se cargan desde configuración versionada, que es lo que sostiene el ASR-2.2: agregar un ramo nuevo es cargar una definición, no modificar el motor de rating.
+
 
 **Persistencia.** PostgreSQL guarda el estado transaccional; Redis guarda perfiles de riesgo con vencimiento de 15 minutos, lo que acota la ventana de exposición de datos derivados; el almacenamiento de objetos guarda documentos firmados y el registro de auditoría en modo de solo escritura; Kafka retiene los eventos de dominio 7 días para permitir su reproceso.
 
@@ -172,7 +199,7 @@ La cadena de razonamiento que sigue este documento es siempre la misma: **un ASR
 
 Esta vista muestra dónde vive cada patrón dentro de la arquitectura. Las anotaciones entre llaves indican el patrón que gobierna ese componente o esa capa.
 
-![Figura 4. Asignación de los doce patrones sobre los componentes de la arquitectura](diagramas/imagenes/vista_patrones.png)
+![Figura 6. Asignación de los doce patrones sobre los componentes de la arquitectura](diagramas/imagenes/vista_patrones.png)
 
 Tres observaciones sobre la asignación:
 
@@ -209,19 +236,19 @@ Los tres patrones siguientes se detallan estructuralmente porque son los que sos
 
 Los cuatro patrones del camino crítico no actúan por separado sino como una cadena de decisiones. Este diagrama muestra el recorrido completo de una solicitud de cotización y dónde interviene cada uno.
 
-![Figura 5. Composición de los patrones Cache-Aside, Interruptor de circuito, Timeout y Mamparo en el camino de cotización](diagramas/imagenes/patron_latencia.png)
+![Figura 7. Composición de los patrones Cache-Aside, Interruptor de circuito, Timeout y Mamparo en el camino de cotización](diagramas/imagenes/patron_latencia.png)
 
 La lectura importante es que **hay tres salidas distintas hacia una respuesta válida** y ninguna es un error: acierto de caché en menos de 20 ms, respuesta del proveedor dentro del presupuesto de 150 ms, o prima preliminar en modo degradado. El sistema nunca se queda esperando, que es precisamente lo que exige la medida de «0% de solicitudes perdidas» del ASR-1.2.
 
 #### La modificabilidad: P5 + P6 y la dirección de las dependencias
 
-![Figura 6. Puertos, adaptadores y configuración externalizada: ninguna flecha sale del núcleo](diagramas/imagenes/patron_puertos_adaptadores.png)
+![Figura 8. Puertos, adaptadores y configuración externalizada: ninguna flecha sale del núcleo](diagramas/imagenes/patron_puertos_adaptadores.png)
 
 Lo relevante de este diagrama no son las cajas sino **el sentido de las flechas**. El núcleo define los puertos `PasarelaDePago` y `ReglaDeRamo` y no depende de nada externo; los adaptadores y los archivos de configuración apuntan *hacia* el núcleo. Por eso la afirmación del ASR-2.1 —«cero cambios en servicios del núcleo»— no es una promesa de disciplina del equipo sino una propiedad estructural: agregar `AdaptadorSPEI` no puede obligar a modificar el núcleo porque no existe ninguna arista que vaya en esa dirección.
 
 #### La confidencialidad: P9 y la frontera de custodia
 
-![Figura 7. Tokenización con custodia única: aguas adentro solo circulan tokens](diagramas/imagenes/patron_tokenizacion.png)
+![Figura 9. Tokenización con custodia única: aguas adentro solo circulan tokens](diagramas/imagenes/patron_tokenizacion.png)
 
 El diagrama define una **frontera de custodia**. A su izquierda existe el dato original; a su derecha solo existen tokens, que no tienen valor si se filtran. Esa frontera es lo que convierte el ASR-4.1 en algo verificable: para comprobar que no hay datos personales en texto plano basta con inspeccionar todo lo que hay a la derecha y comprobar que solo aparecen tokens. Sin la frontera, la verificación tendría que ser exhaustiva sobre los siete servicios del núcleo.
 

@@ -180,6 +180,10 @@ Seguir el guion de §8.3. Verificar antes que las diez figuras se vean nítidas 
 **Estado:** PENDIENTE
 Subir con acceso por enlace y pegarlo en §8.1 y §10.1 del entregable.
 
+### T-35 · Alinear el campo nativo de prioridad con las etiquetas
+**Estado:** Hecho
+El campo `priority` de Jira contradecía la etiqueta `prioridad-*` en 33 historias: las creadas hoy quedaron todas con el valor por defecto Medium y las de arquitectura con High heredado. Como Jira ordena el backlog por el campo nativo y no por la etiqueta, el tablero mostraba un orden que contradecía la priorización documentada en §7.5. Se alinean los dos.
+
 ---
 
 ## 6. Cierre de la entrega
@@ -202,7 +206,7 @@ Push de `feature/semana-4` y crear el PR manualmente:
 | Documentación | T-01 a T-09 | 9 | 0 |
 | Corrección semana 3 | T-10 a T-13 | 4 | 0 |
 | Diagramas | T-14 a T-23 | 10 | 0 |
-| Tablero Jira | T-24 a T-29 | 6 | 0 |
+| Tablero Jira | T-24 a T-29, T-35 | 7 | 0 |
 | Video | T-30 a T-32 | 1 | 2 |
 | Cierre | T-33 a T-34 | 0 | 2 |
-| **Total** | **34** | **30** | **4** |
+| **Total** | **35** | **31** | **4** |

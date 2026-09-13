@@ -129,7 +129,13 @@ export_aws_process_credentials() {
   access_key="$(jq -er '.AccessKeyId | select(type == "string" and length > 0)' <<<"$credential_json")"
   secret_key="$(jq -er '.SecretAccessKey | select(type == "string" and length > 0)' <<<"$credential_json")"
   session_token="$(jq -er '.SessionToken | select(type == "string" and length > 0)' <<<"$credential_json")"
-  expiration_epoch="$(jq -er '.Expiration | select(type == "string") | sub("\\.[0-9]+Z$"; "Z") | fromdateiso8601' <<<"$credential_json")" \
+  expiration_epoch="$(jq -er '
+    .Expiration
+    | select(type == "string")
+    | sub("\\+00:00$"; "Z")
+    | sub("\\.[0-9]+Z$"; "Z")
+    | fromdateiso8601
+  ' <<<"$credential_json")" \
     || fail "Exported AWS credentials do not include a parseable expiration"
   export AWS_ACCESS_KEY_ID="$access_key"
   export AWS_SECRET_ACCESS_KEY="$secret_key"

@@ -13,32 +13,42 @@ Esta vista explica qué información relevante maneja Solventa, qué contexto es
 
 No es un modelo entidad-relación ni un diseño de tablas. Tampoco prescribe esquemas físicos, índices, particiones o nombres de bases de datos.
 
-El archivo contiene dos páginas complementarias:
+El diagrama se lee de izquierda a derecha y utiliza la estructura de integración solicitada:
 
-1. **Flujo de información:** lectura de izquierda a derecha desde fuentes y consumidores, pasando por contratos de entrada y dominios propietarios, hasta repositorios y productos de información.
-2. **Gobierno y clasificación:** detalle de los conjuntos administrados por cada contexto, su sensibilidad, linaje, integridad, retención y recuperación.
-
-La primera página favorece el seguimiento de los recorridos, mientras la segunda permite revisar controles y responsabilidades sin sobrecargar el flujo principal.
+1. **Fuentes y consumidores:** clientes, socios y proveedores externos que originan o reciben información.
+2. **Controles de entrada y fachadas:** autenticación, API Gateway, BFF Web, BFF Móvil, API de Socios y validadores de datos, eventos y callbacks.
+3. **Event Bus y colas:** canales asíncronos para familias de eventos, reintentos y DLQ.
+4. **Servicios y contextos:** capacidades que validan, transforman y son propietarias de la información de dominio.
+5. **Repositorios y productos de datos:** persistencia operacional aislada, documentos, registro de auditoría, analítica y caché.
 
 ## 2. Convenciones
 
 | Representación | Significado |
 |---|---|
-| Columna amarilla | Fuentes o consumidores externos de información |
-| Columna azul | Contratos de entrada validados y normalizados |
-| Contenedor de contexto | Propietario lógico y `system of record` del conjunto de información |
-| Columna morada | Repositorios lógicos y productos derivados de información |
-| `«RESTRINGIDO»` | Información cuya exposición puede causar daño significativo o incumplimiento |
-| `«CONFIDENCIAL»` | Información contractual, financiera o comercial de acceso limitado |
-| `«INTERNO»` | Información operativa no destinada a publicación abierta |
-| Línea azul punteada `«flow»` | Flujo lógico de información entre propietarios |
-| Línea verde punteada `«event»` | Hecho de negocio inmutable comunicado mediante un contrato versionado |
+| Caja amarilla | Fuente o consumidor de información |
+| Caja naranja | Autenticación y autorización de acceso |
+| Caja azul clara sin estereotipo | Validador de esquema, calidad, firma o procedencia |
+| Caja verde `«queue»` | Cola asíncrona; incluye reintentos y envío a DLQ |
+| Caja azul `«component»` | Servicio que procesa información; los nueve contextos son propietarios de sus datos |
+| Cilindro o carpeta morada | Almacén lógico o producto derivado de datos |
+| Cilindro gris | Caché temporal no autoritativa |
+| Rótulo `RESTRINGIDO` | Información cuya exposición puede causar daño significativo o incumplimiento |
+| Rótulo `CONFIDENCIAL` | Información contractual, financiera o comercial de acceso limitado |
+| Rótulo `INTERNO` | Información operativa no destinada a publicación abierta |
+| Línea roja punteada | Flujo con información restringida |
+| Línea azul punteada | Solicitud, consulta o contrato de información |
+| Línea verde punteada | Publicación o consumo mediante una cola |
+| Línea morada continua | Persistencia o proyección hacia un almacén |
 
-Los flujos se expresan con la notación de flujo de información de UML. La flecha indica la dirección en que se transmite la información, no propiedad compartida ni acceso directo a una base de datos. El rótulo de cada contexto indica la clasificación máxima; algunos atributos pueden requerir controles menos restrictivos.
+Las flechas indican dirección de transferencia, no propiedad compartida ni acceso directo a tablas. Las cajas verdes son siempre colas lógicas; los almacenes se muestran únicamente en morado. El rótulo de cada contexto señala su clasificación máxima, aunque algunos atributos puedan requerir controles menos restrictivos.
 
-Las columnas expresan etapas de tratamiento, no capas de ejecución. API Gateway, BFF, pods, VPC y protocolos concretos continúan perteneciendo a las vistas de componentes y despliegue.
+API Gateway y los validadores aparecen porque controlan la entrada y la calidad de la información. Gateway enruta únicamente hacia BFF Web, BFF Móvil o API de Socios; estas fachadas invocan los contextos autorizados y evitan exponerlos directamente. Los detalles de VPC, EKS, pods y protocolos internos continúan perteneciendo a la vista de despliegue.
 
-El diagrama muestra los intercambios críticos para entender compra, emisión, siniestros y pagos. Los hechos auditables de todos los contextos siguen el mismo sobre de auditoría aunque solo se represente una conexión para evitar cruces que reduzcan la legibilidad.
+El diagrama muestra los intercambios críticos para compra, emisión, siniestros y pagos. La conexión `hechos auditables` representa publicaciones de todos los servicios hacia su cola, aunque se agrupa visualmente para evitar cruces innecesarios.
+
+Las colas se diseñan por consumidor o propósito para evitar competencia accidental entre dominios. `Resultados de Pago` agrupa visualmente dos suscripciones independientes: una para Siniestros y otra para Pólizas/Cuotas. Esta agrupación reduce ruido en el diagrama, pero no representa una única cola compartida por ambos consumidores.
+
+El Event Bus contiene colas, suscripciones, reintentos y DLQ. El registro de auditoría es persistencia append-only administrada por Cumplimiento y Auditoría; no almacena mensajes pendientes ni sustituye una DLQ. Los modelos de lectura y analítica son un producto lógico opcional y reconstruible, no una base operacional exigida por la vista de despliegue actual.
 
 ## 3. Propiedad de la información
 
@@ -56,7 +66,7 @@ El diagrama muestra los intercambios críticos para entender compra, emisión, s
 
 Solo el contexto propietario crea o modifica su información. Los demás contextos reciben identificadores, versiones, instantáneas o eventos mediante contratos; nunca consultan ni actualizan directamente sus tablas.
 
-La caja de persistencia operacional representa el patrón común de almacenamiento aislado. No es una base compartida: cada contexto mantiene su propio esquema o base y aplica sus transacciones dentro de esa frontera.
+La caja `Bases transaccionales` representa el patrón común de almacenamiento aislado. No es una base compartida: cada contexto mantiene su propio esquema o base y aplica sus transacciones dentro de esa frontera. Integraciones y Notificaciones procesa referencias y mensajes, pero no es propietario maestro de información de negocio.
 
 ## 4. Instantáneas, referencias y linaje
 
@@ -84,8 +94,13 @@ Estas instantáneas permiten reproducir decisiones sin depender del estado actua
 | `PagoConfirmado` / `PagoFallido` | Pagos | Siniestros | Actualiza el estado de liquidación |
 | `PagoConfirmado` / `PagoFallido` | Pagos | Pólizas/Cuotas | Actualiza el estado de recaudo |
 | Hecho auditable | Todos los contextos | Cumplimiento y Auditoría | Registro inmutable con correlación y versión |
+| Verificación KYC/AML | Identidad | Integraciones y proveedor | Solicitud mínima y respuesta normalizada mediante adaptador |
+| Cobro o desembolso | Pagos | Integraciones y proveedor | Operación idempotente con referencia externa |
+| Firma / ACORD / reaseguro | Pólizas | Integraciones y proveedor | Contrato externo versionado y aislado del dominio |
 
 `CotizaciónAceptada` puede publicarse para auditoría y analítica, pero la emisión se solicita sincrónicamente. El evento no vuelve a ordenar la creación de la póliza.
+
+Los callbacks de proveedores se autentican y validan antes de llegar a Integraciones y Notificaciones. Este contexto adapta el protocolo externo, normaliza el resultado y lo entrega al contexto propietario; los proveedores no invocan directamente Pagos, Pólizas o Identidad.
 
 ## 6. Contratos de información
 
@@ -100,6 +115,8 @@ Todo evento debe contener como mínimo:
 - Carga mínima necesaria para el consumidor.
 
 Los cambios incompatibles exigen una nueva versión del contrato. Los consumidores toleran campos adicionales, validan el esquema y son idempotentes porque la entrega es al menos una vez. Los eventos no transportan documentos, biometría, credenciales, PAN, CVV ni señales crudas si basta una URI autorizada o una referencia.
+
+Cada cola dispone de política de reintentos y DLQ. Reprocesar un mensaje no puede duplicar una póliza, una orden de pago, un desembolso, una notificación ni un registro lógico de auditoría.
 
 ## 7. Clasificación y protección
 
@@ -120,6 +137,7 @@ Los secretos técnicos, tokens de acceso y llaves criptográficas no son informa
 ## 8. Privacidad y minimización
 
 - El consentimiento registra alcance, finalidad, vigencia, otorgamiento y revocación.
+- Autenticación valida identidad, roles y scopes técnicos; Identidad y Cliente conserva y decide la vigencia del consentimiento de negocio.
 - Perfilamiento usa únicamente fuentes cubiertas por un consentimiento vigente.
 - La revocación impide usos futuros, sin borrar evidencia necesaria para demostrar tratamientos previos legítimos.
 - Los consumidores reciben solo los atributos necesarios para su finalidad.
@@ -145,7 +163,7 @@ No se fijan períodos numéricos en esta vista porque deben ser aprobados por ne
 - RDS/Aurora mantiene persistencia aislada por dominio, cifrado, backups y PITR.
 - S3 conserva evidencias y documentos con cifrado, versionado, retención y réplica.
 - Redis es caché temporal; nunca es la única fuente de información crítica.
-- Los modelos de lectura y analítica son proyecciones reconstruibles y no sustituyen al `system of record`.
+- Los modelos de lectura y analítica son proyecciones opcionales y reconstruibles desde contratos gobernados del Event Bus; no sustituyen al `system of record` ni obligan a desplegar un almacén analítico en esta etapa.
 - La réplica regional y los procedimientos de failover deben satisfacer los RPO/RTO aprobados y probarse periódicamente.
 
 La tecnología concreta se muestra en la vista de despliegue; aquí se documentan las propiedades que esa tecnología debe garantizar.

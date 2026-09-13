@@ -23,7 +23,7 @@ La base inicial era útil como inventario, pero mezclaba responsabilidades y dej
 - `Perfil de Riesgo` es una raíz independiente y versionada dentro de ese contexto, porque sus versiones pueden sustentar evaluaciones de distintas cotizaciones y deben ser reconstruibles para actuaría y regulación.
 - La auditoría no se modela como hija exclusiva de Póliza; es una capacidad transversal dentro de Cumplimiento y Auditoría.
 - Se añaden objetos de valor para evitar atributos primitivos ambiguos, por ejemplo `Dinero`, `Periodo` y `DocumentoIdentidad`.
-- Se identifican eventos de dominio coherentes con la arquitectura asíncrona del despliegue.
+- Se identifican eventos de dominio coherentes con la arquitectura asíncrona del despliegue, sin convertir en evento las coordinaciones que requieren respuesta inmediata.
 
 ## 3. Contextos delimitados
 
@@ -89,7 +89,8 @@ Relaciones principales:
 - Perfilamiento solo utiliza fuentes cubiertas por un consentimiento vigente; la referencia al consentimiento y el linaje detallado se preservan en sus registros internos, aunque no se expanden como entidades en este diagrama.
 - Un producto define las condiciones usadas por muchas cotizaciones.
 - Una evaluación de riesgo se sustenta en una versión de perfil de riesgo.
-- Una cotización aceptada puede originar una póliza.
+- Una cotización aceptada puede originar como máximo una póliza mediante la coordinación síncrona de decisión y emisión.
+- `CotizaciónAceptada` puede publicarse como hecho auditable para analítica u otros consumidores, pero no vuelve a ordenar la emisión ni crea una segunda póliza.
 - Una póliza corresponde a un producto y a un cliente tomador.
 - Una póliza ampara muchos siniestros y genera cuotas de prima.
 - Un siniestro aprobado puede generar una orden de indemnización.

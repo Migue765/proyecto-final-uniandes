@@ -17,7 +17,7 @@
                     <mxGeometry x="20" y="42" width="250" height="165" as="geometry"/>
                 </mxCell>
                 <mxCell id="consent" value="&lt;b&gt;«entity»&lt;br&gt;Consentimiento&lt;/b&gt;&lt;hr&gt;consentimientoId: UUID&lt;br&gt;alcance: AlcanceDatos&lt;br&gt;estado: EstadoConsentimiento&lt;br&gt;otorgadoEn: Instant&lt;br&gt;revocadoEn: Instant?&lt;hr&gt;revocar()" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=7;fillColor=#FFFFFF;strokeColor=#4F7CAC;fontFamily=Helvetica;fontSize=10;" parent="ctx-customer" vertex="1">
-                    <mxGeometry x="320" y="42" width="250" height="155" as="geometry"/>
+                    <mxGeometry x="400" y="42" width="170" height="155" as="geometry"/>
                 </mxCell>
                 <mxCell id="e-customer-consent" value="contiene" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=diamond;startFill=1;endArrow=none;fontFamily=Helvetica;fontSize=9;" parent="ctx-customer" source="customer" target="consent" edge="1">
                     <mxGeometry relative="1" as="geometry">
@@ -129,7 +129,12 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-quote-risk" value="evalúa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=diamond;startFill=1;endArrow=none;fontFamily=Helvetica;fontSize=9;" parent="ctx-quote" source="quote" target="risk-evaluation" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="330" y="180"/>
+                            <mxPoint x="330" y="282"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="m-e-quote-risk-s" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Helvetica;fontSize=9;fontStyle=1;labelBackgroundColor=#FFFFFF;" connectable="0" vertex="1" parent="e-quote-risk">
                     <mxGeometry x="-0.82" relative="1" as="geometry">
@@ -374,12 +379,22 @@
                         <mxPoint y="-10" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-quote-policy" value="«evento» CotizaciónAceptada" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;" parent="1" source="quote" target="policy" edge="1">
+                <mxCell id="e-quote-policy" value="origina" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;endArrow=none;fontFamily=Helvetica;fontSize=9;" parent="1" source="quote" target="policy" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="570" y="570"/>
                             <mxPoint x="570" y="570"/>
                         </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="m-e-quote-policy-s" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Helvetica;fontSize=9;fontStyle=1;labelBackgroundColor=#FFFFFF;" connectable="0" vertex="1" parent="e-quote-policy">
+                    <mxGeometry x="-0.82" relative="1" as="geometry">
+                        <mxPoint y="-10" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="m-e-quote-policy-t" value="0..1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Helvetica;fontSize=9;fontStyle=1;labelBackgroundColor=#FFFFFF;" connectable="0" vertex="1" parent="e-quote-policy">
+                    <mxGeometry x="0.82" relative="1" as="geometry">
+                        <mxPoint y="-10" as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-policy-claim" value="ampara" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;endArrow=none;fontFamily=Helvetica;fontSize=9;" parent="1" source="policy" target="claim" edge="1">
@@ -555,7 +570,7 @@
                         <mxPoint y="-10" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-payment-claim-result" value="«evento» PagoConfirmado / PagoFallido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=0;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="payment-order">
+                <mxCell id="e-payment-claim-result" value="«evento» PagoConfirmado / PagoFallido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=0;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="payment-order" target="claim">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="720" y="1170"/>

@@ -1,0 +1,130 @@
+nameOverride: ""
+fullnameOverride: "solventa-exp1"
+
+imagePullSecrets: []
+
+quotation:
+  replicaCount: 2
+  cpuIterations: 150000
+  image:
+    repository: solventa/quotation-service
+    tag: dev
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 8080
+    nodePort: 30080
+    # Keep the NLB source address visible to the VPC CNI NetworkPolicy and
+    # avoid cross-node SNAT before traffic reaches a quotation pod.
+    externalTrafficPolicy: Local
+  health:
+    livenessPath: /health/live
+    readinessPath: /health/ready
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 70
+
+profile:
+  replicaCount: 2
+  cpuIterations: 150000
+  image:
+    repository: solventa/profile-service
+    tag: dev
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  health:
+    livenessPath: /health/live
+    readinessPath: /health/ready
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 70
+
+database:
+  # Connection strings and the generated runtime password are never stored in
+  # values. deploy.sh streams the required Secrets immediately before Helm.
+  runtimeSecret:
+    name: solventa-exp1-db-runtime
+    key: database-url
+    usernameKey: username
+    passwordKey: password
+  adminSecret:
+    name: solventa-exp1-db-admin
+    key: database-url
+  host: ""
+  port: 5432
+  name: solventa
+  sslMode: verify-full
+
+seed:
+  enabled: true
+  profilesPerPartner: 100
+  connectTimeoutSeconds: 10
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+redis:
+  host: ""
+  port: 6379
+  tlsEnabled: true
+  database: 0
+  existingSecret:
+    name: solventa-exp1-redis-runtime
+    key: redis-url
+
+wiremock:
+  enabled: true
+  image:
+    repository: wiremock/wiremock
+    tag: 3.13.2
+    digest: sha256:0d4ecb3e4dc8213fd7a4d37d6a78f6e6b553a6d2e15bd51b0999781282ac61b3
+    pullPolicy: IfNotPresent
+  service:
+    port: 8080
+  # Leave empty to use the in-cluster WireMock service. Set an explicit URL to
+  # test another deterministic provider endpoint.
+  baseUrl: ""
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+podAnnotations: {}
+nodeSelector:
+  kubernetes.io/arch: amd64
+tolerations: []
+affinity: {}
+
+networkPolicy:
+  enabled: true
+  # deploy.sh replaces these with Terraform's exact internal NLB source /32s.
+  quotationIngressCidrs:
+    - 10.51.10.10/32
+    - 10.51.11.10/32

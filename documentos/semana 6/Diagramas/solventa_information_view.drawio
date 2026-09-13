@@ -1,0 +1,124 @@
+<mxfile host="app.diagrams.net">
+    <diagram id="solventa-information" name="Solventa - Información">
+        <mxGraphModel dx="1800" dy="1450" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1450" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Solventa - Vista de Información" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;strokeColor=none;fillColor=none;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="15" width="800" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="subtitle" value="Propiedad, estructura, intercambio, clasificación y ciclo de vida de la información" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#4B5563;strokeColor=none;fillColor=none;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="52" width="900" height="25" as="geometry"/>
+                </mxCell>
+
+                <mxCell id="ownership" value="INFORMACIÓN OPERATIVA POR CONTEXTO · SYSTEM OF RECORD" style="swimlane;html=1;rounded=0;startSize=32;fillColor=#E8F0FA;swimlaneFillColor=#FBFCFE;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="90" width="1180" height="820" as="geometry"/>
+                </mxCell>
+
+                <mxCell id="info-identity" value="&lt;b&gt;IDENTIDAD Y CLIENTE&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#B3261E&quot;&gt;«RESTRINGIDO»&lt;/font&gt;&lt;hr&gt;&lt;b&gt;Cliente&lt;/b&gt;: clienteId, documento, contacto, estado&lt;br&gt;&lt;b&gt;Consentimiento&lt;/b&gt;: alcance, finalidad, vigencia, estado&lt;br&gt;&lt;font color=&quot;#5F6368&quot;&gt;Historial de otorgamiento y revocación&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#EAF2FF;strokeColor=#4F7CAC;fontFamily=Helvetica;fontSize=10;" parent="ownership" vertex="1">
+                    <mxGeometry x="20" y="50" width="360" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="info-profile" value="&lt;b&gt;PERFILAMIENTO Y PERSONALIZACIÓN&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#B3261E&quot;&gt;«RESTRINGIDO»&lt;/font&gt;&lt;hr&gt;&lt;b&gt;Perfil de Riesgo&lt;/b&gt;: perfilId, score, calculadoEn&lt;br&gt;&lt;b&gt;Linaje&lt;/b&gt;: fuentes consentidas, consentimientoId&lt;br&gt;&lt;b&gt;Modelo&lt;/b&gt;: versión, variables y explicación&lt;br&gt;&lt;font color=&quot;#5F6368&quot;&gt;Versionado y reconstruible&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#E0F2F1;strokeColor=#2F7D73;fontFamily=Helvetica;fontSize=10;" parent="ownership" vertex="1">
+                    <mxGeometry x="410" y="50" width="360" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="info-product" value="&lt;b&gt;PRODUCTO Y SUSCRIPCIÓN&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#6B5B00&quot;&gt;«INTERNO»&lt;/font&gt;&lt;hr&gt;&lt;b&gt;Producto&lt;/b&gt;: productoId, tipo, modalidad, vigencia&lt;br&gt;&lt;b&gt;Cobertura&lt;/b&gt;: límites, deducibles y condiciones&lt;br&gt;&lt;b&gt;Regla de Suscripción&lt;/b&gt;: versión, expresión, resultado&lt;br&gt;&lt;font color=&quot;#5F6368&quot;&gt;Catálogo y reglas versionados&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#E9F7EF;strokeColor=#4F8A65;fontFamily=Helvetica;fontSize=10;" parent="ownership" vertex="1">
+                    <mxGeometry x="800" y="50" width="360" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="info-distribution" value="&lt;b&gt;DISTRIBUCIÓN&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#7A3E00&quot;&gt;«CONFIDENCIAL»&lt;/font&gt;&lt;hr&gt;&lt;b&gt;Socio Distribuidor&lt;/b&gt;: socioId, canal, estado, cuota&lt;br&gt;&lt;b&gt;Acuerdo&lt;/b&gt;: acuerdoId, productos, comisión, vigencia&lt;br&gt;&lt;font color=&quot;#5F6368&quot;&gt;No contiene secretos ni API keys&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#EEF2F7;strokeColor=#64748B;fontFamily=Helvetica;fontSize=10;" parent="ownership" vertex="1">
+                    <mxGeometry x="20" y="300" width="360" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="info-quote" value="&lt;b&gt;COTIZACIÓN&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#7A3E00&quot;&gt;«CONFIDENCIAL»&lt;/font&gt;&lt;hr&gt;&lt;b&gt;Cotización&lt;/b&gt;: cotizaciónId, clienteId, prima, estado&lt;br&gt;&lt;b&gt;Cobertura Cotizada&lt;/b&gt;: suma, deducible, prima&lt;br&gt;&lt;b&gt;Evaluación de Riesgo&lt;/b&gt;: perfilId, reglas y resultado&lt;br&gt;&lt;font color=&quot;#5F6368&quot;&gt;Instantánea explicable de la oferta&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFF4DB;strokeColor=#C58A28;fontFamily=Helvetica;fontSize=10;" parent="ownership" vertex="1">
+                    <mxGeometry x="410" y="300" width="360" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="info-policy" value="&lt;b&gt;PÓLIZAS&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#7A3E00&quot;&gt;«CONFIDENCIAL» + PII&lt;/font&gt;&lt;hr&gt;&lt;b&gt;Póliza&lt;/b&gt;: pólizaId, número, vigencia, estado, prima&lt;br&gt;&lt;b&gt;Contrato&lt;/b&gt;: coberturas, endosos y condiciones&lt;br&gt;&lt;b&gt;Beneficiario&lt;/b&gt;: identidad y porcentaje&lt;br&gt;&lt;b&gt;Documento firmado&lt;/b&gt;: URI, hash y versión" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#EDE9FE;strokeColor=#7C65A9;fontFamily=Helvetica;fontSize=10;" parent="ownership" vertex="1">
+                    <mxGeometry x="800" y="300" width="360" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="info-compliance" value="&lt;b&gt;CUMPLIMIENTO Y AUDITORÍA&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#B3261E&quot;&gt;«RESTRINGIDO»&lt;/font&gt;&lt;hr&gt;&lt;b&gt;Caso&lt;/b&gt;: casoId, sujetoId, tipo, riesgo, estado&lt;br&gt;&lt;b&gt;Registro de Auditoría&lt;/b&gt;: actor, acción, recurso, instante&lt;br&gt;&lt;b&gt;Integridad&lt;/b&gt;: hashAnterior, hashActual, correlación&lt;br&gt;&lt;font color=&quot;#5F6368&quot;&gt;Append-only e inmutable&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FDECEC;strokeColor=#B64B4B;fontFamily=Helvetica;fontSize=10;" parent="ownership" vertex="1">
+                    <mxGeometry x="20" y="550" width="360" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="info-claims" value="&lt;b&gt;SINIESTROS&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#B3261E&quot;&gt;«RESTRINGIDO»&lt;/font&gt;&lt;hr&gt;&lt;b&gt;Siniestro&lt;/b&gt;: siniestroId, pólizaId, estado, monto&lt;br&gt;&lt;b&gt;Evidencia&lt;/b&gt;: URI, hash, tipo y cadena de custodia&lt;br&gt;&lt;b&gt;Decisión&lt;/b&gt;: resultado, monto, motivo, instante&lt;br&gt;&lt;b&gt;Fraude&lt;/b&gt;: score, señales y resultado" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FCE8E6;strokeColor=#B95C52;fontFamily=Helvetica;fontSize=10;" parent="ownership" vertex="1">
+                    <mxGeometry x="410" y="550" width="360" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="info-payments" value="&lt;b&gt;PAGOS Y RECAUDO&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#B3261E&quot;&gt;«RESTRINGIDO»&lt;/font&gt;&lt;hr&gt;&lt;b&gt;Orden de Pago&lt;/b&gt;: ordenId, referenciaId, monto, estado&lt;br&gt;&lt;b&gt;Transacción&lt;/b&gt;: proveedorRef, intento, respuesta&lt;br&gt;&lt;b&gt;Cuota de Prima&lt;/b&gt;: pólizaId, vencimiento, estado&lt;br&gt;&lt;font color=&quot;#5F6368&quot;&gt;Token y referencia; nunca PAN/CVV&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#E4F4F3;strokeColor=#3D8580;fontFamily=Helvetica;fontSize=10;" parent="ownership" vertex="1">
+                    <mxGeometry x="800" y="550" width="360" height="220" as="geometry"/>
+                </mxCell>
+
+                <mxCell id="governance" value="CLASIFICACIÓN Y GOBIERNO" style="swimlane;html=1;rounded=0;startSize=32;fillColor=#F8D7D4;swimlaneFillColor=#FFF9F8;strokeColor=#B64B4B;fontFamily=Helvetica;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1240" y="90" width="520" height="820" as="geometry"/>
+                </mxCell>
+                <mxCell id="class-restricted" value="&lt;b&gt;RESTRINGIDO&lt;/b&gt;&lt;br&gt;PII y biometría · señales Open Finance/Open Data&lt;br&gt;KYC/AML y fraude · evidencias · medios tokenizados&lt;br&gt;&lt;font color=&quot;#5F6368&quot;&gt;Acceso por necesidad, propósito y consentimiento&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B64B4B;fontFamily=Helvetica;fontSize=10;" parent="governance" vertex="1">
+                    <mxGeometry x="35" y="55" width="450" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="class-confidential" value="&lt;b&gt;CONFIDENCIAL&lt;/b&gt;&lt;br&gt;Cotizaciones y primas · pólizas y contratos&lt;br&gt;siniestros y decisiones · acuerdos y comisiones&lt;br&gt;&lt;font color=&quot;#5F6368&quot;&gt;Acceso por rol y segregación de funciones&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontFamily=Helvetica;fontSize=10;" parent="governance" vertex="1">
+                    <mxGeometry x="35" y="195" width="450" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="class-internal" value="&lt;b&gt;INTERNO&lt;/b&gt;&lt;br&gt;Catálogo de productos · coberturas · tarifas&lt;br&gt;reglas versionadas · metadatos y contratos de eventos&lt;br&gt;&lt;font color=&quot;#5F6368&quot;&gt;No se publica sin aprobación del propietario&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontFamily=Helvetica;fontSize=10;" parent="governance" vertex="1">
+                    <mxGeometry x="35" y="335" width="450" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="controls" value="&lt;b&gt;CONTROLES TRANSVERSALES&lt;/b&gt;&lt;hr&gt;• Propietario único por contexto; solo este escribe&lt;br&gt;• Cifrado en tránsito y reposo; claves gestionadas&lt;br&gt;• Mínimo privilegio, enmascaramiento y trazabilidad&lt;br&gt;• Tokenización; no almacenar PAN, CVV ni secretos&lt;br&gt;• Consentimiento y finalidad antes de usar señales&lt;br&gt;• CorrelationId, schemaVersion y occurredAt en eventos&lt;br&gt;• Borrado o anonimización sujetos a retención legal" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#B64B4B;fontFamily=Helvetica;fontSize=10;" parent="governance" vertex="1">
+                    <mxGeometry x="35" y="485" width="450" height="270" as="geometry"/>
+                </mxCell>
+
+                <mxCell id="policies" value="POLÍTICAS DE INFORMACIÓN Y CONVENCIONES" style="swimlane;html=1;rounded=0;startSize=32;fillColor=#E2E3E5;swimlaneFillColor=#FAFAFA;strokeColor=#666666;fontFamily=Helvetica;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="940" width="1720" height="430" as="geometry"/>
+                </mxCell>
+                <mxCell id="policy-ownership" value="&lt;b&gt;PROPIEDAD Y CONSISTENCIA&lt;/b&gt;&lt;hr&gt;Cada contexto es system of record de su información.&lt;br&gt;No hay lectura ni escritura directa en tablas ajenas.&lt;br&gt;Las referencias cruzan fronteras como ID + versión o instantánea.&lt;br&gt;Las reglas invariantes se confirman dentro del propietario." style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=10;" parent="policies" vertex="1">
+                    <mxGeometry x="25" y="55" width="390" height="275" as="geometry"/>
+                </mxCell>
+                <mxCell id="policy-lifecycle" value="&lt;b&gt;CICLO DE VIDA Y LINAJE&lt;/b&gt;&lt;hr&gt;&lt;b&gt;Crear:&lt;/b&gt; validar propósito, calidad y consentimiento.&lt;br&gt;&lt;b&gt;Usar:&lt;/b&gt; conservar fuente, modelo, regla y versión.&lt;br&gt;&lt;b&gt;Conservar:&lt;/b&gt; según obligación contractual/regulatoria.&lt;br&gt;&lt;b&gt;Eliminar:&lt;/b&gt; anonimizar o purgar al vencer la retención.&lt;br&gt;Evidencias y documentos: hash, versionado y custodia." style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2F7D73;fontFamily=Helvetica;fontSize=10;" parent="policies" vertex="1">
+                    <mxGeometry x="440" y="55" width="390" height="275" as="geometry"/>
+                </mxCell>
+                <mxCell id="policy-resilience" value="&lt;b&gt;INTEGRIDAD Y RECUPERACIÓN&lt;/b&gt;&lt;hr&gt;Operaciones monetarias con idempotencyKey y restricción única.&lt;br&gt;Auditoría append-only con encadenamiento de hashes.&lt;br&gt;Eventos al menos una vez; consumidores idempotentes.&lt;br&gt;Backups, PITR y réplica según RPO/RTO.&lt;br&gt;Caché nunca es fuente única de información crítica." style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#7C65A9;fontFamily=Helvetica;fontSize=10;" parent="policies" vertex="1">
+                    <mxGeometry x="855" y="55" width="390" height="275" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend" value="&lt;b&gt;CONVENCIONES&lt;/b&gt;&lt;hr&gt;&lt;font color=&quot;#4F7CAC&quot;&gt;┄ ┄ ▷&lt;/font&gt; &lt;b&gt;«flow»&lt;/b&gt; transferencia lógica de información&lt;br&gt;&lt;font color=&quot;#5B7652&quot;&gt;┄ ┄ ▷&lt;/font&gt; &lt;b&gt;«event»&lt;/b&gt; hecho inmutable y versionado&lt;br&gt;Rótulo de sensibilidad: máxima clasificación del conjunto&lt;br&gt;Las flechas no implican base de datos compartida&lt;br&gt;RDS/S3/Redis pertenecen a la vista de despliegue" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#666666;fontFamily=Helvetica;fontSize=10;" parent="policies" vertex="1">
+                    <mxGeometry x="1270" y="55" width="425" height="275" as="geometry"/>
+                </mxCell>
+
+                <mxCell id="flow-identity-profile" value="«flow» clienteId + consentimiento vigente" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=1;exitY=0.35;entryX=0;entryY=0.35;" parent="1" source="info-identity" target="info-profile" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="flow-profile-quote" value="«flow» perfilId + versión + score" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="info-profile" target="info-quote" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="flow-product-quote" value="«flow» producto + versión de reglas" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=0;exitY=0.7;entryX=1;entryY=0.25;" parent="1" source="info-product" target="info-quote" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="flow-distribution-quote" value="«flow» socioId + acuerdoId" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=1;exitY=0.4;entryX=0;entryY=0.4;" parent="1" source="info-distribution" target="info-quote" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="flow-quote-policy" value="«flow» oferta aceptada + instantánea" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=1;exitY=0.55;entryX=0;entryY=0.55;" parent="1" source="info-quote" target="info-policy" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="flow-policy-claims" value="«flow» pólizaId + cobertura vigente" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=0;exitY=0.8;entryX=1;entryY=0.2;" parent="1" source="info-policy" target="info-claims" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="event-policy-payment" value="«event» PólizaEmitida" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=0.75;exitY=1;entryX=0.75;entryY=0;" parent="1" source="info-policy" target="info-payments" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="event-claim-payment" value="«event» SiniestroAprobado" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=1;exitY=0.35;entryX=0;entryY=0.35;" parent="1" source="info-claims" target="info-payments" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="event-payment-claim" value="«event» PagoConfirmado / PagoFallido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=0;exitY=0.75;entryX=1;entryY=0.75;" parent="1" source="info-payments" target="info-claims" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="820" y="850"/>
+                            <mxPoint x="790" y="850"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="event-payment-policy" value="«event» PagoConfirmado / PagoFallido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=1;exitY=0.45;entryX=1;entryY=0.75;" parent="1" source="info-payments" target="info-policy" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1210" y="810"/>
+                            <mxPoint x="1210" y="575"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="event-audit" value="«event» hechos auditables + correlación" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;exitX=0;exitY=0.55;entryX=1;entryY=0.55;" parent="1" source="info-claims" target="info-compliance" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

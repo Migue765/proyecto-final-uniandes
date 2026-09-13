@@ -73,13 +73,19 @@ class FakeConnection:
 
     def execute(self, query: Any, params: tuple[Any, ...] | None = None) -> FakeResult:
         self.executions.append((query, params))
-        if isinstance(query, str) and query.startswith(
-            "SELECT rolsuper, rolreplication, rolbypassrls"
-        ):
+        if isinstance(query, str) and "FROM pg_catalog.pg_roles role" in query:
             if not self.role_exists:
                 return FakeResult()
             return FakeResult(
-                (self.privileged_role, self.privileged_role, self.privileged_role)
+                (
+                    self.privileged_role,
+                    self.privileged_role,
+                    self.privileged_role,
+                    self.privileged_role,
+                    self.privileged_role,
+                    self.privileged_role,
+                    self.privileged_role,
+                )
             )
         if query == "SELECT current_database()":
             return FakeResult(("solventa",))
@@ -142,7 +148,7 @@ def test_existing_runtime_role_is_rotated_without_recreation() -> None:
     assert not any("NOREPLICATION" in statement for statement in statements)
 
 
-def test_existing_privileged_runtime_role_is_rejected() -> None:
+def test_existing_privileged_or_owner_runtime_role_is_rejected() -> None:
     connection = FakeConnection(role_exists=True, privileged_role=True)
 
     with pytest.raises(RuntimeError, match="forbidden privileges"):

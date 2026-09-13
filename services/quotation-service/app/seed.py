@@ -203,8 +203,27 @@ def configure_runtime_role(
 
     connection.execute("SELECT pg_advisory_xact_lock(%s)", (_SEED_LOCK_ID,))
     role_attributes = connection.execute(
-        "SELECT rolsuper, rolreplication, rolbypassrls "
-        "FROM pg_catalog.pg_roles WHERE rolname = %s",
+        "SELECT "
+        "role.rolsuper, "
+        "role.rolreplication, "
+        "role.rolbypassrls, "
+        "EXISTS ("
+        "SELECT 1 FROM pg_catalog.pg_auth_members membership "
+        "WHERE membership.member = role.oid"
+        "), "
+        "EXISTS ("
+        "SELECT 1 FROM pg_catalog.pg_database database "
+        "WHERE database.datname = current_database() AND database.datdba = role.oid"
+        "), "
+        "EXISTS ("
+        "SELECT 1 FROM pg_catalog.pg_namespace namespace "
+        "WHERE namespace.nspowner = role.oid"
+        "), "
+        "EXISTS ("
+        "SELECT 1 FROM pg_catalog.pg_class relation "
+        "WHERE relation.relowner = role.oid"
+        ") "
+        "FROM pg_catalog.pg_roles role WHERE role.rolname = %s",
         (runtime_db_user,),
     ).fetchone()
     role = sql.Identifier(runtime_db_user)

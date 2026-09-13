@@ -13,11 +13,21 @@ Esta vista explica qué información relevante maneja Solventa, qué contexto es
 
 No es un modelo entidad-relación ni un diseño de tablas. Tampoco prescribe esquemas físicos, índices, particiones o nombres de bases de datos.
 
+El archivo contiene dos páginas complementarias:
+
+1. **Flujo de información:** lectura de izquierda a derecha desde fuentes y consumidores, pasando por contratos de entrada y dominios propietarios, hasta repositorios y productos de información.
+2. **Gobierno y clasificación:** detalle de los conjuntos administrados por cada contexto, su sensibilidad, linaje, integridad, retención y recuperación.
+
+La primera página favorece el seguimiento de los recorridos, mientras la segunda permite revisar controles y responsabilidades sin sobrecargar el flujo principal.
+
 ## 2. Convenciones
 
 | Representación | Significado |
 |---|---|
+| Columna amarilla | Fuentes o consumidores externos de información |
+| Columna azul | Contratos de entrada validados y normalizados |
 | Contenedor de contexto | Propietario lógico y `system of record` del conjunto de información |
+| Columna morada | Repositorios lógicos y productos derivados de información |
 | `«RESTRINGIDO»` | Información cuya exposición puede causar daño significativo o incumplimiento |
 | `«CONFIDENCIAL»` | Información contractual, financiera o comercial de acceso limitado |
 | `«INTERNO»` | Información operativa no destinada a publicación abierta |
@@ -25,6 +35,8 @@ No es un modelo entidad-relación ni un diseño de tablas. Tampoco prescribe esq
 | Línea verde punteada `«event»` | Hecho de negocio inmutable comunicado mediante un contrato versionado |
 
 Los flujos se expresan con la notación de flujo de información de UML. La flecha indica la dirección en que se transmite la información, no propiedad compartida ni acceso directo a una base de datos. El rótulo de cada contexto indica la clasificación máxima; algunos atributos pueden requerir controles menos restrictivos.
+
+Las columnas expresan etapas de tratamiento, no capas de ejecución. API Gateway, BFF, pods, VPC y protocolos concretos continúan perteneciendo a las vistas de componentes y despliegue.
 
 El diagrama muestra los intercambios críticos para entender compra, emisión, siniestros y pagos. Los hechos auditables de todos los contextos siguen el mismo sobre de auditoría aunque solo se represente una conexión para evitar cruces que reduzcan la legibilidad.
 
@@ -43,6 +55,8 @@ El diagrama muestra los intercambios críticos para entender compra, emisión, s
 | Cumplimiento y Auditoría | Casos KYC/AML/fraude y registros de auditoría | Restringido |
 
 Solo el contexto propietario crea o modifica su información. Los demás contextos reciben identificadores, versiones, instantáneas o eventos mediante contratos; nunca consultan ni actualizan directamente sus tablas.
+
+La caja de persistencia operacional representa el patrón común de almacenamiento aislado. No es una base compartida: cada contexto mantiene su propio esquema o base y aplica sus transacciones dentro de esa frontera.
 
 ## 4. Instantáneas, referencias y linaje
 
@@ -131,6 +145,7 @@ No se fijan períodos numéricos en esta vista porque deben ser aprobados por ne
 - RDS/Aurora mantiene persistencia aislada por dominio, cifrado, backups y PITR.
 - S3 conserva evidencias y documentos con cifrado, versionado, retención y réplica.
 - Redis es caché temporal; nunca es la única fuente de información crítica.
+- Los modelos de lectura y analítica son proyecciones reconstruibles y no sustituyen al `system of record`.
 - La réplica regional y los procedimientos de failover deben satisfacer los RPO/RTO aprobados y probarse periódicamente.
 
 La tecnología concreta se muestra en la vista de despliegue; aquí se documentan las propiedades que esa tecnología debe garantizar.

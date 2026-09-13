@@ -18,7 +18,7 @@ Por ello no se representan VPC, zonas de disponibilidad, EKS, RDS, Redis, S3 ni 
 |---|---|
 | Contenedor con título de color | Contexto delimitado y frontera de responsabilidad |
 | `«component»` | Componente lógico con una responsabilidad cohesionada |
-| `«port»` | Interfaz ofrecida por el contexto; no implica un protocolo concreto |
+| `«interface»` | Contrato ofrecido por el contexto; no implica un protocolo concreto |
 | Línea continua con flecha | Solicitud síncrona que necesita respuesta inmediata |
 | Línea verde punteada | Publicación o consumo asíncrono de un evento |
 | Event Bus + DLQ | Canal de distribución, reintento y aislamiento de eventos |
@@ -42,6 +42,8 @@ Una línea conectada a un componente o puerto representa una dependencia con el 
 
 Cada contexto conserva datos propios mediante adaptadores de persistencia internos. Ningún componente consulta directamente las tablas de otro contexto.
 
+Las dependencias internas hacen explícita la colaboración entre componentes cohesionados del mismo contexto: Gestión de Socios habilita acuerdos; el Orquestador invoca el Motor de Perfil; Gestión de Cotización solicita el cálculo de la oferta; Reporte y Evidencias entrega el expediente para evaluación; y Órdenes Idempotentes solicita la ejecución y conciliación de cada transacción.
+
 ## 4. Fachadas por canal
 
 - **BFF Web:** compone información para venta asistida, administración de pólizas, operación, socios y tableros.
@@ -60,6 +62,7 @@ Se usa comunicación síncrona cuando el recorrido necesita una respuesta dentro
 - Perfilamiento hacia Identidad para validar consentimiento y hacia Integraciones para obtener señales.
 - Pólizas hacia Producto/Suscripción y Firma.
 - Siniestros hacia Pólizas para validar cobertura y hacia Cumplimiento para evaluar fraude.
+- Dentro de cada contexto, las solicitudes avanzan entre los componentes especializados antes de cruzar una interfaz externa.
 - Pagos hacia el adaptador de pasarela para cobrar o desembolsar.
 
 Cada llamada externa aplica timeout, reintento limitado, circuit breaker y degradación definida por negocio. No se encadenan dependencias externas sin controlar el presupuesto total del recorrido.
@@ -76,7 +79,7 @@ Cada llamada externa aplica timeout, reintento limitado, circuit breaker y degra
 | `PagoConfirmado` / `PagoFallido` | Pagos | Siniestros, cuotas de prima y notificaciones |
 | `EventoParamétricoValidado` | Integraciones | Siniestros |
 
-El bus entrega al menos una vez. Los consumidores deben ser idempotentes, registrar la versión del contrato y propagar identificadores de correlación. La DLQ conserva mensajes que agotaron sus reintentos.
+El bus entrega al menos una vez. Los consumidores deben ser idempotentes, registrar la versión del contrato y propagar identificadores de correlación. La DLQ conserva mensajes que agotaron sus reintentos. Las aristas de consumo muestran los nombres exactos de los contratos que recibe cada componente; una arista puede agrupar varios eventos cuando comparten consumidor.
 
 La emisión de la póliza se solicita sincrónicamente después de aceptar la cotización para cumplir el recorrido de decisión y emisión. `CotizaciónAceptada` se publica además como hecho de negocio para auditoría y consumidores futuros; no vuelve a ordenar la emisión y, por tanto, no crea una segunda póliza.
 
@@ -85,7 +88,8 @@ La emisión de la póliza se solicita sincrónicamente después de aceptar la co
 - **Open Finance / Open Data:** normaliza señales financieras y públicas consentidas.
 - **KYC / AML:** encapsula verificación de identidad y listas restrictivas.
 - **Pasarelas de Pago:** abstrae cobro, desembolso y webhooks firmados.
-- **Firma y Notificación:** gestiona firma electrónica, no repudio, documentos y avisos.
+- **Firma electrónica:** gestiona firma, no repudio y documentos contractuales.
+- **Notificaciones:** abstrae correo, SMS y push; consume eventos de póliza y pagos sin acoplar esos contextos a un proveedor.
 - **IoT / Paramétricos:** valida y normaliza eventos de clima, vuelos o telemetría.
 - **ACORD / Reaseguro:** traduce el modelo interno a estándares sectoriales y contratos de reaseguradoras.
 

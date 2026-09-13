@@ -14,6 +14,8 @@ La estructura sigue la convención del ejemplo suministrado: canales a la izquie
 |---|---|
 | Contenedor azul claro | Canales y actores |
 | Caja azul `component` | Microservicio o workload desplegable |
+| Cuadrado blanco sobre el borde | Puerto (`Port`) de comunicación del componente |
+| Círculo negro unido al puerto (`●|`) | Punto que indica el extremo receptor y, por tanto, la dirección del flujo |
 | Caja naranja | ASR, control transversal o sistema externo |
 | Caja verde `queue` | Cola o suscripción asíncrona con retry y DLQ |
 | Cilindro o carpeta morada | Base de datos o almacén administrado |
@@ -23,7 +25,9 @@ La estructura sigue la convención del ejemplo suministrado: canales a la izquie
 | Línea morada continua | Persistencia o proyección |
 | Línea naranja punteada | Aplicación de certificado, firma o telemetría |
 
-Las flechas indican la dirección de la solicitud o transferencia. Una cola se define por propósito o consumidor; no se conectan colas directamente entre sí. Los eventos se publican desde el productor y cada consumidor recibe una suscripción independiente.
+Las líneas no usan puntas de flecha. La dirección se lee desde el puerto cuadrado del componente emisor hacia el indicador negro `●`, que permanece sobre la misma línea y se une mediante un tramo corto al puerto cuadrado del componente receptor: `□────────●|□`. Esta regla se aplica a componentes, actores, controles ASR, colas, sistemas externos y almacenes de datos; ninguna relación termina directamente sobre la caja completa.
+
+Una cola se define por propósito o consumidor; no se conectan colas directamente entre sí. Los eventos se publican desde el productor y cada consumidor recibe una suscripción independiente.
 
 ## 3. Actores y acceso
 

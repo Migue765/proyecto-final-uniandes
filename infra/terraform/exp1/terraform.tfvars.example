@@ -1,0 +1,19 @@
+aws_region         = "us-east-1"
+aws_profile        = "solventa-lab"
+expected_account_id = "969325258550"
+
+# Replace this documentation-only address with the operator's current public IP.
+# The configuration rejects 0.0.0.0/0.
+cluster_endpoint_public_access_cidrs = ["203.0.113.10/32"]
+api_allowed_source_cidrs             = ["203.0.113.10/32"]
+
+eks_version          = "1.36"
+vpc_cni_addon_version = "v1.22.4-eksbuild.3"
+rds_engine_version   = "15.19"
+redis_engine_version = "7.1"
+
+enable_ecs_load_runner = false
+
+# When Fargate is enabled, pin the exact immutable tag or digest produced by
+# the image build. Terraform deliberately has no `latest` fallback:
+# load_runner_image = "969325258550.dkr.ecr.us-east-1.amazonaws.com/solventa-exp1-load-runner@sha256:..."

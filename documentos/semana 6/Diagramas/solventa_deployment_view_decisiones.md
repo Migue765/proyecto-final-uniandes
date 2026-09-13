@@ -24,11 +24,15 @@ La vista combina elementos de despliegue y contenedores para comunicar la arquit
 
 ## 3. Entrada privada a EKS
 
-**Decisión:** usar un ALB interno y un Ingress Controller entre API Gateway y EKS.
+**Decisión:** usar una integración privada de Amazon API Gateway HTTP API mediante VPC Link V2 hacia el listener de un ALB interno.
 
-**Razón:** evita exponer directamente los microservicios a Internet y enruta las solicitudes hacia BFF Web, BFF Móvil o API Socios. TLS protege el tráfico y ACM administra los certificados.
+**Razón:** API Gateway requiere VPC Link V2 para alcanzar un ALB privado. El ALB distribuye las solicitudes hacia BFF Web, BFF Móvil o API Socios sin exponer directamente los workloads a Internet. TLS protege el tráfico y ACM administra los certificados.
 
-**Consecuencia:** las reglas de API Gateway, ALB e Ingress deben mantenerse coordinadas.
+**Decisión:** desplegar AWS Load Balancer Controller dentro de EKS para observar los recursos Kubernetes `Ingress` y crear o actualizar el ALB, sus listeners, reglas y target groups. El controller administra la configuración, pero no forma parte del recorrido de cada solicitud.
+
+**Decisión:** utilizar target groups de tipo IP, de modo que el ALB enrute directamente a los pods registrados por los servicios Kubernetes.
+
+**Consecuencia:** las rutas de API Gateway, el VPC Link, las reglas del ALB y los recursos `Ingress` deben mantenerse coordinados. El VPC Link, el HTTP API y el ALB deben pertenecer a la misma cuenta AWS, y las subredes privadas deben estar correctamente etiquetadas para el descubrimiento del ALB interno.
 
 ## 4. EKS y alta disponibilidad
 
@@ -177,6 +181,7 @@ La región secundaria contiene:
 |---|---|---|
 | **ACM** | AWS Certificate Manager | Administra los certificados TLS utilizados por API Gateway y el ALB. |
 | **ALB** | Application Load Balancer | Recibe tráfico privado desde API Gateway y lo distribuye hacia los servicios publicados por EKS. |
+| **AWS Load Balancer Controller** | Controller de Kubernetes para Elastic Load Balancing | Observa recursos `Ingress` o `Service` y crea o actualiza el ALB, sus reglas y target groups; no procesa las solicitudes de negocio. |
 | **AML** | Anti-Money Laundering | Controles externos para detectar lavado de activos durante la validación de clientes y operaciones. |
 | **API** | Application Programming Interface | Contrato mediante el cual canales, socios y servicios intercambian solicitudes y respuestas. |
 | **AWS** | Amazon Web Services | Plataforma cloud donde se despliega la solución. |
@@ -203,6 +208,7 @@ La región secundaria contiene:
 | **S3** | Simple Storage Service | Almacena evidencias y documentos con cifrado, versionado, retención y réplica regional. |
 | **TLS** | Transport Layer Security | Cifra las comunicaciones HTTPS y permite verificar la identidad del servidor. |
 | **WAF** | Web Application Firewall | Filtra tráfico malicioso y ataques web antes de que alcancen las API. |
+| **VPC Link V2** | Enlace privado administrado de API Gateway | Permite que API Gateway integre un HTTP API con el listener de un ALB privado dentro de una VPC. |
 | **GitOps** | Gestión declarativa de despliegues mediante Git | Mantiene la configuración versionada y sincroniza el estado aprobado con EKS. |
 | **PodDisruptionBudget** | Política de disponibilidad de Kubernetes | Conserva una cantidad mínima de réplicas durante mantenimientos o interrupciones voluntarias. |
 | **Event Bus** | Canal central de eventos | Desacopla productores y consumidores de eventos de pólizas, siniestros, pagos y fuentes externas. |

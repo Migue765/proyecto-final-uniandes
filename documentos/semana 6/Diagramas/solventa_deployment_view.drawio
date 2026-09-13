@@ -25,11 +25,17 @@
                 <mxCell id="gateway-ms" value="WAF | OAuth2/JWT | cuotas | versionado" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontStyle=0;fontSize=11;" parent="gateway" vertex="1">
                     <mxGeometry x="20" y="34" width="340" height="26" as="geometry"/>
                 </mxCell>
-                <mxCell id="ingress" value="ALB interno + Ingress Controller | TLS / ACM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
-                    <mxGeometry x="650" y="316" width="300" height="30" as="geometry"/>
+                <mxCell id="vpc-link" value="API Gateway VPC Link V2" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="690" y="290" width="220" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="ingress" value="ALB interno | TLS / ACM | Target Groups tipo IP" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="650" y="326" width="300" height="28" as="geometry"/>
                 </mxCell>
                 <mxCell id="eks" value="EKS privado - replicas multi-AZ | HPA | PodDisruptionBudget | IAM por service account (IRSA)" style="swimlane;html=1;rounded=0;startSize=30;fillColor=#e8f4f8;strokeColor=#0e7490;strokeWidth=2;fontStyle=1;" parent="1" vertex="1">
                     <mxGeometry x="180" y="360" width="1160" height="540" as="geometry"/>
+                </mxCell>
+                <mxCell id="aws-lb-controller" value="AWS Load Balancer Controller" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F4F8;strokeColor=#0E7490;fontSize=9;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1090" y="392" width="210" height="22" as="geometry"/>
                 </mxCell>
                 <mxCell id="bff-web" value="Container: BFF Web&lt;br&gt;&lt;b&gt;Microservicio: BFF Web&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d9e4f5;strokeColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
                     <mxGeometry x="300" y="420" width="210" height="58" as="geometry"/>
@@ -118,18 +124,24 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-gateway-ingress" value="HTTPS privado" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;" parent="1" source="gateway" target="ingress" edge="1">
+                <mxCell id="e-gateway-vpc-link" value="integración privada" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;" parent="1" source="gateway" target="vpc-link" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="e-gateway-web" value="enrutamiento" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;" parent="1" source="ingress" target="bff-web" edge="1">
+                <mxCell id="e-vpc-link-alb" value="HTTPS privado" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;" parent="1" source="vpc-link" target="ingress" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="e-gateway-mobile" value="enrutamiento" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;" parent="1" source="ingress" target="bff-mobile" edge="1">
+                <mxCell id="e-gateway-web" value="target group IP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;" parent="1" source="ingress" target="bff-web" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-gateway-mobile" value="target group IP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;" parent="1" source="ingress" target="bff-mobile" edge="1">
                     <mxGeometry x="0.4595" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-gateway-partners" value="enrutamiento" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;" parent="1" source="ingress" target="api-partners" edge="1">
+                <mxCell id="e-gateway-partners" value="target group IP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;" parent="1" source="ingress" target="api-partners" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-controller-alb" value="crea y administra" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=4 4;strokeColor=#0E7490;endArrow=open;endFill=0;fontFamily=Helvetica;fontSize=9;" parent="1" source="aws-lb-controller" target="ingress" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="e-partner-identity" value="consentimiento" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;" parent="1" source="api-partners" target="identity" edge="1">

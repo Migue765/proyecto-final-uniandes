@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 import pytest
@@ -7,6 +8,8 @@ from app.seed import (
     RUNTIME_ROLE,
     UPSERT_PROFILES,
     SeedSettings,
+    SeedStageError,
+    _failure_event,
     configure_runtime_role,
     main,
     seed_database,
@@ -27,6 +30,18 @@ class FakeResult:
 
     def fetchone(self) -> tuple[Any, ...] | None:
         return self._row
+
+
+class FakeDiagnostic:
+    message_primary = (
+        'permission denied for role "solventa_runtime"; password=hunter2; '
+        "postgresql://admin:do-not-log@example.invalid/solventa " + ("x" * 300)
+    )
+
+
+class FakeDatabaseError(Exception):
+    sqlstate = "42501"
+    diag = FakeDiagnostic()
 
 
 class FakePgConnection:
@@ -111,6 +126,24 @@ def test_existing_runtime_role_is_rotated_without_recreation() -> None:
     assert any("ALTER ROLE" in statement for statement in statements)
 
 
+def test_failure_event_reports_stage_and_sqlstate_without_sensitive_data() -> None:
+    event = _failure_event(
+        "seed_transaction",
+        SeedStageError("configure_runtime_role", FakeDatabaseError("unsafe fallback")),
+    )
+
+    serialized = json.dumps(event)
+    assert event["event"] == "database_seed_failed"
+    assert event["stage"] == "configure_runtime_role"
+    assert event["error_type"] == "FakeDatabaseError"
+    assert event["sqlstate"] == "42501"
+    assert len(event["message_primary"]) <= 160
+    assert "solventa_runtime" not in serialized
+    assert "hunter2" not in serialized
+    assert "do-not-log" not in serialized
+    assert "unsafe fallback" not in serialized
+
+
 def test_seed_rejects_any_runtime_role_name_other_than_fixed_role() -> None:
     with pytest.raises(ValueError):
         configure_runtime_role(
@@ -141,5 +174,11 @@ def test_seed_failure_does_not_print_connection_details(monkeypatch, capsys) -> 
     captured = capsys.readouterr()
     assert exit_code == 1
     assert captured.out == ""
-    assert captured.err == '{"event":"database_seed_failed"}\n'
+    assert json.loads(captured.err) == {
+        "event": "database_seed_failed",
+        "stage": "configuration",
+        "error_type": "RuntimeError",
+        "sqlstate": "none",
+        "message_primary": "unavailable",
+    }
     assert secret_url not in captured.err

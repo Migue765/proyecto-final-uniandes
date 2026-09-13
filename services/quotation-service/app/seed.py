@@ -7,8 +7,9 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
-from typing import Literal
+from typing import Any, Literal
 
 import psycopg
 from psycopg import sql
@@ -26,6 +27,74 @@ from .config import validate_database_url
 
 RUNTIME_ROLE = "solventa_runtime"
 _SEED_LOCK_ID = 2_026_091_200
+_MAX_PRIMARY_MESSAGE_LENGTH = 160
+_SQLSTATE_PATTERN = re.compile(r"^[0-9A-Z]{5}$")
+_URI_PATTERN = re.compile(r"(?i)\b(?:https?|postgres(?:ql)?|redis(?:s)?)://\S+")
+_SECRET_ASSIGNMENT_PATTERN = re.compile(
+    r"(?i)\b(?:password|passwd|secret|token)\s*[:=]\s*[^\s,;]+"
+)
+_IDENTITY_PATTERN = re.compile(
+    r"(?i)\b(user|role)\s+(?:\"[^\"]*\"|'[^']*'|[^\s,;]+)"
+)
+
+
+class SeedStageError(RuntimeError):
+    """Preserve a fixed seed stage without copying database error text."""
+
+    def __init__(self, stage: str, cause: Exception) -> None:
+        super().__init__("database seed stage failed")
+        self.stage = stage
+        self.cause = cause
+
+
+def _sanitized_primary_message(error: Exception) -> str:
+    diagnostic = getattr(error, "diag", None)
+    message = getattr(diagnostic, "message_primary", None)
+    if not isinstance(message, str) or not message.strip():
+        return "unavailable"
+
+    normalized = " ".join(
+        "".join(character if character.isprintable() else " " for character in message)
+        .split()
+    )
+    normalized = _URI_PATTERN.sub("[redacted-url]", normalized)
+    normalized = _SECRET_ASSIGNMENT_PATTERN.sub("credential=[redacted]", normalized)
+    normalized = _IDENTITY_PATTERN.sub(r"\1 [redacted]", normalized)
+    return normalized[:_MAX_PRIMARY_MESSAGE_LENGTH] or "unavailable"
+
+
+def _failure_event(default_stage: str, error: Exception) -> dict[str, str]:
+    stage = default_stage
+    cause = error
+    if isinstance(error, SeedStageError):
+        stage = error.stage
+        cause = error.cause
+
+    sqlstate = getattr(cause, "sqlstate", None)
+    if not isinstance(sqlstate, str) or not _SQLSTATE_PATTERN.fullmatch(sqlstate):
+        sqlstate = "none"
+
+    return {
+        "event": "database_seed_failed",
+        "stage": stage,
+        "error_type": type(cause).__name__[:64] or "Exception",
+        "sqlstate": sqlstate,
+        "message_primary": _sanitized_primary_message(cause),
+    }
+
+
+def _execute_seed_statement(
+    connection: psycopg.Connection,
+    stage: str,
+    query: Any,
+    parameters: tuple[Any, ...] | None = None,
+) -> Any:
+    try:
+        if parameters is None:
+            return connection.execute(query)
+        return connection.execute(query, parameters)
+    except Exception as error:
+        raise SeedStageError(stage, error) from error
 
 
 class SeedSettings(BaseModel):
@@ -211,21 +280,41 @@ def seed_database(
     runtime_db_user: str,
     runtime_db_password: SecretStr,
 ) -> None:
-    with connection.transaction():
-        connection.execute(CREATE_RATES)
-        connection.execute(CREATE_PROFILES)
-        connection.execute(UPSERT_RATES)
-        connection.execute(UPSERT_PROFILES, (profiles_per_partner,))
-        configure_runtime_role(connection, runtime_db_user, runtime_db_password)
+    try:
+        with connection.transaction():
+            _execute_seed_statement(connection, "create_partner_rates", CREATE_RATES)
+            _execute_seed_statement(
+                connection, "create_synthetic_profiles", CREATE_PROFILES
+            )
+            _execute_seed_statement(connection, "upsert_partner_rates", UPSERT_RATES)
+            _execute_seed_statement(
+                connection,
+                "upsert_synthetic_profiles",
+                UPSERT_PROFILES,
+                (profiles_per_partner,),
+            )
+            try:
+                configure_runtime_role(
+                    connection, runtime_db_user, runtime_db_password
+                )
+            except Exception as error:
+                raise SeedStageError("configure_runtime_role", error) from error
+    except SeedStageError:
+        raise
+    except Exception as error:
+        raise SeedStageError("seed_transaction", error) from error
 
 
 def main() -> int:
+    stage = "configuration"
     try:
         settings = SeedSettings.from_env()
+        stage = "database_connection"
         with psycopg.connect(
             settings.database_admin_url.get_secret_value(),
             connect_timeout=settings.connect_timeout_seconds,
         ) as connection:
+            stage = "seed_transaction"
             seed_database(
                 connection,
                 settings.profiles_per_partner,
@@ -244,8 +333,15 @@ def main() -> int:
             + "\n"
         )
         return 0
-    except Exception:
-        sys.stderr.write('{"event":"database_seed_failed"}\n')
+    except Exception as error:
+        sys.stderr.write(
+            json.dumps(
+                _failure_event(stage, error),
+                separators=(",", ":"),
+                ensure_ascii=True,
+            )
+            + "\n"
+        )
         return 1
 
 

@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="solventa-functional" name="Solventa - Vista Funcional">
-        <mxGraphModel dx="900" dy="811" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1250" math="0" shadow="0">
+        <mxGraphModel dx="475" dy="428" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1250" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -460,7 +460,35 @@
                 <mxCell id="e-iface-cache-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="data" source="iface-cache" target="port-cache-in">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="legend" value="&lt;b&gt;Convenciones:&lt;/b&gt; azul = microservicio · □ = puerto de comunicación · ●| = dirección del flujo, unido al puerto receptor · líneas sin flecha · morado = base/almacén · naranja = ASR o sistema externo · verde = cola/suscripción · azul continua = solicitud síncrona · verde punteada = evento · morada = persistencia/proyección" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#F5F5F5;strokeColor=#666666;fontFamily=Helvetica;fontSize=10;" parent="1" vertex="1">
+                <mxCell id="bar-iface-auth" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-auth" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-gateway" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-gateway" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-bffweb" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-bffweb" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-bffmobile" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-bffmobile" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-partners" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-partners" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-validation" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-validation" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-observability" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-observability" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-q-profile" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-q-profile" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-q-orders" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-q-orders" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-q-parametric" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-q-parametric" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-q-results" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-q-results" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-q-notifications" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-q-notifications" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-q-audit" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-q-audit" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-identity" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-identity" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-quote" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-quote" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-profiling" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-profiling" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-policy" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-policy" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-claims" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-claims" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-payments" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-payments" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-compliance" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-compliance" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-adapters" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-adapters" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-external" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-external" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-db-operational" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-db-operational" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-store-evidence" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-store-evidence" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-db-audit" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-db-audit" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-db-analytics" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-db-analytics" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+                <mxCell id="bar-iface-cache" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" parent="iface-cache" vertex="1"><mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/></mxCell>
+
+                <mxCell id="legend" value="&lt;b&gt;Convenciones:&lt;/b&gt; azul = microservicio · □ = puerto de comunicación · ●| = indicador de dirección integrado a la línea, junto al puerto receptor · líneas sin flecha · morado = base/almacén · naranja = ASR o sistema externo · verde = cola/suscripción · azul continua = solicitud síncrona · verde punteada = evento · morada = persistencia/proyección" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#F5F5F5;strokeColor=#666666;fontFamily=Helvetica;fontSize=10;" parent="1" vertex="1">
                     <mxGeometry x="20" y="1080" width="1680" height="70" as="geometry"/>
                 </mxCell>
                 <mxCell id="e-web-auth" value="autenticar" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-actor-web-out" target="iface-auth" edge="1">
@@ -622,9 +650,11 @@
                 <mxCell id="e-external-validation" value="callback / evento firmado" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-external-out" target="iface-validation" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="945" y="900"/>
-                            <mxPoint x="510" y="900"/>
-                            <mxPoint x="510" y="715"/>
+                            <mxPoint x="920" y="815"/>
+                            <mxPoint x="920" y="890"/>
+                            <mxPoint x="510" y="890"/>
+                            <mxPoint x="510" y="780"/>
+                            <mxPoint x="253" y="780"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
@@ -643,9 +673,11 @@
                 <mxCell id="e-cert-gateway" value="TLS / mTLS" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=3 3;strokeColor=#D79B00;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-cert-out" target="iface-gateway" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="945" y="960"/>
+                            <mxPoint x="910" y="927"/>
+                            <mxPoint x="910" y="960"/>
                             <mxPoint x="510" y="960"/>
                             <mxPoint x="510" y="345"/>
+                            <mxPoint x="365" y="345"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>

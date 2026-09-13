@@ -16,10 +16,10 @@ No es un modelo entidad-relación ni un diseño de tablas. Tampoco prescribe esq
 El diagrama se lee de izquierda a derecha y utiliza la estructura de integración solicitada:
 
 1. **Fuentes y consumidores:** clientes, socios y proveedores externos que originan o reciben información.
-2. **Controles de entrada:** autenticación, API Gateway y validadores de datos, eventos y callbacks.
-3. **Colas:** canales asíncronos para familias de eventos, reintentos y DLQ.
+2. **Controles de entrada y fachadas:** autenticación, API Gateway, BFF Web, BFF Móvil, API de Socios y validadores de datos, eventos y callbacks.
+3. **Event Bus y colas:** canales asíncronos para familias de eventos, reintentos y DLQ.
 4. **Servicios y contextos:** capacidades que validan, transforman y son propietarias de la información de dominio.
-5. **Repositorios y productos de datos:** persistencia operacional aislada, documentos, bitácora, analítica y caché.
+5. **Repositorios y productos de datos:** persistencia operacional aislada, documentos, registro de auditoría, analítica y caché.
 
 ## 2. Convenciones
 
@@ -42,11 +42,13 @@ El diagrama se lee de izquierda a derecha y utiliza la estructura de integració
 
 Las flechas indican dirección de transferencia, no propiedad compartida ni acceso directo a tablas. Las cajas verdes son siempre colas lógicas; los almacenes se muestran únicamente en morado. El rótulo de cada contexto señala su clasificación máxima, aunque algunos atributos puedan requerir controles menos restrictivos.
 
-API Gateway y los validadores aparecen porque controlan la entrada y la calidad de la información. Los detalles de VPC, EKS, pods y protocolos internos continúan perteneciendo a la vista de despliegue.
+API Gateway y los validadores aparecen porque controlan la entrada y la calidad de la información. Gateway enruta únicamente hacia BFF Web, BFF Móvil o API de Socios; estas fachadas invocan los contextos autorizados y evitan exponerlos directamente. Los detalles de VPC, EKS, pods y protocolos internos continúan perteneciendo a la vista de despliegue.
 
 El diagrama muestra los intercambios críticos para compra, emisión, siniestros y pagos. La conexión `hechos auditables` representa publicaciones de todos los servicios hacia su cola, aunque se agrupa visualmente para evitar cruces innecesarios.
 
 Las colas se diseñan por consumidor o propósito para evitar competencia accidental entre dominios. `Resultados de Pago` agrupa visualmente dos suscripciones independientes: una para Siniestros y otra para Pólizas/Cuotas. Esta agrupación reduce ruido en el diagrama, pero no representa una única cola compartida por ambos consumidores.
+
+El Event Bus contiene colas, suscripciones, reintentos y DLQ. El registro de auditoría es persistencia append-only administrada por Cumplimiento y Auditoría; no almacena mensajes pendientes ni sustituye una DLQ. Los modelos de lectura y analítica son un producto lógico opcional y reconstruible, no una base operacional exigida por la vista de despliegue actual.
 
 ## 3. Propiedad de la información
 
@@ -92,8 +94,13 @@ Estas instantáneas permiten reproducir decisiones sin depender del estado actua
 | `PagoConfirmado` / `PagoFallido` | Pagos | Siniestros | Actualiza el estado de liquidación |
 | `PagoConfirmado` / `PagoFallido` | Pagos | Pólizas/Cuotas | Actualiza el estado de recaudo |
 | Hecho auditable | Todos los contextos | Cumplimiento y Auditoría | Registro inmutable con correlación y versión |
+| Verificación KYC/AML | Identidad | Integraciones y proveedor | Solicitud mínima y respuesta normalizada mediante adaptador |
+| Cobro o desembolso | Pagos | Integraciones y proveedor | Operación idempotente con referencia externa |
+| Firma / ACORD / reaseguro | Pólizas | Integraciones y proveedor | Contrato externo versionado y aislado del dominio |
 
 `CotizaciónAceptada` puede publicarse para auditoría y analítica, pero la emisión se solicita sincrónicamente. El evento no vuelve a ordenar la creación de la póliza.
+
+Los callbacks de proveedores se autentican y validan antes de llegar a Integraciones y Notificaciones. Este contexto adapta el protocolo externo, normaliza el resultado y lo entrega al contexto propietario; los proveedores no invocan directamente Pagos, Pólizas o Identidad.
 
 ## 6. Contratos de información
 
@@ -130,6 +137,7 @@ Los secretos técnicos, tokens de acceso y llaves criptográficas no son informa
 ## 8. Privacidad y minimización
 
 - El consentimiento registra alcance, finalidad, vigencia, otorgamiento y revocación.
+- Autenticación valida identidad, roles y scopes técnicos; Identidad y Cliente conserva y decide la vigencia del consentimiento de negocio.
 - Perfilamiento usa únicamente fuentes cubiertas por un consentimiento vigente.
 - La revocación impide usos futuros, sin borrar evidencia necesaria para demostrar tratamientos previos legítimos.
 - Los consumidores reciben solo los atributos necesarios para su finalidad.
@@ -155,7 +163,7 @@ No se fijan períodos numéricos en esta vista porque deben ser aprobados por ne
 - RDS/Aurora mantiene persistencia aislada por dominio, cifrado, backups y PITR.
 - S3 conserva evidencias y documentos con cifrado, versionado, retención y réplica.
 - Redis es caché temporal; nunca es la única fuente de información crítica.
-- Los modelos de lectura y analítica son proyecciones reconstruibles y no sustituyen al `system of record`.
+- Los modelos de lectura y analítica son proyecciones opcionales y reconstruibles desde contratos gobernados del Event Bus; no sustituyen al `system of record` ni obligan a desplegar un almacén analítico en esta etapa.
 - La réplica regional y los procedimientos de failover deben satisfacer los RPO/RTO aprobados y probarse periódicamente.
 
 La tecnología concreta se muestra en la vista de despliegue; aquí se documentan las propiedades que esa tecnología debe garantizar.

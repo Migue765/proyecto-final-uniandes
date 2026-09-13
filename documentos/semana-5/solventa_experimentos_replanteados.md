@@ -5,6 +5,7 @@
 - **Estado:** propuesta completa para ratificación y ejecución
 - **Fuente canónica de requisitos:** [Los 10 ASR más críticos para el negocio](./catalogo_asr_solventa_replanteado.md)
 - **Documento reemplazado conceptualmente:** [Diseño de experimentos v1.0](./solventa_experimentos.pdf)
+- **Runbook de E1:** [Ejecución completa del experimento 1](../../docs/experimento-1/EJECUCION.md)
 
 **Equipo responsable:** Jazmin Natalia Córdoba Puerto, Juan Esteban Mejía
 Izasa, Miguel Alejandro Gómez Alarcón y Angie Natalia Arandio Niño.

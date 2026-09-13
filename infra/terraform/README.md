@@ -19,7 +19,10 @@ servicios administrados son reales.
 - NLB interno hacia el NodePort fijo `30080` y API Gateway REST regional con
   VPC Link. La resource policy permite únicamente CIDRs explícitos de
   laboratorio y la EIP del NAT usada por el runner Fargate, y únicamente
-  identidades de la cuenta del experimento. Solo expone
+  al operador `solventa-terraform-operator` y, cuando se habilita, al rol
+  específico del runner Fargate. Sendos `Deny` explícitos para cualquier
+  origen o principal fuera de esas allowlists impiden que una identity policy
+  IAM omita cualquiera de los dos controles. Solo expone
   `POST /api/v1/cotizaciones`, exige firma SigV4 mediante `AWS_IAM` y usa la
   política TLS 1.3 `SecurityPolicy_TLS13_1_3_2025_09` en modo `STRICT`.
   El security group del NLB no acepta clientes directos; la evaluación inbound
@@ -119,8 +122,12 @@ Antes del `apply`, verifique en el plan:
 - RDS y Redis sin acceso público y Single-AZ;
 - endpoint público de EKS restringido al `/32` elegido;
 - API Gateway restringido a los CIDRs de laboratorio y la EIP del NAT;
-- principal de la resource policy restringido a la cuenta y método con
-  `authorization = "AWS_IAM"`;
+- `Deny` explícito de API Gateway para cualquier origen fuera de esos CIDRs;
+- `Deny` explícito para cualquier principal distinto del operador y el rol
+  opcional del runner;
+- principal de la resource policy restringido al operador exacto y, si se
+  habilita, al rol exacto del runner Fargate; método con `authorization =
+  "AWS_IAM"`;
 - ningún valor de contraseña en variables, plan o repositorio;
 - `enable_ecs_load_runner = false`, salvo que se vaya a ejecutar desde Fargate.
 
@@ -135,8 +142,10 @@ Este repositorio no ejecuta `apply` automáticamente.
 
 `partner_ref` es solamente una etiqueta sintética en el body de prueba. No es
 una identidad, una credencial ni un mecanismo de autorización. El acceso al
-endpoint requiere una identidad IAM de esta cuenta con `execute-api:Invoke`,
-una firma SigV4 válida y una IP permitida. Las cuotas o autorizaciones
+endpoint requiere que el principal sea el usuario IAM
+`solventa-terraform-operator` o, cuando se habilita, el rol exacto del runner
+Fargate; además debe tener `execute-api:Invoke`, presentar una firma SigV4
+válida y provenir de una IP permitida. Las cuotas o autorizaciones
 productivas por socio quedan fuera del baseline y nunca se infieren de esa
 etiqueta.
 

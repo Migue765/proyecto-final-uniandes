@@ -99,6 +99,52 @@ resource "aws_api_gateway_vpc_link" "api" {
 
 data "aws_iam_policy_document" "api_gateway_resource" {
   statement {
+    sid     = "DenyUnexpectedPrincipals"
+    effect  = "Deny"
+    actions = ["execute-api:Invoke"]
+    resources = [
+      "execute-api:/*"
+    ]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "ArnNotEquals"
+      variable = "aws:PrincipalArn"
+      values = distinct(concat(
+        ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/solventa-terraform-operator"],
+        var.enable_ecs_load_runner ? [aws_iam_role.load_runner_task[0].arn] : []
+      ))
+    }
+  }
+
+  statement {
+    sid     = "DenyOutsideLaboratorySources"
+    effect  = "Deny"
+    actions = ["execute-api:Invoke"]
+    resources = [
+      "execute-api:/*"
+    ]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "NotIpAddress"
+      variable = "aws:SourceIp"
+      values = distinct(concat(
+        var.api_allowed_source_cidrs,
+        ["${aws_eip.nat.public_ip}/32"]
+      ))
+    }
+  }
+
+  statement {
     sid     = "AllowOnlyLaboratorySources"
     effect  = "Allow"
     actions = ["execute-api:Invoke"]
@@ -107,8 +153,11 @@ data "aws_iam_policy_document" "api_gateway_resource" {
     ]
 
     principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+      type = "AWS"
+      identifiers = distinct(concat(
+        ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/solventa-terraform-operator"],
+        var.enable_ecs_load_runner ? [aws_iam_role.load_runner_task[0].arn] : []
+      ))
     }
 
     condition {

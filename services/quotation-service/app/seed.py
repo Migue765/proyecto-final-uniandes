@@ -202,13 +202,16 @@ def configure_runtime_role(
         raise ValueError("unsupported runtime database role")
 
     connection.execute("SELECT pg_advisory_xact_lock(%s)", (_SEED_LOCK_ID,))
-    role_exists = connection.execute(
-        "SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = %s",
+    role_attributes = connection.execute(
+        "SELECT rolsuper, rolreplication, rolbypassrls "
+        "FROM pg_catalog.pg_roles WHERE rolname = %s",
         (runtime_db_user,),
     ).fetchone()
     role = sql.Identifier(runtime_db_user)
-    if role_exists is None:
+    if role_attributes is None:
         connection.execute(sql.SQL("CREATE ROLE {} LOGIN").format(role))
+    elif any(role_attributes):
+        raise RuntimeError("runtime database role has forbidden privileges")
 
     password_buffer = bytearray(runtime_db_password.get_secret_value().encode("utf-8"))
     encrypted_password: bytes | None = None
@@ -220,8 +223,8 @@ def configure_runtime_role(
         )
         connection.execute(
             sql.SQL(
-                "ALTER ROLE {} WITH LOGIN PASSWORD {} NOSUPERUSER NOCREATEDB "
-                "NOCREATEROLE NOINHERIT NOREPLICATION"
+                "ALTER ROLE {} WITH LOGIN PASSWORD {} NOCREATEDB "
+                "NOCREATEROLE NOINHERIT"
             ).format(role, sql.Literal(encrypted_password.decode("ascii")))
         )
     finally:

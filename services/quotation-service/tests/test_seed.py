@@ -57,8 +57,14 @@ class FakePgConnection:
 
 
 class FakeConnection:
-    def __init__(self, *, role_exists: bool = False) -> None:
+    def __init__(
+        self,
+        *,
+        role_exists: bool = False,
+        privileged_role: bool = False,
+    ) -> None:
         self.role_exists = role_exists
+        self.privileged_role = privileged_role
         self.executions: list[tuple[Any, tuple[Any, ...] | None]] = []
         self.pgconn = FakePgConnection()
 
@@ -67,8 +73,14 @@ class FakeConnection:
 
     def execute(self, query: Any, params: tuple[Any, ...] | None = None) -> FakeResult:
         self.executions.append((query, params))
-        if query == "SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = %s":
-            return FakeResult((1,) if self.role_exists else None)
+        if isinstance(query, str) and query.startswith(
+            "SELECT rolsuper, rolreplication, rolbypassrls"
+        ):
+            if not self.role_exists:
+                return FakeResult()
+            return FakeResult(
+                (self.privileged_role, self.privileged_role, self.privileged_role)
+            )
         if query == "SELECT current_database()":
             return FakeResult(("solventa",))
         return FakeResult()
@@ -126,6 +138,21 @@ def test_existing_runtime_role_is_rotated_without_recreation() -> None:
     statements = rendered_statements(connection)
     assert not any("CREATE ROLE" in statement for statement in statements)
     assert any("ALTER ROLE" in statement for statement in statements)
+    assert not any("NOSUPERUSER" in statement for statement in statements)
+    assert not any("NOREPLICATION" in statement for statement in statements)
+
+
+def test_existing_privileged_runtime_role_is_rejected() -> None:
+    connection = FakeConnection(role_exists=True, privileged_role=True)
+
+    with pytest.raises(RuntimeError, match="forbidden privileges"):
+        configure_runtime_role(
+            connection,
+            RUNTIME_ROLE,
+            SecretStr("another-runtime-password-24"),
+        )
+
+    assert not any("ALTER ROLE" in statement for statement in rendered_statements(connection))
 
 
 def test_failure_event_reports_stage_and_sqlstate_without_sensitive_data() -> None:

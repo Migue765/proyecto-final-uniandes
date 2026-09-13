@@ -1,0 +1,118 @@
+name: solventa-experiment-1
+
+services:
+  postgres:
+    image: postgres:15.19-bookworm@sha256:5d1d70e254e3c5d7d76847a9deebb18478cd518df37abf6b278d4bdb1fe5d96c
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+    networks: [experiment]
+
+  redis:
+    image: redis:7.4.11-alpine@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+    command:
+      - /bin/sh
+      - -ec
+      - exec redis-server --appendonly no --save '' --requirepass "$$REDIS_PASSWORD"
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=$$REDIS_PASSWORD redis-cli ping"]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+    networks: [experiment]
+
+  wiremock:
+    image: wiremock/wiremock:3.13.2@sha256:0d4ecb3e4dc8213fd7a4d37d6a78f6e6b553a6d2e15bd51b0999781282ac61b3
+    command: ["--global-response-templating", "--disable-gzip"]
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings:ro
+    ports:
+      - "127.0.0.1:8082:8080"
+    networks: [experiment]
+
+  database-seed:
+    build:
+      context: ./quotation-service
+    command: ["python", "-m", "app.seed"]
+    environment:
+      DATABASE_ADMIN_URL: ${DATABASE_ADMIN_URL:?DATABASE_ADMIN_URL is required}
+      RUNTIME_DB_USER: ${RUNTIME_DB_USER:?RUNTIME_DB_USER is required}
+      RUNTIME_DB_PASSWORD: ${RUNTIME_DB_PASSWORD:?RUNTIME_DB_PASSWORD is required}
+      SEED_PROFILES_PER_PARTNER: "100"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    networks: [experiment]
+
+  profile-service:
+    build:
+      context: ./profile-service
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      REDIS_URL: ${REDIS_URL:?REDIS_URL is required}
+      WIREMOCK_URL: http://wiremock:8080
+      CACHE_TTL_SECONDS: "900"
+      CACHE_TTL_JITTER_SECONDS: "60"
+      PROFILE_CPU_ITERATIONS: "800"
+    depends_on:
+      database-seed:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      wiremock:
+        condition: service_started
+    ports:
+      - "127.0.0.1:8081:8080"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          python -c "import urllib.request;
+          urllib.request.urlopen('http://127.0.0.1:8080/health/live', timeout=2)"
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [experiment]
+
+  quotation-service:
+    build:
+      context: ./quotation-service
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      PROFILE_SERVICE_URL: http://profile-service:8080
+      QUOTE_CPU_ITERATIONS: "1200"
+    depends_on:
+      database-seed:
+        condition: service_completed_successfully
+      profile-service:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8080:8080"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          python -c "import urllib.request;
+          urllib.request.urlopen('http://127.0.0.1:8080/health/live', timeout=2)"
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [experiment]
+
+networks:
+  experiment:
+    internal: true
+
+volumes:
+  postgres-data:

@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="solventa-deployment" name="Solventa - Despliegue">
-        <mxGraphModel dx="2336" dy="1931" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1400" math="0" shadow="0">
+        <mxGraphModel dx="2855" dy="2306" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1400" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -22,7 +22,7 @@
                 <mxCell id="eks" value="EKS privado - replicas multi-AZ | HPA | PodDisruptionBudget | IAM por service account (IRSA)" style="swimlane;html=1;rounded=0;startSize=30;fillColor=#e8f4f8;strokeColor=#0e7490;strokeWidth=2;fontStyle=1;" parent="1" vertex="1">
                     <mxGeometry x="180" y="350" width="1160" height="550" as="geometry"/>
                 </mxCell>
-                <mxCell id="bff-web" value="Container: BFF Web&lt;br&gt;&lt;b&gt;Microservicio: BFF Web&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d9e4f5;strokeColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
+                <mxCell id="bff-web" value="Container: BFF Web&lt;br&gt;&lt;b&gt;Microservicio: BFF Web&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d9e4f5;strokeColor=#6c8ebf;fontStyle=1;shadow=0;" parent="1" vertex="1">
                     <mxGeometry x="300" y="420" width="210" height="58" as="geometry"/>
                 </mxCell>
                 <mxCell id="bff-mobile" value="Container: BFF Movil&lt;br&gt;&lt;b&gt;Microservicio: BFF Movil&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d9e4f5;strokeColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
@@ -378,7 +378,7 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-payments-data" value="propietario" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Helvetica;fontSize=9;" parent="1" edge="1">
+                <mxCell id="e-payments-data" value="propietario" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Helvetica;fontSize=9;" parent="1" source="payments" target="payments-db" edge="1">
                     <mxGeometry x="-0.154" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="660" y="843"/>
@@ -505,9 +505,10 @@
                 <mxCell id="e-profiling-bus" value="Perfil&lt;div&gt;Actualizado&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=6 6;strokeColor=#5b7652;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;exitX=0.994;exitY=0.839;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="aws" source="profiling" target="bus">
                     <mxGeometry x="0.1181" y="-10" relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="780" y="585"/>
-                            <mxPoint x="780" y="810"/>
-                            <mxPoint x="660" y="810"/>
+                            <mxPoint x="627" y="630"/>
+                            <mxPoint x="780" y="630"/>
+                            <mxPoint x="780" y="870"/>
+                            <mxPoint x="660" y="870"/>
                         </Array>
                         <mxPoint x="520" y="595" as="sourcePoint"/>
                         <mxPoint x="660" y="840" as="targetPoint"/>
@@ -517,9 +518,7 @@
                 <mxCell id="e-claims-compliance" value="evaluacion de fraude" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontFamily=Helvetica;fontSize=9;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="aws" source="claims" target="compliance" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="460" y="675"/>
-                            <mxPoint x="460" y="640"/>
-                            <mxPoint x="950" y="640"/>
+                            <mxPoint x="950" y="700"/>
                         </Array>
                         <mxPoint x="450" y="674.97" as="sourcePoint"/>
                         <mxPoint x="950" y="650.97" as="targetPoint"/>

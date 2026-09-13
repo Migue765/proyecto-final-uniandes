@@ -18,6 +18,11 @@ output "api_gateway_rest_api_id" {
   value       = aws_api_gateway_rest_api.api.id
 }
 
+output "api_gateway_name" {
+  description = "REST API name used as a CloudWatch dimension."
+  value       = aws_api_gateway_rest_api.api.name
+}
+
 output "api_gateway_stage_name" {
   description = "Deployed REST API stage."
   value       = aws_api_gateway_stage.api.stage_name
@@ -31,6 +36,11 @@ output "api_gateway_invoke_url" {
 output "api_gateway_cloudwatch_role_arn" {
   description = "Regional API Gateway role used for CloudWatch execution logs."
   value       = aws_iam_role.apigateway_cloudwatch.arn
+}
+
+output "api_gateway_log_group_name" {
+  description = "CloudWatch access log group for the experiment REST API."
+  value       = aws_cloudwatch_log_group.apigateway.name
 }
 
 output "internal_nlb_dns_name" {
@@ -60,6 +70,11 @@ output "rds_endpoint" {
   value       = aws_db_instance.postgres.address
 }
 
+output "rds_instance_identifier" {
+  description = "RDS instance identifier used as a CloudWatch dimension."
+  value       = aws_db_instance.postgres.identifier
+}
+
 output "rds_port" {
   description = "PostgreSQL listener port."
   value       = aws_db_instance.postgres.port
@@ -78,6 +93,16 @@ output "rds_master_secret_arn" {
 output "redis_primary_endpoint" {
   description = "Private Redis primary endpoint."
   value       = aws_elasticache_replication_group.redis.primary_endpoint_address
+}
+
+output "redis_replication_group_id" {
+  description = "Redis replication group identifier."
+  value       = aws_elasticache_replication_group.redis.replication_group_id
+}
+
+output "redis_member_cluster_ids" {
+  description = "Redis member identifiers used as CloudWatch dimensions."
+  value       = aws_elasticache_replication_group.redis.member_clusters
 }
 
 output "redis_port" {

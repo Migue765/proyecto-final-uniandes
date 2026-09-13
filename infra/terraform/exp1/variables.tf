@@ -86,11 +86,11 @@ variable "vpc_cni_addon_version" {
 variable "node_instance_type" {
   description = "Fixed instance type for the experiment node group."
   type        = string
-  default     = "c7i.large"
+  default     = "c7i-flex.large"
 
   validation {
-    condition     = var.node_instance_type == "c7i.large"
-    error_message = "Experiment 1 is intentionally fixed to c7i.large for reproducibility."
+    condition     = var.node_instance_type == "c7i-flex.large"
+    error_message = "Experiment 1 is intentionally fixed to c7i-flex.large for reproducibility in the laboratory account."
   }
 }
 

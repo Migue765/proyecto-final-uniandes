@@ -5,13 +5,22 @@ permite crear los roles que EKS y API Gateway necesitan. La política
 [`policy.json`](policy.json) añade únicamente la administración de roles cuyo
 nombre comience por `solventa-exp1-`, permite adjuntar solo las políticas AWS
 enumeradas de EKS, ECR y API Gateway, y restringe `PassRole` a los servicios
-usados. No concede `PutRolePolicy` sobre roles creados por el operador, de modo
-que no se pueda convertir el prefijo del laboratorio en una vía de escalamiento
-de privilegios. También permite crear exclusivamente los
-roles vinculados a servicio que EKS, el node group, RDS, ElastiCache, ELB y el
-runner ECS pueden necesitar la primera vez que se usan en la cuenta. En el caso
-de ElastiCache incluye el `PutRolePolicy` exacto que documenta AWS, limitado al
-ARN de su propio rol vinculado.
+usados. No concede `PutRolePolicy`, de modo que el operador no pueda insertar
+políticas inline ni convertir el prefijo del laboratorio en una vía de
+escalamiento de privilegios. También permite crear exclusivamente los roles
+vinculados a servicio que EKS, el node group, RDS, ElastiCache, ELB y el runner
+ECS pueden necesitar la primera vez que se usan en la cuenta. EKS también
+valida si ya existe `AWSServiceRoleForAmazonEKSNodegroup` antes de crear un
+node group; por eso se permite `iam:GetRole` únicamente sobre ese rol vinculado
+exacto.
+
+La creación del rol vinculado de ElastiCache se cubre con
+`iam:CreateServiceLinkedRole` condicionado a `elasticache.amazonaws.com`. No se
+incluye `iam:PutRolePolicy`: la consola de IAM marca `iam:AWSServiceName` como
+una condición no aplicable a esa acción y las políticas administradas vigentes
+de ElastiCache no la requieren. Si una operación futura la solicitara, detenga
+el despliegue y precree el rol vinculado desde una sesión administradora; no
+amplíe los permisos del operador.
 
 Esta política es un bootstrap manual. No puede ser creada por el mismo operador
 antes de que tenga los permisos y no debe resolverse creando access keys.

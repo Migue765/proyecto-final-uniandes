@@ -21,25 +21,23 @@ resource "aws_security_group" "eks_nodes" {
   description = "Additional security group for EKS worker nodes"
   vpc_id      = aws_vpc.main.id
 
-  ingress {
-    description = "Node-to-node traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    self        = true
-  }
-
-  egress {
-    description = "Outbound traffic through the private-subnet NAT"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name = "${var.name_prefix}-eks-nodes"
   }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "eks_nodes_self" {
+  security_group_id            = aws_security_group.eks_nodes.id
+  referenced_security_group_id = aws_security_group.eks_nodes.id
+  description                  = "Node-to-node traffic"
+  ip_protocol                  = "-1"
+}
+
+resource "aws_vpc_security_group_egress_rule" "eks_nodes_all" {
+  security_group_id = aws_security_group.eks_nodes.id
+  description       = "Outbound traffic through the private-subnet NAT"
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
 }
 
 resource "aws_eks_cluster" "main" {

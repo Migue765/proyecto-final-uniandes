@@ -16,14 +16,13 @@ resource "aws_security_group" "nlb" {
   }
 }
 
-resource "aws_security_group_rule" "eks_nodeport_from_nlb" {
-  type                     = "ingress"
-  description              = "NLB health checks and requests to the fixed NodePort"
-  from_port                = 30080
-  to_port                  = 30080
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.eks_nodes.id
-  source_security_group_id = aws_security_group.nlb.id
+resource "aws_vpc_security_group_ingress_rule" "eks_nodeport_from_nlb" {
+  security_group_id            = aws_security_group.eks_nodes.id
+  referenced_security_group_id = aws_security_group.nlb.id
+  description                  = "NLB health checks and requests to the fixed NodePort"
+  from_port                    = 30080
+  to_port                      = 30080
+  ip_protocol                  = "tcp"
 }
 
 resource "aws_lb" "api" {
@@ -103,7 +102,7 @@ data "aws_iam_policy_document" "api_gateway_resource" {
     effect  = "Deny"
     actions = ["execute-api:Invoke"]
     resources = [
-      "execute-api:/*"
+      "${aws_api_gateway_rest_api.api.execution_arn}/*"
     ]
 
     principals {
@@ -126,7 +125,7 @@ data "aws_iam_policy_document" "api_gateway_resource" {
     effect  = "Deny"
     actions = ["execute-api:Invoke"]
     resources = [
-      "execute-api:/*"
+      "${aws_api_gateway_rest_api.api.execution_arn}/*"
     ]
 
     principals {
@@ -149,7 +148,7 @@ data "aws_iam_policy_document" "api_gateway_resource" {
     effect  = "Allow"
     actions = ["execute-api:Invoke"]
     resources = [
-      "execute-api:/*"
+      "${aws_api_gateway_rest_api.api.execution_arn}/*"
     ]
 
     principals {
@@ -174,13 +173,17 @@ data "aws_iam_policy_document" "api_gateway_resource" {
 resource "aws_api_gateway_rest_api" "api" {
   name                 = "${var.name_prefix}-api"
   description          = "Regional REST API for Solventa experiment 1"
-  policy               = data.aws_iam_policy_document.api_gateway_resource.json
   security_policy      = "SecurityPolicy_TLS13_1_3_2025_09"
   endpoint_access_mode = "STRICT"
 
   endpoint_configuration {
     types = ["REGIONAL"]
   }
+}
+
+resource "aws_api_gateway_rest_api_policy" "api" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  policy      = data.aws_iam_policy_document.api_gateway_resource.json
 }
 
 resource "aws_api_gateway_resource" "api_path" {
@@ -242,6 +245,8 @@ resource "aws_api_gateway_deployment" "api" {
   lifecycle {
     create_before_destroy = true
   }
+
+  depends_on = [aws_api_gateway_rest_api_policy.api]
 }
 
 resource "aws_api_gateway_stage" "api" {

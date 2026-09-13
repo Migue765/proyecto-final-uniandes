@@ -78,15 +78,10 @@
       }
     },
     {
-      "Sid": "ConfigureOnlyElastiCacheServiceLinkedRole",
+      "Sid": "ReadEKSNodegroupServiceLinkedRole",
       "Effect": "Allow",
-      "Action": "iam:PutRolePolicy",
-      "Resource": "arn:aws:iam::969325258550:role/aws-service-role/elasticache.amazonaws.com/AWSServiceRoleForElastiCache*",
-      "Condition": {
-        "StringLike": {
-          "iam:AWSServiceName": "elasticache.amazonaws.com"
-        }
-      }
+      "Action": "iam:GetRole",
+      "Resource": "arn:aws:iam::969325258550:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup"
     },
     {
       "Sid": "PassOnlyExperimentRolesToRequiredServices",

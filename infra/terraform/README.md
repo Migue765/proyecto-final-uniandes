@@ -9,7 +9,8 @@ servicios administrados son reales.
 - VPC propia en dos zonas, con dos subredes públicas, dos privadas de aplicación
   y dos subredes de datos aisladas.
 - Un NAT Gateway compartido por las dos subredes privadas.
-- EKS 1.36 con un grupo fijo de dos nodos `c7i.large` (2 vCPU cada uno) y el
+- EKS 1.36 con un grupo fijo de dos nodos `c7i-flex.large` (2 vCPU y 4 GiB cada
+  uno) y el
   add-on administrado VPC CNI con enforcement de `NetworkPolicy` habilitado.
 - ECR privado para `quote`, `profile` y `load-runner`.
 - RDS PostgreSQL 15.19 `db.t4g.micro`, 20 GB gp3, Single-AZ y contraseña maestra
@@ -118,7 +119,7 @@ terraform show exp1.tfplan
 Antes del `apply`, verifique en el plan:
 
 - cuenta `969325258550` y región `us-east-1`;
-- exactamente dos nodos `c7i.large`;
+- exactamente dos nodos `c7i-flex.large`;
 - RDS y Redis sin acceso público y Single-AZ;
 - endpoint público de EKS restringido al `/32` elegido;
 - API Gateway restringido a los CIDRs de laboratorio y la EIP del NAT;
@@ -209,12 +210,12 @@ en CloudWatch; los JTL quedan en el bucket de evidencia.
 ## Costos y advertencias
 
 Con los precios unitarios verificados para `us-east-1`, el costo fijo de
-referencia es aproximadamente USD 0,378/h o USD 276/mes a 730 horas:
+referencia es aproximadamente USD 0,36908/h o USD 269,43/mes a 730 horas:
 
 | Recurso | Referencia por hora |
 | --- | ---: |
 | EKS control plane | USD 0,10000 |
-| 2 × c7i.large | USD 0,17850 |
+| 2 × c7i-flex.large | USD 0,16958 |
 | RDS db.t4g.micro | USD 0,01600 |
 | Redis cache.t4g.micro | USD 0,01600 |
 | NAT Gateway | USD 0,04500 |
@@ -224,6 +225,17 @@ No incluye almacenamiento, snapshots, solicitudes de API Gateway, LCUs del
 NLB, procesamiento/transferencia del NAT, logs, X-Ray, S3 ni Fargate. Confirme
 siempre el precio vigente en AWS antes de ejecutar. El NAT, EKS y los nodos
 siguen facturando aunque no exista tráfico.
+
+`c7i-flex.large` es una adaptación obligatoria del entorno: el plan Free de la
+cuenta de laboratorio rechazó `c7i.large`. Conserva la forma experimental de
+2 vCPU, 4 GiB y arquitectura x86_64 por nodo, y debe permanecer sin cambios en
+todas las corridas para mantener la comparabilidad interna. Este ajuste no
+autoriza comparar resultados históricos obtenidos sobre `c7i.large`.
+AWS documenta una línea base de CPU de 40 % por vCPU para esta familia, con
+capacidad de alcanzar el rendimiento completo la mayor parte del tiempo. Por
+eso la calibración y las tres corridas deben ejecutarse sobre estos mismos
+nodos, registrar CPU/throttling y tratar la variación de rendimiento como una
+limitación al interpretar latencia y escalamiento.
 
 El NAT único reduce costo, pero introduce un único punto de falla y posible
 tráfico entre zonas. RDS, Redis y los nodos fijos tampoco ofrecen la resiliencia

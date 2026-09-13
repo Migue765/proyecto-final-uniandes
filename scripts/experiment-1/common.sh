@@ -23,6 +23,13 @@ if [[ -z "${AWS_BIN:-}" ]]; then
   fi
 fi
 
+# kubectl's EKS exec credential entry invokes the command name `aws`. Ensure it
+# resolves to the same AWS CLI binary whose login session is validated below.
+if [[ -n "$AWS_BIN" && -x "$AWS_BIN" ]]; then
+  AWS_BIN_DIR="$(cd -- "$(dirname -- "$AWS_BIN")" && pwd)"
+  export PATH="${AWS_BIN_DIR}:${PATH}"
+fi
+
 fail() {
   printf 'ERROR: %s\n' "$*" >&2
   exit 1

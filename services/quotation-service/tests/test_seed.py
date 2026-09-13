@@ -93,6 +93,8 @@ def test_seed_is_idempotent_and_configures_read_only_runtime_role() -> None:
     assert "ON CONFLICT" in connection.executions[2][0]
     assert "ON CONFLICT" in connection.executions[3][0]
     assert "partner_number * 100 + profile_number" in UPSERT_PROFILES
+    assert UPSERT_PROFILES.count("MOD(") == 4
+    assert "%" not in UPSERT_PROFILES.replace("%s", "")
     statements = rendered_statements(connection)
     assert any("CREATE ROLE" in statement for statement in statements)
     assert any(

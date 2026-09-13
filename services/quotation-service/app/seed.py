@@ -173,10 +173,13 @@ UPSERT_PROFILES = """
         'partner-' || to_char(partner_number, 'FM00'),
         'profile-00000000-0000-4000-8000-' ||
             lpad((partner_number * 100 + profile_number)::text, 12, '0'),
-        18 + ((partner_number * 7 + profile_number * 3) % 63),
-        1800000.00 + ((partner_number * 110003 + profile_number * 7919) % 18200000),
-        (((partner_number * 13 + profile_number * 17) % 8500)::numeric / 10000),
-        ((partner_number + profile_number) % 6)
+        18 + MOD(partner_number * 7 + profile_number * 3, 63),
+        1800000.00 + MOD(
+            partner_number * 110003 + profile_number * 7919,
+            18200000
+        ),
+        (MOD(partner_number * 13 + profile_number * 17, 8500)::numeric / 10000),
+        MOD(partner_number + profile_number, 6)
     FROM generate_series(1, 50) AS partner_number
     CROSS JOIN generate_series(1, %s) AS profile_number
     ON CONFLICT (partner_id, profile_id) DO UPDATE SET

@@ -27,11 +27,24 @@ Kubelet-originated health probes remain node traffic. Egress is intentionally
 left to VPC security groups because DNS, RDS, Redis, and external AWS endpoints
 use dynamic addresses.
 
-The starting CPU calibration is `150000` synthetic hash iterations in each
-service. This is deliberately configurable from 1 to 1,000,000 through
-`quotation.cpuIterations` and `profile.cpuIterations`; calibrate it before the
-recorded runs so the intended 500-RPM step moves the HPA from two to three pods
-without violating p95. Never change it between the three evidence runs.
+The CPU calibration is `1200` synthetic hash iterations in quotation and `800`
+in profile, matching the service config defaults. It is configurable from 1 to
+1,000,000 through `quotation.cpuIterations` and `profile.cpuIterations`. Never
+change it between the three evidence runs.
+
+The previous default of `150000` was an uncalibrated placeholder. Measured on
+2026-09-14 at roughly 850 ns per iteration in quotation and 1020 ns in profile,
+it cost 281 ms of CPU per quotation. Because a request's hash chain is serial, a
+single request against a 500m container limit could not finish in under 562 ms,
+so p95 <= 250 ms was unreachable at any replica count — adding pods raises
+throughput, never per-request speed. At `1200`/`800` the synthetic cost is about
+1.8 ms per request, below the framework overhead itself.
+
+One consequence to state in the verdict: at these values a 500-RPM step will not
+move the HPA, because total demand is roughly 15 millicores. The honest reading
+is "500 RPM fits within the initial capacity", not "elasticity was demonstrated".
+Scaling appears in the phases that approach 50,506 offered RPM, where demand
+reaches about 1.5 cores and the HPA needs more than the current `maxReplicas: 4`.
 
 ## Configuration boundary
 

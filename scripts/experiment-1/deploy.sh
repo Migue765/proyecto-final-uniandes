@@ -85,8 +85,12 @@ if [[ "${INSTALL_METRICS_SERVER:-true}" == "true" ]]; then
     --wait
 fi
 
-QUOTE_CPU_ITERATIONS="${QUOTE_CPU_ITERATIONS:-150000}"
-PROFILE_CPU_ITERATIONS="${PROFILE_CPU_ITERATIONS:-150000}"
+# Defaults aligned with the service config defaults and with values.yaml. The
+# previous 150000 was an uncalibrated placeholder: measured at ~850 ns and
+# ~1020 ns per iteration, it cost 281 ms of CPU per quotation and made the
+# p95 <= 250 ms target of ASR-ESC-01 unreachable regardless of replica count.
+QUOTE_CPU_ITERATIONS="${QUOTE_CPU_ITERATIONS:-1200}"
+PROFILE_CPU_ITERATIONS="${PROFILE_CPU_ITERATIONS:-800}"
 [[ "$QUOTE_CPU_ITERATIONS" =~ ^[1-9][0-9]{0,6}$ && "$QUOTE_CPU_ITERATIONS" -le 1000000 ]] \
   || fail "QUOTE_CPU_ITERATIONS must be between 1 and 1000000"
 [[ "$PROFILE_CPU_ITERATIONS" =~ ^[1-9][0-9]{0,6}$ && "$PROFILE_CPU_ITERATIONS" -le 1000000 ]] \

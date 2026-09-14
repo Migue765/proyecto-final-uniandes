@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestFragmentController guiclass="TestFragmentControllerGui" testclass="TestFragmentController" testname="Signed quotation request" enabled="true"/>
+    <hashTree>
+      <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Create synthetic non-auth identifiers" enabled="true">
+        <stringProp name="cacheKey">true</stringProp>
+        <stringProp name="filename"></stringProp>
+        <stringProp name="parameters"></stringProp>
+        <stringProp name="script">int partnerNumber = (ctx.getThreadNum() % 50) + 1
+int profileOffset = Integer.parseInt(props.getProperty('profile_offset', '0'))
+int localProfileNumber = (Integer.parseInt(vars.get('profile_index') ?: '0') % 20) + 1
+int profileNumber = profileOffset + localProfileNumber
+vars.put('profile_index', Integer.toString(localProfileNumber))
+vars.put('partner_ref', String.format('partner-%02d', partnerNumber))
+vars.put('profile_ref', String.format('profile-00000000-0000-4000-8000-%012d', (partnerNumber * 100) + profileNumber))
+vars.put('request_body', '{"partner_ref":"' + vars.get('partner_ref') + '","profile_ref":"' + vars.get('profile_ref') + '"}')</stringProp>
+        <stringProp name="scriptLanguage">groovy</stringProp>
+      </JSR223PreProcessor>
+      <hashTree/>
+      <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Sign exact request with AWS SigV4" enabled="true">
+        <stringProp name="cacheKey">true</stringProp>
+        <stringProp name="filename">/work/sigv4.groovy</stringProp>
+        <stringProp name="parameters"></stringProp>
+        <stringProp name="script"></stringProp>
+        <stringProp name="scriptLanguage">groovy</stringProp>
+      </JSR223PreProcessor>
+      <hashTree/>
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP headers" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Content-Type</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Accept</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Authorization</stringProp>
+            <stringProp name="Header.value">${sigv4_authorization}</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">X-Amz-Date</stringProp>
+            <stringProp name="Header.value">${sigv4_amz_date}</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">X-Amz-Security-Token</stringProp>
+            <stringProp name="Header.value">${sigv4_session_token}</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
+      <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Aggregate RPM limiter" enabled="true">
+        <stringProp name="throughput">${__groovy(Thread.currentThread().getName().startsWith('measured - ') ? props['target_rpm'] : props['warmup_rpm'])}</stringProp>
+        <intProp name="calcMode">4</intProp>
+      </ConstantThroughputTimer>
+      <hashTree/>
+      <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST quotation" enabled="true">
+        <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="" elementType="HTTPArgument">
+              <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              <stringProp name="Argument.value">${request_body}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain"></stringProp>
+        <stringProp name="HTTPSampler.port"></stringProp>
+        <stringProp name="HTTPSampler.protocol"></stringProp>
+        <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        <stringProp name="HTTPSampler.path">${__P(target_url,http://127.0.0.1:30080/api/v1/cotizaciones)}</stringProp>
+        <stringProp name="HTTPSampler.method">POST</stringProp>
+        <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+        <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+        <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+        <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+        <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        <stringProp name="HTTPSampler.connect_timeout">${__P(connect_timeout_ms,2000)}</stringProp>
+        <stringProp name="HTTPSampler.response_timeout">${__P(response_timeout_ms,5000)}</stringProp>
+      </HTTPSamplerProxy>
+      <hashTree>
+        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Require HTTP 2xx" enabled="true">
+          <collectionProp name="Asserion.test_strings">
+            <stringProp name="2xx">2\d\d</stringProp>
+          </collectionProp>
+          <stringProp name="Assertion.custom_message">Quotation must return HTTP 2xx</stringProp>
+          <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+          <boolProp name="Assertion.assume_success">false</boolProp>
+          <intProp name="Assertion.test_type">1</intProp>
+        </ResponseAssertion>
+        <hashTree/>
+        <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="Validate quotation JSON schema" enabled="true">
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">def failSchema = { String reason -&gt;
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage('Invalid quotation response schema: ' + reason)
+}
+
+try {
+    def payload = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+    if (!(payload instanceof Map)) {
+        failSchema('root is not an object')
+        return
+    }
+
+    def requiredKeys = ['quotation_id', 'request_id', 'partner_ref', 'profile_ref', 'currency', 'monthly_premium', 'risk_score', 'tariff_version', 'calculation_checksum'] as Set
+    if (payload.keySet() != requiredKeys) {
+        failSchema('required fields differ')
+        return
+    }
+
+    def uuidV4 = ~/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+    def profileRef = ~/^profile-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+    def decimalAmount = ~/^[0-9]+\.[0-9]{2}$/
+    def checksum = ~/^[0-9a-f]{16}$/
+
+    if (!(payload.quotation_id instanceof String) || !(payload.quotation_id ==~ uuidV4)) failSchema('quotation_id')
+    else if (!(payload.request_id instanceof String) || !(payload.request_id ==~ uuidV4)) failSchema('request_id')
+    else if (payload.partner_ref != vars.get('partner_ref')) failSchema('partner_ref')
+    else if (!(payload.profile_ref instanceof String) || !(payload.profile_ref ==~ profileRef) || payload.profile_ref != vars.get('profile_ref')) failSchema('profile_ref')
+    else if (payload.currency != 'COP') failSchema('currency')
+    else if (!(payload.monthly_premium instanceof String) || !(payload.monthly_premium ==~ decimalAmount) || new BigDecimal(payload.monthly_premium) &lt;= 0) failSchema('monthly_premium')
+    else if (!(payload.risk_score instanceof Integer) || payload.risk_score &lt; 0 || payload.risk_score &gt; 1000) failSchema('risk_score')
+    else if (payload.tariff_version != 'synthetic-v1') failSchema('tariff_version')
+    else if (!(payload.calculation_checksum instanceof String) || !(payload.calculation_checksum ==~ checksum)) failSchema('calculation_checksum')
+} catch (Exception ignored) {
+    failSchema('invalid JSON or field type')
+}</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Assertion>
+        <hashTree/>
+        <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Keep measured samples only" enabled="true">
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">if (!Thread.currentThread().getName().startsWith('measured - ')) {
+    prev.setIgnore()
+}</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223PostProcessor>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

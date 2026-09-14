@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/open-finance/v1/profiles"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "account_age_months": 36,
+      "inflow_stability": 0.82,
+      "delinquency_count": 0
+    }
+  }
+}

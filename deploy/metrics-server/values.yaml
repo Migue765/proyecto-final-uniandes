@@ -1,0 +1,13 @@
+# Compatible with the official metrics-server chart 3.14.0 / app 0.9.0.
+# Do not add --kubelet-insecure-tls; EKS kubelet certificates are trusted.
+replicas: 2
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+resources:
+  requests:
+    cpu: 100m
+    memory: 200Mi
+  limits:
+    cpu: 300m
+    memory: 400Mi

@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["quotation", "profile", "database", "redis", "wiremock", "seed", "networkPolicy"],
+  "properties": {
+    "quotation": {
+      "type": "object",
+      "required": ["replicaCount", "image", "service", "resources", "autoscaling"],
+      "properties": {
+        "replicaCount": {"type": "integer", "minimum": 2},
+        "cpuIterations": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "image": {"$ref": "#/$defs/image"},
+        "service": {
+          "type": "object",
+          "required": ["type", "port", "nodePort", "externalTrafficPolicy"],
+          "properties": {
+            "type": {"const": "NodePort"},
+            "port": {"type": "integer", "minimum": 1, "maximum": 65535},
+            "nodePort": {"const": 30080},
+            "externalTrafficPolicy": {"const": "Local"}
+          }
+        },
+        "resources": {"$ref": "#/$defs/resources"},
+        "autoscaling": {"$ref": "#/$defs/autoscaling"}
+      }
+    },
+    "profile": {
+      "type": "object",
+      "required": ["replicaCount", "image", "service", "resources", "autoscaling"],
+      "properties": {
+        "replicaCount": {"type": "integer", "minimum": 2},
+        "cpuIterations": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "image": {"$ref": "#/$defs/image"},
+        "resources": {"$ref": "#/$defs/resources"},
+        "autoscaling": {"$ref": "#/$defs/autoscaling"}
+      }
+    },
+    "database": {
+      "type": "object",
+      "required": ["runtimeSecret", "adminSecret", "port", "name", "sslMode"],
+      "properties": {
+        "runtimeSecret": {
+          "type": "object",
+          "required": ["name", "key", "usernameKey", "passwordKey"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "key": {"type": "string", "minLength": 1},
+            "usernameKey": {"type": "string", "minLength": 1},
+            "passwordKey": {"type": "string", "minLength": 1}
+          }
+        },
+        "adminSecret": {
+          "type": "object",
+          "required": ["name", "key"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "key": {"type": "string", "minLength": 1}
+          }
+        },
+        "sslMode": {"const": "verify-full"}
+      }
+    },
+    "redis": {
+      "type": "object",
+      "required": ["host", "port", "tlsEnabled", "existingSecret"],
+      "properties": {
+        "host": {"type": "string"},
+        "port": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "tlsEnabled": {"const": true},
+        "existingSecret": {
+          "type": "object",
+          "required": ["name", "key"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "key": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "networkPolicy": {
+      "type": "object",
+      "required": ["enabled", "quotationIngressCidrs"],
+      "properties": {
+        "enabled": {"const": true},
+        "quotationIngressCidrs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{1,3}(\\.[0-9]{1,3}){3}/([0-9]|[12][0-9]|3[0-2])$"
+          }
+        }
+      }
+    },
+    "wiremock": {
+      "type": "object",
+      "required": ["enabled", "image", "service"],
+      "properties": {
+        "enabled": {"const": true},
+        "image": {
+          "type": "object",
+          "required": ["repository", "tag", "digest", "pullPolicy"],
+          "properties": {
+            "repository": {"const": "wiremock/wiremock"},
+            "tag": {"const": "3.13.2"},
+            "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+            "pullPolicy": {"enum": ["Always", "IfNotPresent", "Never"]}
+          }
+        }
+      }
+    },
+    "seed": {
+      "type": "object",
+      "required": ["enabled", "profilesPerPartner", "connectTimeoutSeconds"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "profilesPerPartner": {"const": 100},
+        "connectTimeoutSeconds": {"type": "integer", "minimum": 1, "maximum": 60}
+      }
+    }
+  },
+  "$defs": {
+    "image": {
+      "type": "object",
+      "required": ["repository", "tag", "pullPolicy"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "tag": {"type": "string", "minLength": 1, "not": {"const": "latest"}},
+        "pullPolicy": {"enum": ["Always", "IfNotPresent", "Never"]}
+      }
+    },
+    "resources": {
+      "type": "object",
+      "required": ["requests", "limits"],
+      "properties": {
+        "requests": {
+          "type": "object",
+          "required": ["cpu", "memory"],
+          "properties": {
+            "cpu": {"const": "250m"},
+            "memory": {"const": "256Mi"}
+          }
+        },
+        "limits": {
+          "type": "object",
+          "required": ["cpu", "memory"],
+          "properties": {
+            "cpu": {"const": "500m"},
+            "memory": {"const": "512Mi"}
+          }
+        }
+      }
+    },
+    "autoscaling": {
+      "type": "object",
+      "required": ["enabled", "minReplicas", "maxReplicas", "targetCPUUtilizationPercentage"],
+      "properties": {
+        "enabled": {"const": true},
+        "minReplicas": {"const": 2},
+        "maxReplicas": {"const": 4},
+        "targetCPUUtilizationPercentage": {"const": 70}
+      }
+    }
+  }
+}

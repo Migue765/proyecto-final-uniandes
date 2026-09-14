@@ -1,0 +1,74 @@
+{{- if .Values.wiremock.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "solventa-exp1.fullname" . }}-wiremock
+  labels:
+    {{- include "solventa-exp1.labels" . | nindent 4 }}
+    app.kubernetes.io/component: wiremock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "solventa-exp1.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: wiremock
+  template:
+    metadata:
+      labels:
+        {{- include "solventa-exp1.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: wiremock
+    spec:
+      serviceAccountName: {{ include "solventa-exp1.fullname" . }}-workload
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: wiremock
+          image: "{{ .Values.wiremock.image.repository }}@{{ .Values.wiremock.image.digest }}"
+          imagePullPolicy: {{ .Values.wiremock.image.pullPolicy }}
+          args:
+            - --port
+            - "8080"
+            - --disable-gzip
+            - --no-request-journal
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /__admin/health
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet:
+              path: /__admin/health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+          resources:
+            {{- toYaml .Values.wiremock.resources | nindent 12 }}
+          volumeMounts:
+            - name: mappings
+              mountPath: /home/wiremock/mappings
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: mappings
+          configMap:
+            name: {{ include "solventa-exp1.fullname" . }}-wiremock-mappings
+        - name: tmp
+          emptyDir: {}
+{{- end }}

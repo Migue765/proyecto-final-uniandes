@@ -1,0 +1,72 @@
+{{- if .Values.seed.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "solventa-exp1.fullname" . }}-database-seed
+  labels:
+    {{- include "solventa-exp1.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database-seed
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        {{- include "solventa-exp1.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: database-seed
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: database-seed
+          image: "{{ .Values.quotation.image.repository }}:{{ .Values.quotation.image.tag }}"
+          imagePullPolicy: {{ .Values.quotation.image.pullPolicy }}
+          command: ["python", "-m", "app.seed"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          env:
+            - name: DATABASE_ADMIN_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.adminSecret.name }}
+                  key: {{ .Values.database.adminSecret.key }}
+            - name: RUNTIME_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.runtimeSecret.name }}
+                  key: {{ .Values.database.runtimeSecret.usernameKey }}
+            - name: RUNTIME_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.runtimeSecret.name }}
+                  key: {{ .Values.database.runtimeSecret.passwordKey }}
+            - name: SEED_PROFILES_PER_PARTNER
+              value: {{ .Values.seed.profilesPerPartner | quote }}
+            - name: DB_CONNECT_TIMEOUT_SECONDS
+              value: {{ .Values.seed.connectTimeoutSeconds | quote }}
+          resources:
+            {{- toYaml .Values.seed.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      nodeSelector:
+        kubernetes.io/arch: amd64
+{{- end }}

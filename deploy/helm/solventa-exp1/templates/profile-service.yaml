@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "solventa-exp1.fullname" . }}-profile
+  labels:
+    {{- include "solventa-exp1.labels" . | nindent 4 }}
+    app.kubernetes.io/component: profile
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "solventa-exp1.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: profile
+  ports:
+    - name: http
+      port: {{ .Values.profile.service.port }}
+      targetPort: http
+      protocol: TCP

@@ -1,0 +1,8 @@
+Solventa experiment 1 was rendered for namespace {{ .Release.Namespace }}.
+
+Quotation NodePort: 30080
+Profile service: {{ include "solventa-exp1.fullname" . }}-profile:{{ .Values.profile.service.port }}
+WireMock URL: {{ include "solventa-exp1.wiremockUrl" . }}
+
+Run the smoke test with:
+  scripts/experiment-1/smoke.sh

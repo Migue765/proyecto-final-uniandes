@@ -1,0 +1,40 @@
+{{- if .Values.wiremock.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "solventa-exp1.fullname" . }}-wiremock-mappings
+  labels:
+    {{- include "solventa-exp1.labels" . | nindent 4 }}
+    app.kubernetes.io/component: wiremock
+data:
+  open-finance-profile.json: |-
+    {
+      "priority": 1,
+      "request": {
+        "method": "POST",
+        "urlPath": "/open-finance/v1/profiles",
+        "headers": {
+          "Content-Type": { "contains": "application/json" }
+        },
+        "bodyPatterns": [
+          { "matchesJsonPath": "$.partner_ref" },
+          { "matchesJsonPath": "$.profile_ref" }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {}
+      }
+    }
+  unmatched.json: |-
+    {
+      "priority": 100,
+      "request": { "method": "ANY", "urlPattern": "/.*" },
+      "response": {
+        "status": 404,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": { "error": "unmapped_mock_request" }
+      }
+    }
+{{- end }}

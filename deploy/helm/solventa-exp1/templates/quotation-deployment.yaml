@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "solventa-exp1.fullname" . }}-quotation
+  labels:
+    {{- include "solventa-exp1.labels" . | nindent 4 }}
+    app.kubernetes.io/component: quotation
+spec:
+  replicas: {{ .Values.quotation.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "solventa-exp1.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: quotation
+  template:
+    metadata:
+      labels:
+        {{- include "solventa-exp1.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: quotation
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "solventa-exp1.fullname" . }}-workload
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: quotation
+          image: "{{ .Values.quotation.image.repository }}:{{ .Values.quotation.image.tag }}"
+          imagePullPolicy: {{ .Values.quotation.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "8080"
+            - name: QUOTE_CPU_ITERATIONS
+              value: {{ .Values.quotation.cpuIterations | quote }}
+            - name: PROFILE_SERVICE_URL
+              value: "http://{{ include "solventa-exp1.fullname" . }}-profile:{{ .Values.profile.service.port }}"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.runtimeSecret.name }}
+                  key: {{ .Values.database.runtimeSecret.key }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.quotation.health.readinessPath }}
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.quotation.health.livenessPath }}
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.quotation.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              {{- include "solventa-exp1.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: quotation
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

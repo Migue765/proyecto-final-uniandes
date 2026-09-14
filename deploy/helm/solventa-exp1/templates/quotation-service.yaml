@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "solventa-exp1.fullname" . }}-quotation
+  labels:
+    {{- include "solventa-exp1.labels" . | nindent 4 }}
+    app.kubernetes.io/component: quotation
+spec:
+  type: NodePort
+  externalTrafficPolicy: {{ .Values.quotation.service.externalTrafficPolicy }}
+  selector:
+    {{- include "solventa-exp1.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: quotation
+  ports:
+    - name: http
+      port: {{ .Values.quotation.service.port }}
+      targetPort: http
+      nodePort: {{ .Values.quotation.service.nodePort }}
+      protocol: TCP

@@ -20,14 +20,26 @@ La estructura sigue la convención del ejemplo suministrado: canales a la izquie
 | Caja verde `queue` | Cola o suscripción asíncrona con retry y DLQ |
 | Cilindro o carpeta morada | Base de datos o almacén administrado |
 | Cilindro gris | Caché temporal no autoritativa |
-| Línea azul continua | Solicitud síncrona con respuesta inmediata |
-| Línea verde punteada | Publicación o consumo de evento |
-| Línea morada continua | Persistencia o proyección |
-| Línea naranja punteada | Aplicación de certificado, firma o telemetría |
+| Línea azul continua | Solicitud síncrona con respuesta inmediata (`«sync»`), normalmente HTTPS/REST |
+| Línea verde punteada | Publicación o consumo asíncrono de evento (`«event»`) mediante bus, cola o suscripción |
+| Línea morada continua | Persistencia directa realizada por el propietario de la información (`«persistence»`) |
+| Línea morada punteada | Construcción asíncrona de una proyección o modelo de lectura (`«projection»`) |
+| Línea naranja punteada | Aplicación transversal de seguridad, certificado, firma o telemetría (`«security»` / `«telemetry»`) |
+| Línea gris continua | Acceso a caché temporal no autoritativa (`«cache»`) |
 
 Las líneas no usan puntas de flecha. La dirección se lee desde el puerto cuadrado del componente emisor hacia el indicador negro compuesto `●|`, colocado sobre la misma línea junto al puerto cuadrado del componente receptor: `□────────●|□`. El círculo y su barra se representan como una sola marca visual; el tramo posterior llega al puerto receptor. Esta regla se aplica a componentes, actores, controles ASR, colas, sistemas externos y almacenes de datos; ninguna relación termina directamente sobre la caja completa.
 
+Los colores y patrones anteriores son una convención de esta vista, no una equivalencia normativa de UML. Por ello, cada relación conserva una etiqueta funcional y se recomienda incluir el estereotipo indicado cuando el diagrama se consulte sin color o se imprima en escala de grises.
+
 Una cola se define por propósito o consumidor; no se conectan colas directamente entre sí. Los eventos se publican desde el productor y cada consumidor recibe una suscripción independiente.
+
+### 2.1. Uso de puertos compartidos
+
+Un puerto UML representa un punto lógico de interacción, no necesariamente un puerto TCP. Varias relaciones pueden compartirlo cuando exponen o consumen el mismo contrato, emplean la misma tecnología y tienen la misma modalidad de comunicación. Por ejemplo, varios consumidores pueden invocar una única API de consentimiento, o varios productores pueden publicar en el mismo destino de mensajería.
+
+No se debe compartir un puerto cuando las relaciones representan contratos o modalidades diferentes. En particular, las solicitudes síncronas, suscripciones de eventos, persistencia, caché y controles ASR deben modelarse mediante puertos separados aunque la implementación utilice el mismo listener de red.
+
+La vista separa por modalidad los puertos de Pólizas, Claims, Pagos, Perfilamiento y Validación de entradas. También separa las interfaces receptoras de Adaptadores externos, Claims, Cumplimiento, Gateway, Pólizas y Rating y ofertas. Un mismo puerto puede seguir atendiendo varios consumidores cuando comparten contrato y modalidad; no se crea un puerto distinto por consumidor.
 
 ## 3. Actores y acceso
 
@@ -85,6 +97,22 @@ Las llamadas a terceros aplican timeout, reintento limitado, circuit breaker y d
 | Hechos auditables | Todos los workloads | Cumplimiento | Registrar, correlacionar y analizar actividad |
 
 La entrega es al menos una vez. Los consumidores deben ser idempotentes y validar `eventId`, `schemaVersion`, `correlationId` y `causationId`. Cada cola aplica retry y DLQ sin convertir la DLQ en un almacén de auditoría.
+
+### 6.1. Hechos auditables frente a métricas, logs y trazas
+
+Los **hechos auditables** son evidencia funcional de acciones relevantes para el negocio, la seguridad o el cumplimiento. Permiten responder quién realizó una acción, qué cambió, sobre qué entidad, cuándo ocurrió y cuál fue el resultado. Algunos ejemplos son otorgar o revocar un consentimiento, emitir o cancelar una póliza, aprobar un siniestro, confirmar un pago o modificar información sensible. Se publican como eventos en la cola **Hechos auditables** y Cumplimiento los conserva en el Registro de Auditoría append-only, con controles de integridad, acceso y retención regulatoria.
+
+Las **métricas, logs y trazas** son señales técnicas de observabilidad utilizadas para operar y diagnosticar el sistema:
+
+| Señal | Pregunta principal | Ejemplos | Uso habitual |
+|---|---|---|---|
+| Métricas | ¿Cómo se comporta el sistema en conjunto? | Latencia, tasa de errores, solicitudes por segundo, profundidad de cola, uso de CPU | Tableros, alertas, capacidad y SLO/SLA |
+| Logs | ¿Qué informó un componente durante su ejecución? | Error de validación, timeout de proveedor, inicio de un proceso, detalle técnico controlado | Diagnóstico, soporte y análisis de incidentes |
+| Trazas | ¿Cómo recorrió una solicitud los componentes? | Spans de Gateway, BFF, microservicios, colas y adaptadores asociados a un `traceId` | Localizar latencia y fallos en recorridos distribuidos |
+
+La diferencia principal es el propósito: un hecho auditable demuestra una acción de negocio y puede tener valor legal o regulatorio; una señal de observabilidad explica la salud y ejecución técnica del sistema. Un mismo recorrido puede producir ambos, pero uno no sustituye al otro. Por ejemplo, la emisión de una póliza genera un hecho auditable estable y, al mismo tiempo, métricas de latencia, logs técnicos y una traza distribuida. Las señales técnicas pueden muestrearse, agregarse o vencer según la política operativa; los hechos auditables requieren retención, inmutabilidad e integridad acordes con la regulación.
+
+Ambos pueden compartir `correlationId` para facilitar la investigación, pero deben mantenerse separados. El Registro de Auditoría no almacena volcados de logs, y los logs no deben utilizarse como evidencia autoritativa ni contener secretos o datos personales innecesarios.
 
 ## 7. Datos
 

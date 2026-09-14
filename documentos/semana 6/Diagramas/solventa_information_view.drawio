@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="solventa-information" name="Solventa - Vista de Información">
-        <mxGraphModel dx="329" dy="296" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1200" math="0" shadow="0">
+        <mxGraphModel dx="777" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1200" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -97,11 +97,11 @@
                 <mxCell id="svc-integration" value="&lt;b&gt;ADAPTADORES EXTERNOS&lt;/b&gt;&lt;br&gt;Container: Integraciones · protocolos y normalización" style="shape=component;whiteSpace=wrap;html=1;align=left;spacingLeft=34;fillColor=#D9E4F5;strokeColor=#4472C4;fontFamily=Helvetica;fontSize=9;" parent="services" vertex="1">
                     <mxGeometry x="180" y="769" width="270" height="62" as="geometry"/>
                 </mxCell>
-                <mxCell id="e-profile-identity" value="validar consentimiento" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#B64B4B;endArrow=open;endFill=0;fontSize=8;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="services" source="svc-profile" target="svc-identity">
+                <mxCell id="e-profile-identity" value="validar consentimiento" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#B64B4B;endArrow=open;endFill=0;fontSize=8;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="services" source="svc-profile" target="svc-identity">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="325" y="117" as="targetPoint"/>
                         <Array as="points">
-                            <mxPoint x="480" y="350"/>
+                            <mxPoint x="480" y="377"/>
                             <mxPoint x="480" y="86"/>
                         </Array>
                     </mxGeometry>
@@ -109,8 +109,10 @@
                 <mxCell id="e-profile-qprofile" value="publica" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=0;exitY=0.25;entryX=1;entryY=0.75;" parent="1" source="svc-profile" target="q-profile" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="810" y="335"/>
-                            <mxPoint x="810" y="238"/>
+                            <mxPoint x="940" y="477"/>
+                            <mxPoint x="940" y="320"/>
+                            <mxPoint x="810" y="320"/>
+                            <mxPoint x="810" y="237"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
@@ -135,8 +137,9 @@
                 <mxCell id="e-qprofile-quote" value="consume" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;" parent="1" source="q-profile" target="svc-quote" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="850" y="215"/>
-                            <mxPoint x="850" y="514"/>
+                            <mxPoint x="830" y="215"/>
+                            <mxPoint x="830" y="240"/>
+                            <mxPoint x="1105" y="240"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
@@ -187,32 +190,35 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-gateway-quote" value="cotizar / aceptar" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" parent="1" source="bff-web" target="svc-quote" edge="1">
+                <mxCell id="e-gateway-quote" value="cotizar / aceptar" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=0.25;exitY=0;entryX=0;entryY=0.3;exitDx=0;exitDy=0;" parent="1" source="bff-web" target="svc-quote" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="500" y="487"/>
-                            <mxPoint x="500" y="502"/>
+                            <mxPoint x="300" y="460"/>
+                            <mxPoint x="300" y="410"/>
+                            <mxPoint x="870" y="410"/>
+                            <mxPoint x="870" y="276"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-gateway-policy" value="consultar / gestionar" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.75;entryX=0;entryY=0.3;" parent="1" source="bff-web" target="svc-policy" edge="1">
-                    <mxGeometry relative="1" as="geometry">
+                    <mxGeometry x="-0.2156" relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="510" y="501"/>
-                            <mxPoint x="510" y="550"/>
-                            <mxPoint x="780" y="550"/>
-                            <mxPoint x="780" y="584"/>
+                            <mxPoint x="370" y="520"/>
+                            <mxPoint x="510" y="520"/>
+                            <mxPoint x="510" y="390"/>
+                            <mxPoint x="920" y="390"/>
+                            <mxPoint x="920" y="378"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-gateway-claims" value="FNOL / evidencia" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=6 6;strokeColor=#B64B4B;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.75;entryX=0;entryY=0.3;" parent="1" source="bff-mobile" target="svc-claims" edge="1">
                     <mxGeometry x="0.7348" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="520" y="501"/>
-                            <mxPoint x="520" y="685"/>
-                            <mxPoint x="770" y="685"/>
-                            <mxPoint x="770" y="680"/>
-                            <mxPoint x="970" y="680"/>
+                            <mxPoint x="520" y="520"/>
+                            <mxPoint x="930" y="520"/>
+                            <mxPoint x="930" y="582"/>
                         </Array>
                         <mxPoint x="980" y="680" as="targetPoint"/>
                         <mxPoint as="offset"/>
@@ -230,32 +236,35 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-bffmobile-policy" value="billetera / offline" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.5;entryX=0;entryY=0.7;" edge="1" parent="1" source="bff-mobile" target="svc-policy">
-                    <mxGeometry relative="1" as="geometry">
+                    <mxGeometry x="-0.3061" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="530" y="488"/>
                             <mxPoint x="530" y="540"/>
-                            <mxPoint x="790" y="540"/>
-                            <mxPoint x="790" y="608"/>
+                            <mxPoint x="920" y="540"/>
+                            <mxPoint x="920" y="402"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-apipartners-quote" value="originación B2B · acuerdo · producto" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.75;entryX=0;entryY=0.7;" edge="1" parent="1" source="api-partners" target="svc-quote">
-                    <mxGeometry relative="1" as="geometry">
+                <mxCell id="e-apipartners-quote" value="originación B2B&lt;div&gt;acuerdo , producto&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.25;entryX=0;entryY=0.7;exitDx=0;exitDy=0;" edge="1" parent="1" source="api-partners" target="svc-quote">
+                    <mxGeometry x="-0.0837" relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="530" y="576"/>
-                            <mxPoint x="530" y="430"/>
+                            <mxPoint x="540" y="549"/>
+                            <mxPoint x="540" y="430"/>
                             <mxPoint x="785" y="430"/>
-                            <mxPoint x="785" y="526"/>
+                            <mxPoint x="785" y="340"/>
+                            <mxPoint x="970" y="340"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-data-profile" value="señal normalizada" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=6 6;strokeColor=#B64B4B;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" parent="1" source="data-validator" target="svc-profile" edge="1">
                     <mxGeometry x="0.8495" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="510" y="680"/>
-                            <mxPoint x="510" y="300"/>
-                            <mxPoint x="880" y="300"/>
-                            <mxPoint x="880" y="350"/>
+                            <mxPoint x="510" y="560"/>
+                            <mxPoint x="850" y="560"/>
+                            <mxPoint x="850" y="492"/>
                         </Array>
                         <mxPoint as="offset"/>
                     </mxGeometry>
@@ -288,116 +297,142 @@
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="e-policy-claims" value="pólizaId + cobertura" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;" parent="1" source="svc-policy" target="svc-claims" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="e-policy-qpolicy" value="Póliza&lt;div&gt;Emitida&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=0;exitY=0.2;entryX=1;entryY=0.25;" parent="1" source="svc-policy" target="q-policy" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="840" y="577"/>
-                            <mxPoint x="840" y="328"/>
-                        </Array>
+                    <mxGeometry x="-0.7324" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-qpolicy-payments" value="PólizaEmitida / SiniestroAprobado" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.75;entryX=0;entryY=0.2;" parent="1" source="q-policy" target="svc-payments" edge="1">
-                    <mxGeometry relative="1" as="geometry">
+                <mxCell id="e-policy-qpolicy" value="Póliza&lt;div&gt;Emitida&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=0;exitY=0.2;entryX=1;entryY=0.25;" parent="1" source="svc-policy" target="q-policy" edge="1">
+                    <mxGeometry x="-0.5154" y="-1" relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="755" y="373"/>
-                            <mxPoint x="755" y="741"/>
+                            <mxPoint x="830" y="371"/>
+                            <mxPoint x="830" y="328"/>
                         </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-qpolicy-payments" value="PólizaEmitida&lt;div&gt;&amp;nbsp;SiniestroAprobado&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.75;entryX=-0.002;entryY=0.405;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="q-policy" target="svc-payments" edge="1">
+                    <mxGeometry x="0.5037" y="-10" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="755" y="372"/>
+                            <mxPoint x="755" y="690"/>
+                        </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-qpolicy-notification" value="aviso de emisión" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=0;exitY=0.8;entryX=1;entryY=0.25;" parent="1" source="svc-policy" target="q-notification" edge="1">
-                    <mxGeometry relative="1" as="geometry">
+                    <mxGeometry x="0.2178" relative="1" as="geometry">
                         <Array as="points">
+                            <mxPoint x="870" y="409"/>
+                            <mxPoint x="870" y="615"/>
                             <mxPoint x="785" y="615"/>
                             <mxPoint x="785" y="733"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-qclaims-claims" value="evento / reporte" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.5;entryX=0;entryY=0.25;" parent="1" source="q-claims" target="svc-claims" edge="1">
-                    <mxGeometry relative="1" as="geometry">
+                <mxCell id="e-qclaims-claims" value="evento&lt;div&gt;&amp;nbsp;/ reporte&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.5;entryX=0;entryY=0.25;" parent="1" source="q-claims" target="svc-claims" edge="1">
+                    <mxGeometry x="0.0759" y="3" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="770" y="485"/>
-                            <mxPoint x="770" y="663"/>
+                            <mxPoint x="770" y="580"/>
+                            <mxPoint x="970" y="580"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-claims-qclaims" value="SiniestroAprobado" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=0;exitY=0.75;entryX=1;entryY=0.75;" parent="1" source="svc-claims" target="q-policy" edge="1">
-                    <mxGeometry relative="1" as="geometry">
+                <mxCell id="e-claims-qclaims" value="SiniestroAprobado" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=0.25;exitY=0;entryX=1;entryY=0.75;exitDx=0;exitDy=0;" parent="1" source="svc-claims" target="q-policy" edge="1">
+                    <mxGeometry x="-0.6799" relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="820" y="694"/>
-                            <mxPoint x="820" y="372"/>
+                            <mxPoint x="1038" y="550"/>
+                            <mxPoint x="820" y="550"/>
+                            <mxPoint x="820" y="373"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-payments-qpayments" value="publica resultado" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=0;exitY=0.7;entryX=1;entryY=0.75;" parent="1" source="svc-payments" target="q-payments" edge="1">
+                    <mxGeometry x="-0.6713" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="940" y="708"/>
+                            <mxPoint x="940" y="710"/>
+                            <mxPoint x="870" y="710"/>
+                            <mxPoint x="870" y="643"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-qpayments-claims" value="PagoConfirmado / PagoFallido" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.25;entryX=0;entryY=0.7;exitDx=0;exitDy=0;" parent="1" source="q-payments" target="svc-claims" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="780" y="772"/>
-                            <mxPoint x="780" y="643"/>
+                            <mxPoint x="725" y="600"/>
+                            <mxPoint x="970" y="600"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-qpayments-claims" value="PagoConfirmado / PagoFallido" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.25;entryX=0;entryY=0.7;" parent="1" source="q-payments" target="svc-claims" edge="1">
-                    <mxGeometry relative="1" as="geometry">
+                <mxCell id="e-qpayments-policy" value="actualiza cuota" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=0.75;exitY=0;entryX=0;entryY=0.65;exitDx=0;exitDy=0;" parent="1" source="q-payments" target="svc-policy" edge="1">
+                    <mxGeometry x="-0.4273" relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="760" y="598"/>
-                            <mxPoint x="760" y="690"/>
+                            <mxPoint x="696" y="570"/>
+                            <mxPoint x="910" y="570"/>
+                            <mxPoint x="910" y="399"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-qpayments-policy" value="actualiza cuota" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.5;entryX=0;entryY=0.65;" parent="1" source="q-payments" target="svc-policy" edge="1">
-                    <mxGeometry relative="1" as="geometry">
+                <mxCell id="e-payments-qnotification" value="aviso de resultado" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=0.25;exitY=1;entryX=1;entryY=0.75;exitDx=0;exitDy=0;" parent="1" source="svc-payments" target="q-notification" edge="1">
+                    <mxGeometry x="0.418" y="1" relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="750" y="620"/>
-                            <mxPoint x="750" y="605"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="e-payments-qnotification" value="aviso de resultado" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=0;exitY=0.8;entryX=1;entryY=0.75;" parent="1" source="svc-payments" target="q-notification" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
+                            <mxPoint x="1038" y="750"/>
+                            <mxPoint x="940" y="750"/>
+                            <mxPoint x="940" y="779"/>
                             <mxPoint x="790" y="779"/>
                             <mxPoint x="790" y="778"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-qnotification-integration" value="despachar" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" parent="1" source="q-notification" target="svc-integration" edge="1">
-                    <mxGeometry relative="1" as="geometry">
+                <mxCell id="e-qnotification-integration" value="despachar" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.5;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="1" source="q-notification" target="svc-integration" edge="1">
+                    <mxGeometry x="-0.3669" relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="770" y="755"/>
-                            <mxPoint x="770" y="912"/>
+                            <mxPoint x="920" y="755"/>
+                            <mxPoint x="920" y="850"/>
+                            <mxPoint x="1038" y="850"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-identity-integration" value="verificación KYC / AML" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.25;entryX=1;entryY=0.25;" edge="1" parent="1" source="svc-identity" target="svc-integration">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="1320" y="171"/>
-                            <mxPoint x="1320" y="909"/>
+                            <mxPoint x="1320" y="885"/>
+                            <mxPoint x="1240" y="885"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-policy-integration" value="firma / ACORD / reaseguro" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="svc-policy" target="svc-integration">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="1300" y="596"/>
-                            <mxPoint x="1300" y="924"/>
+                            <mxPoint x="1260" y="390"/>
+                            <mxPoint x="1260" y="900"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-payments-integration" value="cobrar / desembolsar" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.35;entryX=1;entryY=0.7;" edge="1" parent="1" source="svc-payments" target="svc-integration">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
+                            <mxPoint x="1240" y="751"/>
                             <mxPoint x="1330" y="751"/>
-                            <mxPoint x="1330" y="936"/>
+                            <mxPoint x="1330" y="910"/>
+                            <mxPoint x="1240" y="910"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-integration-providers" value="protocolos externos" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=0.25;exitY=1;entryX=1;entryY=0.5;" edge="1" parent="1" source="svc-integration" target="providers">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="1045" y="1035"/>
+                            <mxPoint x="1040" y="931"/>
+                            <mxPoint x="1040" y="1035"/>
                             <mxPoint x="245" y="1035"/>
                             <mxPoint x="245" y="920"/>
                         </Array>
@@ -406,19 +441,27 @@
                 <mxCell id="e-integration-payments" value="resultado normalizado" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#4F7CAC;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.85;entryX=1;entryY=0.75;" edge="1" parent="1" source="svc-integration" target="svc-payments">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="1310" y="946"/>
+                            <mxPoint x="1240" y="920"/>
+                            <mxPoint x="1310" y="920"/>
                             <mxPoint x="1310" y="776"/>
+                            <mxPoint x="1240" y="776"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-services-qaudit" value="hechos auditables" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;" parent="1" source="services" target="q-audit" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="e-services-qaudit" value="hechos&lt;div&gt;&amp;nbsp;auditables&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;" parent="1" source="services" target="q-audit" edge="1">
+                    <mxGeometry x="0.6201" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="760" y="560"/>
+                            <mxPoint x="760" y="890"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="e-qaudit-compliance" value="registrar" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=12;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=open;endFill=0;fontSize=8;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="q-audit" target="svc-compliance" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="780" y="890"/>
-                            <mxPoint x="780" y="842"/>
+                            <mxPoint x="940" y="890"/>
+                            <mxPoint x="940" y="798"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
@@ -431,36 +474,47 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="e-policy-documents" value="documento firmado" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8064A2;endArrow=block;endFill=1;fontSize=8;" parent="1" source="svc-policy" target="store-documents" edge="1">
-                    <mxGeometry relative="1" as="geometry">
+                    <mxGeometry x="-0.4469" relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="1320" y="596"/>
-                            <mxPoint x="1320" y="432"/>
+                            <mxPoint x="1105" y="432"/>
                         </Array>
+                        <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-claims-documents" value="evidencia + hash" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8064A2;endArrow=block;endFill=1;fontSize=8;" parent="1" source="svc-claims" target="store-documents" edge="1">
+                <mxCell id="e-claims-documents" value="evidencia + hash" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8064A2;endArrow=block;endFill=1;fontSize=8;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" parent="1" source="svc-claims" target="store-documents" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="1360" y="678"/>
+                            <mxPoint x="1240" y="580"/>
+                            <mxPoint x="1360" y="580"/>
                             <mxPoint x="1360" y="480"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-queues-events" value="registro append-only" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8064A2;endArrow=block;endFill=1;fontSize=8;" parent="1" source="svc-compliance" target="store-events" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="e-queues-events" value="registro&amp;nbsp;&lt;div&gt;append-only&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8064A2;endArrow=block;endFill=1;fontSize=8;" parent="1" source="svc-compliance" target="store-events" edge="1">
+                    <mxGeometry x="0.3412" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1105" y="760"/>
+                            <mxPoint x="1370" y="760"/>
+                            <mxPoint x="1370" y="623"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="e-events-analytics" value="proyecciones seudonimizadas" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#D79B00;endArrow=open;endFill=0;fontSize=8;exitX=0.75;exitY=1;entryX=0.5;entryY=1;" parent="1" source="queues" target="db-analytics" edge="1">
+                <mxCell id="e-events-analytics" value="proyecciones seudonimizadas" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=16;html=1;dashed=1;dashPattern=8 4;strokeColor=#D79B00;endArrow=open;endFill=0;fontSize=8;exitX=0.75;exitY=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="queues" target="db-analytics" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="695" y="1040"/>
-                            <mxPoint x="1518" y="1040"/>
+                            <mxPoint x="1660" y="1040"/>
+                            <mxPoint x="1660" y="810"/>
+                            <mxPoint x="1630" y="810"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e-profile-cache" value="perfil temporal" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#7F7F7F;endArrow=block;endFill=1;fontSize=8;" parent="1" source="svc-profile" target="cache" edge="1">
+                <mxCell id="e-profile-cache" value="perfil temporal" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#7F7F7F;endArrow=block;endFill=1;fontSize=8;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" parent="1" source="svc-profile" target="cache" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="1300" y="350"/>
+                            <mxPoint x="1173" y="550"/>
+                            <mxPoint x="1300" y="550"/>
                             <mxPoint x="1300" y="950"/>
                         </Array>
                     </mxGeometry>

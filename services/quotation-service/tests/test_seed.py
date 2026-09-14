@@ -158,9 +158,7 @@ def test_existing_privileged_or_owner_runtime_role_is_rejected() -> None:
             SecretStr("another-runtime-password-24"),
         )
 
-    assert not any(
-        "ALTER ROLE" in statement for statement in rendered_statements(connection)
-    )
+    assert not any("ALTER ROLE" in statement for statement in rendered_statements(connection))
 
 
 def test_failure_event_reports_stage_and_sqlstate_without_sensitive_data() -> None:

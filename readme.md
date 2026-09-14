@@ -40,6 +40,20 @@ documentos/
       modelo_despliegue.drawio
 ```
 
+## Experimento 1 — baseline de escalabilidad
+
+La implementación del baseline de 500 RPM está separada en:
+
+- [plan ejecutable](docs/experimento-1/PLAN.md);
+- [infraestructura AWS con Terraform](infra/terraform/README.md);
+- [servicios sintéticos](services/README.md);
+- [chart de EKS](deploy/helm/solventa-exp1/README.md);
+- [generador y protocolo JMeter](load-tests/README.md);
+- [runbook de ejecución](scripts/experiment-1/README.md).
+
+El código no ejecuta automáticamente recursos facturables. El stack principal
+requiere un `terraform plan` revisado y un `apply` explícito.
+
 ---
 
 ## Tablero del proyecto

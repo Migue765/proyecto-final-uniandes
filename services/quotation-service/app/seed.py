@@ -33,7 +33,9 @@ _URI_PATTERN = re.compile(r"(?i)\b(?:https?|postgres(?:ql)?|redis(?:s)?)://\S+")
 _SECRET_ASSIGNMENT_PATTERN = re.compile(
     r"(?i)\b(?:password|passwd|secret|token)\s*[:=]\s*[^\s,;]+"
 )
-_IDENTITY_PATTERN = re.compile(r"(?i)\b(user|role)\s+(?:\"[^\"]*\"|'[^']*'|[^\s,;]+)")
+_IDENTITY_PATTERN = re.compile(
+    r"(?i)\b(user|role)\s+(?:\"[^\"]*\"|'[^']*'|[^\s,;]+)"
+)
 
 
 class SeedStageError(RuntimeError):
@@ -52,9 +54,8 @@ def _sanitized_primary_message(error: Exception) -> str:
         return "unavailable"
 
     normalized = " ".join(
-        "".join(
-            character if character.isprintable() else " " for character in message
-        ).split()
+        "".join(character if character.isprintable() else " " for character in message)
+        .split()
     )
     normalized = _URI_PATTERN.sub("[redacted-url]", normalized)
     normalized = _SECRET_ASSIGNMENT_PATTERN.sub("credential=[redacted]", normalized)
@@ -241,7 +242,8 @@ def configure_runtime_role(
         )
         connection.execute(
             sql.SQL(
-                "ALTER ROLE {} WITH LOGIN PASSWORD {} NOCREATEDB NOCREATEROLE NOINHERIT"
+                "ALTER ROLE {} WITH LOGIN PASSWORD {} NOCREATEDB "
+                "NOCREATEROLE NOINHERIT"
             ).format(role, sql.Literal(encrypted_password.decode("ascii")))
         )
     finally:
@@ -317,7 +319,9 @@ def seed_database(
                 (profiles_per_partner,),
             )
             try:
-                configure_runtime_role(connection, runtime_db_user, runtime_db_password)
+                configure_runtime_role(
+                    connection, runtime_db_user, runtime_db_password
+                )
             except Exception as error:
                 raise SeedStageError("configure_runtime_role", error) from error
     except SeedStageError:

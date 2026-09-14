@@ -86,8 +86,10 @@ Nothing in this directory runs automatically.
 
    The archive includes non-sensitive Terraform outputs, Git revision/status,
    effective Helm values and manifest, requested and resolved pod image digests,
-   CPU/HPA snapshots, events, and the last three hours of API Gateway access
-   logs. To inspect the same managed log stream directly:
+   CPU/HPA snapshots, events, raw managed metrics, and six timestamped CloudWatch
+   PNG graphs per measured run for API Gateway, RDS, and Redis. It also includes
+   the last three hours of API Gateway access logs. To inspect the same managed
+   log stream directly:
 
    ```bash
    /opt/homebrew/bin/aws --profile solventa-lab --region us-east-1 logs tail \

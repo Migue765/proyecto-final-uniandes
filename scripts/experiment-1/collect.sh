@@ -112,8 +112,130 @@ aws_cli cloudwatch get-metric-data \
   --output json >"$managed_metrics_file" \
   || fail "Unable to collect CloudWatch metrics for API Gateway, RDS, and Redis"
 
+cloudwatch_graphs_root="${collection_dir}/cloudwatch-graphs"
+cloudwatch_graphs_dir="$cloudwatch_graphs_root"
+mkdir -p "$cloudwatch_graphs_root"
+graph_evidence_id="${SOURCE_RUN_ID:-$collection_id}"
+
+render_cloudwatch_graph() {
+  local graph_name="$1"
+  local graph_title="$2"
+  local metrics_json="$3"
+  local widget_file image_file temporary_image
+  validate_safe_id "$graph_name"
+  widget_file="${cloudwatch_graphs_dir}/${graph_name}.widget.json"
+  image_file="${cloudwatch_graphs_dir}/${graph_name}.png"
+  temporary_image="${image_file}.tmp"
+
+  jq -n \
+    --arg title "${graph_title} | ${graph_evidence_id}" \
+    --arg region "$AWS_REGION" \
+    --arg start "$metric_start_time" \
+    --arg end "$metric_end_time" \
+    --argjson metrics "$metrics_json" \
+    '{
+      width: 1200,
+      height: 600,
+      view: "timeSeries",
+      stacked: false,
+      region: $region,
+      start: $start,
+      end: $end,
+      timezone: "+0000",
+      period: 60,
+      title: $title,
+      legend: {position: "bottom"},
+      liveData: false,
+      metrics: $metrics
+    }' >"$widget_file"
+
+  if ! aws_cli cloudwatch get-metric-widget-image \
+    --metric-widget "file://${widget_file}" \
+    --output-format png \
+    --query MetricWidgetImage \
+    --output text \
+    | python3 -c 'import base64, sys; sys.stdout.buffer.write(base64.b64decode(sys.stdin.buffer.read()))' \
+      >"$temporary_image"; then
+    rm -f -- "$temporary_image"
+    fail "Unable to render CloudWatch graph ${graph_name}"
+  fi
+  python3 -c 'import pathlib, sys; data = pathlib.Path(sys.argv[1]).read_bytes(); raise SystemExit(0 if data.startswith(b"\x89PNG\r\n\x1a\n") else 1)' \
+    "$temporary_image" || fail "CloudWatch graph is not a valid PNG: ${graph_name}"
+  mv -- "$temporary_image" "$image_file"
+}
+
+api_traffic_metrics="$(jq -cn --arg api "$api_name" --arg stage "$api_stage" '[
+  ["AWS/ApiGateway","Count","ApiName",$api,"Stage",$stage,{stat:"Sum",label:"Solicitudes",color:"#2ca02c"}],
+  ["AWS/ApiGateway","4XXError","ApiName",$api,"Stage",$stage,{stat:"Sum",label:"Errores 4XX",color:"#ff7f0e"}],
+  ["AWS/ApiGateway","5XXError","ApiName",$api,"Stage",$stage,{stat:"Sum",label:"Errores 5XX",color:"#d62728"}]
+]')"
+api_latency_metrics="$(jq -cn --arg api "$api_name" --arg stage "$api_stage" '[
+  ["AWS/ApiGateway","Latency","ApiName",$api,"Stage",$stage,{stat:"p95",label:"Latencia p95 (ms)",color:"#1f77b4"}],
+  ["AWS/ApiGateway","Latency","ApiName",$api,"Stage",$stage,{stat:"p99",label:"Latencia p99 (ms)",color:"#9467bd"}],
+  ["AWS/ApiGateway","IntegrationLatency","ApiName",$api,"Stage",$stage,{stat:"p95",label:"Integracion p95 (ms)",color:"#17becf"}]
+]')"
+rds_capacity_metrics="$(jq -cn --arg rds "$rds_identifier" '[
+  ["AWS/RDS","CPUUtilization","DBInstanceIdentifier",$rds,{stat:"Average",label:"CPU promedio (%)",color:"#d62728"}],
+  ["AWS/RDS","DatabaseConnections","DBInstanceIdentifier",$rds,{stat:"Maximum",label:"Conexiones maximas",color:"#1f77b4",yAxis:"right"}]
+]')"
+rds_latency_metrics="$(jq -cn --arg rds "$rds_identifier" '[
+  ["AWS/RDS","ReadLatency","DBInstanceIdentifier",$rds,{stat:"p95",label:"Lectura p95 (s)",color:"#2ca02c"}],
+  ["AWS/RDS","WriteLatency","DBInstanceIdentifier",$rds,{stat:"p95",label:"Escritura p95 (s)",color:"#ff7f0e"}]
+]')"
+redis_capacity_metrics="$(jq -cn --arg redis "$redis_cluster_identifier" '[
+  ["AWS/ElastiCache","EngineCPUUtilization","CacheClusterId",$redis,{stat:"Average",label:"CPU motor promedio (%)",color:"#d62728"}],
+  ["AWS/ElastiCache","CurrConnections","CacheClusterId",$redis,{stat:"Maximum",label:"Conexiones maximas",color:"#1f77b4",yAxis:"right"}]
+]')"
+redis_cache_metrics="$(jq -cn --arg redis "$redis_cluster_identifier" '[
+  ["AWS/ElastiCache","CacheHits","CacheClusterId",$redis,{stat:"Sum",label:"Cache hits",color:"#2ca02c"}],
+  ["AWS/ElastiCache","CacheMisses","CacheClusterId",$redis,{stat:"Sum",label:"Cache misses",color:"#ff7f0e"}],
+  ["AWS/ElastiCache","Evictions","CacheClusterId",$redis,{stat:"Sum",label:"Evictions",color:"#d62728"}]
+]')"
+
+render_cloudwatch_graph_set() {
+  render_cloudwatch_graph "api-gateway-throughput-errors" "API Gateway - trafico y errores" "$api_traffic_metrics"
+  render_cloudwatch_graph "api-gateway-latency" "API Gateway - latencia" "$api_latency_metrics"
+  render_cloudwatch_graph "rds-capacity" "RDS - CPU y conexiones" "$rds_capacity_metrics"
+  render_cloudwatch_graph "rds-latency" "RDS - latencia de lectura y escritura" "$rds_latency_metrics"
+  render_cloudwatch_graph "redis-capacity" "Redis - CPU y conexiones" "$redis_capacity_metrics"
+  render_cloudwatch_graph "redis-cache" "Redis - hits, misses y evictions" "$redis_cache_metrics"
+}
+
+if [[ -n "$SOURCE_RUN_ID" ]]; then
+  run_count="$(jq -er '.runs | select(type == "number" and . > 0 and . <= 100)' \
+    "${RESULTS_DIR}/${SOURCE_RUN_ID}/manifest.json")" || fail "Run manifest has no valid run count"
+  for run_number in $(seq 1 "$run_count"); do
+    measured_jtl="${RESULTS_DIR}/${SOURCE_RUN_ID}/run-${run_number}/measured.jtl"
+    [[ -f "$measured_jtl" && ! -L "$measured_jtl" ]] || fail "Missing measured JTL for CloudWatch run ${run_number}"
+    read -r metric_start_time metric_end_time < <(
+      python3 -c '
+import csv
+import sys
+from datetime import datetime, timezone
+
+with open(sys.argv[1], encoding="utf-8", newline="") as handle:
+    samples = [(int(row["timeStamp"]), int(row["elapsed"])) for row in csv.DictReader(handle)]
+if not samples:
+    raise SystemExit("measured JTL contains no timestamps")
+def iso(epoch_ms):
+    return datetime.fromtimestamp(epoch_ms / 1000, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+print(iso(min(timestamp for timestamp, _ in samples)), iso(max(timestamp + elapsed for timestamp, elapsed in samples)))
+' "$measured_jtl"
+    )
+    cloudwatch_graphs_dir="${cloudwatch_graphs_root}/run-${run_number}"
+    mkdir -p "$cloudwatch_graphs_dir"
+    graph_evidence_id="${SOURCE_RUN_ID} run-${run_number} measured"
+    render_cloudwatch_graph_set
+  done
+else
+  render_cloudwatch_graph_set
+fi
+
 if [[ -n "$SOURCE_RUN_ID" ]]; then
   cp "$managed_metrics_file" "${RESULTS_DIR}/${SOURCE_RUN_ID}/managed-cloudwatch-metrics.json"
+  mkdir -p "${RESULTS_DIR}/${SOURCE_RUN_ID}/cloudwatch-graphs"
+  cp -R "${cloudwatch_graphs_root}/." "${RESULTS_DIR}/${SOURCE_RUN_ID}/cloudwatch-graphs/"
+  SOURCE_RUN_ID="$SOURCE_RUN_ID" "${SCRIPT_DIR}/analyze.sh"
 fi
 
 task_definition="$(tf_text_first load_runner_task_definition_arn 2>/dev/null || true)"

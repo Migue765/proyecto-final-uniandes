@@ -207,6 +207,9 @@ def evidence_inventory(run_dir: Path) -> dict[str, Any]:
         if (k8s_dir / "prometheus").is_dir()
         else 0,
         "managed_cloudwatch_metrics": (run_dir / "managed-cloudwatch-metrics.json").is_file(),
+        "cloudwatch_graphs": len(list((run_dir / "cloudwatch-graphs").rglob("*.png")))
+        if (run_dir / "cloudwatch-graphs").is_dir()
+        else 0,
     }
 
 
@@ -328,6 +331,7 @@ def markdown_report(report: dict[str, Any]) -> str:
             f"- Snapshots Prometheus de aplicación: {inventory['application_metric_snapshots']}",
             "- Métricas CloudWatch administradas: "
             + ("sí" if inventory["managed_cloudwatch_metrics"] else "no"),
+            f"- Gráficas PNG de CloudWatch: {inventory['cloudwatch_graphs']}",
             "",
             "## Revisión manual pendiente",
             "",

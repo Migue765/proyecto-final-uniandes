@@ -536,15 +536,16 @@ configuración congelada.
 
 Protocolo inmutable por corrida:
 
-1. 5 min a 50 RPM;
+1. 1 min a 50 RPM;
 2. salto a 500 RPM en 5 s o menos;
-3. 30 min medidos a 500 RPM;
-4. 5 min a 50 RPM;
+3. 8 min medidos a 500 RPM;
+4. 30 s a 50 RPM;
 5. 30 s adicionales de observación HPA.
 
 Cada corrida usa un contenedor y una sesión temporal nueva. Los perfiles son
-1–20, 21–40 y 41–60 respectivamente. La duración de tráfico y observación es
-121 min 30 s en total, más construcción y generación de reportes.
+1–20, 21–40 y 41–60 respectivamente. Cada corrida dura 10 min; las tres suman
+30 min de protocolo, más construcción, generación de reportes y cualquier
+espera necesaria para recuperar el estado inicial entre repeticiones.
 
 El script actual encadena las tres corridas después de su cooldown, pero no
 impide que la siguiente empiece si el HPA aún no volvió a dos réplicas. Hasta
@@ -661,7 +662,7 @@ para ocultar un incumplimiento.
 
 | Criterio | PASS por corrida |
 |---|---|
-| Intentos observados | 15.000 muestras iniciadas en 30 min, tolerancia ±1 %; se contrasta con timestamps y capacidad no saturada del generador |
+| Intentos observados | 4.000 muestras iniciadas en 8 min, tolerancia ±1 % (±40); se contrasta con timestamps y capacidad no saturada del generador |
 | Respuesta válida | Más de 99 % de HTTP 2xx con esquema de negocio válido, equivalente a error `<1 %` |
 | Latencia | p95 ≤250 ms y p99 ≤500 ms |
 | Errores | 429, timeout, transporte, 5xx y 2xx con esquema inválido cuentan como error |

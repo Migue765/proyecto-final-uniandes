@@ -90,7 +90,7 @@ if [[ "${WAIT_FOR_COMPLETION:-false}" == "true" ]]; then
   require_command kubectl
   configure_eks_context
   RUN_ID="$RUN_ID" \
-  MONITOR_DURATION_SECONDS=7500 \
+  MONITOR_DURATION_SECONDS=2100 \
   SKIP_CONTEXT_UPDATE=true \
   "${SCRIPT_DIR}/monitor.sh" &
   monitor_pid=$!
@@ -100,7 +100,7 @@ if [[ "${WAIT_FOR_COMPLETION:-false}" == "true" ]]; then
   }
   trap cleanup EXIT INT TERM
 
-  deadline=$((SECONDS + 14400))
+  deadline=$((SECONDS + 3600))
   while (( SECONDS < deadline )); do
     task_status="$(aws_cli ecs describe-tasks \
       --cluster "$ecs_cluster" \

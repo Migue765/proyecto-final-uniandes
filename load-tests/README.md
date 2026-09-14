@@ -3,7 +3,7 @@
 The JMeter 5.6.3 plan implements the agreed **baseline**, not the original
 50,000-RPM hypothesis:
 
-- a 5-minute warm-up at **50 RPM**, followed by an immediate step to exactly
+- a 1-minute warm-up at **50 RPM**, followed by an immediate step to exactly
   **500 requests per minute total** (8.33 RPS), not 500 RPM per partner;
 - 50 concurrent threads representing `partner-01` through `partner-50`;
 - `POST /api/v1/cotizaciones`, HTTP keep-alive, redirects disabled, and no
@@ -15,10 +15,10 @@ The JMeter 5.6.3 plan implements the agreed **baseline**, not the original
 - 20 deterministic profiles per partner (1,000 values across all partners in a
   run), reused between warm-up, measurement, and cooldown for observable cache
   hits;
-- a 30-minute measured window whose JTL begins at the 500-RPM step;
+- an 8-minute measured window whose JTL begins at the 500-RPM step;
 - three complete runs, each writing a measured JTL and an HTML dashboard, then a
-  five-minute cooldown at 50 RPM so the 300-second HPA scale-down window elapses,
-  followed by a 30-second observation interval for the next HPA sync.
+  30-second cooldown at 50 RPM, followed by a 30-second observation interval.
+  Each run therefore lasts 10 minutes.
 
 The request body is computationally useful even though all data are synthetic:
 
@@ -31,9 +31,10 @@ The request body is computationally useful even though all data are synthetic:
 This baseline can validate the deployed path at 500 RPM, error rate, latency,
 resource consumption, deterministic dependencies, and whether an HPA happens to
 react at this load. It **cannot** validate 50,000 RPM, the documented 100x scaling
-hypothesis, or strong statistical fairness among partners. At 500 RPM split over
-50 partners, each partner receives only about 10 requests/minute; partner-level
-p95 comparisons therefore have limited statistical power in a 30-minute window.
+hypothesis, endurance, complete HPA scale-down, or strong statistical fairness
+among partners. At 500 RPM split over 50 partners, each partner receives only
+about 10 requests/minute; partner-level p95 comparisons therefore have limited
+statistical power in an 8-minute measured window.
 
 Do not claim the experiment-1 hypothesis is confirmed from these runs. A later,
 separately authorized load ladder is required for the 50,000-RPM claim.
@@ -49,7 +50,7 @@ The runner, quotation image, and profile image are all built for `linux/amd64`,
 matching both the current Colima context and the EKS/Fargate runtime platform.
 The local orchestration starts one container per run and exports a fresh session
 before each container; every session must remain valid for that run plus a
-five-minute safety margin. Fargate keeps all three runs in one task and refreshes
+two-minute safety margin. Fargate keeps all three runs in one task and refreshes
 its task-role credentials before every run.
 
 Each evidence run uses a disjoint seeded profile range without flushing Redis:

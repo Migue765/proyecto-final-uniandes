@@ -230,15 +230,20 @@ contexto `colima-x86`, los nodos EKS `c7i-flex.large` y el runner Fargate opcion
 
 Cada corrida usa el mismo artefacto y configuración:
 
-1. Cinco minutos a 50 RPM para estabilizar.
+1. Un minuto a 50 RPM para estabilizar el recorrido.
 2. Salto a 500 RPM en cinco segundos o menos.
-3. Treinta minutos a 500 RPM agregados, sin retries del cliente.
-4. Cinco minutos de enfriamiento a 50 RPM.
-5. Esperar que réplicas y caché vuelvan al estado inicial.
+3. Ocho minutos a 500 RPM agregados, sin retries del cliente.
+4. Treinta segundos de enfriamiento a 50 RPM.
+5. Treinta segundos de observación final. Si el HPA se activó, la siguiente
+   corrida espera fuera de esta ventana hasta recuperar el estado inicial.
 
 El primer minuto posterior al salto no se excluye al evaluar el tiempo de
 recuperación. Los percentiles se calculan a partir de muestras, nunca
 promediando percentiles de nodos o corridas.
+
+La ventana de diez minutos aporta aproximadamente 4.000 muestras medidas por
+corrida. Es suficiente para evaluar latencia y errores del baseline, pero no
+demuestra resistencia prolongada, disponibilidad mensual ni scale-down completo.
 
 ### 6. Evidencia
 

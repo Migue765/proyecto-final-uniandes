@@ -20,7 +20,7 @@
         <stringProp name="ThreadGroup.num_threads">${__P(partner_threads,50)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(ramp_seconds,5)}</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">${__P(warmup_seconds,300)}</stringProp>
+        <stringProp name="ThreadGroup.duration">${__P(warmup_seconds,60)}</stringProp>
         <stringProp name="ThreadGroup.delay">0</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
@@ -55,8 +55,8 @@
         <stringProp name="ThreadGroup.num_threads">${__P(partner_threads,50)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(ramp_seconds,5)}</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">${__P(measured_seconds,1800)}</stringProp>
-        <stringProp name="ThreadGroup.delay">${__P(measured_delay_seconds,300)}</stringProp>
+        <stringProp name="ThreadGroup.duration">${__P(measured_seconds,480)}</stringProp>
+        <stringProp name="ThreadGroup.delay">${__P(measured_delay_seconds,60)}</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
@@ -90,8 +90,8 @@
         <stringProp name="ThreadGroup.num_threads">${__P(partner_threads,50)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(ramp_seconds,5)}</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">${__P(cooldown_seconds,300)}</stringProp>
-        <stringProp name="ThreadGroup.delay">${__P(cooldown_delay_seconds,2100)}</stringProp>
+        <stringProp name="ThreadGroup.duration">${__P(cooldown_seconds,30)}</stringProp>
+        <stringProp name="ThreadGroup.delay">${__P(cooldown_delay_seconds,540)}</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>

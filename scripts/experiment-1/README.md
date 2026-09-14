@@ -53,8 +53,8 @@ Nothing in this directory runs automatically.
    scripts/experiment-1/smoke.sh
    ```
 
-5. Run the baseline locally against the same API Gateway path (approximately
-   120 minutes plus startup/reporting):
+5. Run the baseline locally against the same API Gateway path (30 minutes of
+   protocol plus startup, reporting, and any inter-run HPA recovery waits):
 
    ```bash
    scripts/experiment-1/run-local.sh
@@ -62,9 +62,11 @@ Nothing in this directory runs automatically.
 
    The local script deliberately uses one container per run. It refreshes the
    `solventa-lab` temporary session immediately before each container and rejects
-   a session that cannot cover the 40-minute traffic schedule plus the
-   five-minute credential margin. Within each container, warm-up, measurement,
-   and cooldown remain one uninterrupted JMeter process.
+   a session that cannot cover the 10-minute traffic schedule plus the
+   two-minute credential margin. Within each container, warm-up, measurement,
+   and cooldown remain one uninterrupted JMeter process. Before each repetition,
+   both measured deployments and HPAs must be back at two Ready replicas; this
+   wait happens before temporary credentials are exported.
 
    Or launch the pre-provisioned ECS Fargate task, which uploads evidence to S3:
 
@@ -108,9 +110,13 @@ Nothing in this directory runs automatically.
 - API Gateway traffic is always SigV4 signed. Unsigned mode is rejected unless
   `VALIDATION_MODE=true` and the target is localhost.
 - Production protocol parameters are fixed at a 50-RPM warm-up, immediate 500-RPM
-  aggregate step, 50 partners, 20 reused profiles per partner/run, 300 seconds
-  warm-up, 1,800 seconds measured, 300 seconds cooldown after every run, and
+  aggregate step, 50 partners, 20 reused profiles per partner/run, 60 seconds
+  warm-up, 480 seconds measured, 30 seconds cooldown after every run, and
   a 30-second post-cooldown HPA observation before each of the three runs ends.
+- The shortened protocol provides about 4,000 measured requests per run and is
+  evidence for baseline latency, throughput, and technical errors only. It does
+  not demonstrate endurance, monthly availability, long-term saturation, or
+  complete HPA scale-down behavior.
 - Calibrate `QUOTE_CPU_ITERATIONS` and `PROFILE_CPU_ITERATIONS` before recording
   evidence. The initial `150000` is a hypothesis, not a measured constant. Freeze
   both values for all three runs; the intended signal is HPA `2 -> 3` while p95

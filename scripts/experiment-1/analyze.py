@@ -143,6 +143,7 @@ def summarize_jtl(path: Path, target_rpm: int, measured_seconds: int) -> dict[st
     expected_samples = target_rpm * measured_seconds / 60
     tolerance_samples = expected_samples * 0.01
     attempted_rpm = sample_count * 60 / measured_seconds
+    completed_rpm = valid_count * 60 / measured_seconds
     valid_percent = valid_count * 100 / sample_count
     latency = {
         "p50_ms": percentile(latencies, 0.50),
@@ -153,7 +154,9 @@ def summarize_jtl(path: Path, target_rpm: int, measured_seconds: int) -> dict[st
     criteria = {
         "offered_rate_within_1_percent": abs(sample_count - expected_samples)
         <= tolerance_samples,
-        "valid_success_at_least_99_percent": valid_percent >= 99.0,
+        # ASR-ESC-01 demands technical error strictly below 1 percent, so a run
+        # that lands on exactly 99.0 percent valid responses is a FAIL.
+        "valid_success_above_99_percent": valid_percent > 99.0,
         "p95_at_most_250_ms": latency["p95_ms"] <= 250,
         "p99_at_most_500_ms": latency["p99_ms"] <= 500,
     }
@@ -178,8 +181,13 @@ def summarize_jtl(path: Path, target_rpm: int, measured_seconds: int) -> dict[st
         "sample_count": sample_count,
         "expected_samples": expected_samples,
         "sample_tolerance": tolerance_samples,
+        # attempted_rpm counts every request the generator observed leaving the
+        # client; completed_rpm counts only business-valid 2xx responses. Neither
+        # is an edge-side counter of offered/admitted/rejected traffic, which
+        # still has to be reconciled against API Gateway metrics by hand.
         "attempted_rpm": round(attempted_rpm, 4),
-        "completed_rpm": round(attempted_rpm, 4),
+        "completed_rpm": round(completed_rpm, 4),
+        "rpm_basis": "client-observed samples; not an edge-side offered/admitted counter",
         "valid_count": valid_count,
         "valid_percent": round(valid_percent, 4),
         "first_sample_at": utc_iso(first_timestamp),
@@ -261,6 +269,9 @@ def analyze(results_root: Path, run_id: str) -> tuple[dict[str, Any], Path]:
             "HPA decision, additional Ready capacity, and simultaneous SLO recovery within 60 seconds",
             "PostgreSQL and Redis managed metrics for the same measurement windows",
             "load-generator CPU below 80 percent and absence of generator throttling",
+            "reconciliation of attempted_rpm/completed_rpm against API Gateway "
+            "Count, 4XXError, 5XXError and throttle metrics, because the JTL only "
+            "observes traffic from the client side",
         ],
     }
     return report, run_dir
@@ -276,17 +287,18 @@ def markdown_report(report: dict[str, Any]) -> str:
         "",
         "El resultado integral queda pendiente hasta revisar saturación, HPA, servicios administrados y generador.",
         "",
-        "| Corrida | Muestras | RPM intentadas | Válidas | p50 | p95 | p99 | Máx. | HTTP central |",
-        "|---:|---:|---:|---:|---:|---:|---:|---:|:---:|",
+        "| Corrida | Muestras | RPM intentadas | RPM completadas | Válidas | p50 | p95 | p99 | Máx. | HTTP central |",
+        "|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|",
     ]
     for run in report["runs"]:
         latency = run["latency"]
         lines.append(
-            "| {run} | {samples} | {rpm:.2f} | {valid:.2f}% | {p50} ms | {p95} ms | "
+            "| {run} | {samples} | {rpm:.2f} | {completed:.2f} | {valid:.2f}% | {p50} ms | {p95} ms | "
             "{p99} ms | {maximum} ms | {result} |".format(
                 run=run["run"],
                 samples=run["sample_count"],
                 rpm=run["attempted_rpm"],
+                completed=run["completed_rpm"],
                 valid=run["valid_percent"],
                 p50=latency["p50_ms"],
                 p95=latency["p95_ms"],

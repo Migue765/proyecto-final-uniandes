@@ -1,0 +1,1107 @@
+<mxfile host="65bd71144e">
+    <diagram id="solventa-functional" name="Solventa - Vista Funcional">
+        <mxGraphModel dx="855" dy="770" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1250" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Solventa - Vista Funcional" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;strokeColor=none;fillColor=none;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="20" width="800" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="subtitle" value="Canales, funciones de acceso, mensajería, microservicios y datos" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#4B5563;strokeColor=none;fillColor=none;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="60" width="1000" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="channels" value="CANALES Y ACTORES" style="swimlane;html=1;rounded=0;startSize=32;fillColor=#CFE2F3;swimlaneFillColor=#F5FAFE;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="110" width="190" height="930" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor-web" value="&lt;b&gt;WEB APP&lt;/b&gt;&lt;br&gt;Cliente · asesor · operación" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontFamily=Helvetica;fontSize=10;" parent="channels" vertex="1">
+                    <mxGeometry x="20" y="80" width="150" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-actor-web-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="actor-web">
+                    <mxGeometry x="145" y="30" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor-mobile" value="&lt;b&gt;MÓVIL APP&lt;/b&gt;&lt;br&gt;Cliente · evidencia · offline" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontFamily=Helvetica;fontSize=10;" parent="channels" vertex="1">
+                    <mxGeometry x="20" y="230" width="150" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-actor-mobile-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="actor-mobile">
+                    <mxGeometry x="145" y="30" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor-partner" value="&lt;b&gt;SOCIO EMBEDDED&lt;/b&gt;&lt;br&gt;Originación B2B" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontFamily=Helvetica;fontSize=10;" parent="channels" vertex="1">
+                    <mxGeometry x="20" y="380" width="150" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-actor-partner-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="actor-partner">
+                    <mxGeometry x="145" y="30" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor-ops" value="&lt;b&gt;OPERACIÓN / CUMPLIMIENTO&lt;/b&gt;&lt;br&gt;Casos · auditoría · reportes" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontFamily=Helvetica;fontSize=10;" parent="channels" vertex="1">
+                    <mxGeometry x="20" y="680" width="150" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-actor-ops-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="actor-ops">
+                    <mxGeometry x="145" y="35" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="access" value="ACCESO Y ASR" style="swimlane;html=1;rounded=0;startSize=32;fillColor=#FFE6CC;swimlaneFillColor=#FFF8F1;strokeColor=#D79B00;fontFamily=Helvetica;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="110" width="260" height="930" as="geometry"/>
+                </mxCell>
+                <mxCell id="asr-auth" value="&lt;b&gt;AUTENTICACIÓN Y AUTORIZACIÓN&lt;/b&gt;&lt;br&gt;OIDC / OAuth 2.0 · JWT&lt;br&gt;roles · scopes · MFA" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F9CB9C;strokeColor=#D79B00;fontFamily=Helvetica;fontSize=10;" parent="access" vertex="1">
+                    <mxGeometry x="40" y="65" width="195" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-auth-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="asr-auth">
+                    <mxGeometry x="-5" y="40" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-auth-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="asr-auth">
+                    <mxGeometry x="100" y="85" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-auth" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="access">
+                    <mxGeometry x="8" y="105" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-auth" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-auth">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="gateway" value="&lt;b&gt;API GATEWAY&lt;/b&gt;&lt;br&gt;cuotas · enrutamiento&lt;br&gt;trazabilidad · protección" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontFamily=Helvetica;fontSize=10;" parent="access" vertex="1">
+                    <mxGeometry x="25" y="200" width="210" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-gateway-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="gateway">
+                    <mxGeometry x="100" y="-5" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-gateway-security-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="gateway">
+                    <mxGeometry x="155" y="-5" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-gateway-web" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="gateway">
+                    <mxGeometry x="45" y="85" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-gateway-mobile" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="gateway">
+                    <mxGeometry x="100" y="85" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-gateway-partners" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="gateway">
+                    <mxGeometry x="155" y="85" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-gateway" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;rotation=90;" vertex="1" parent="access">
+                    <mxGeometry x="120" y="173" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-gateway" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;rotation=90;" vertex="1" parent="iface-gateway">
+                    <mxGeometry x="4" y="3" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-gateway-security" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;rotation=90;" vertex="1" parent="access">
+                    <mxGeometry x="175" y="173" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-gateway-security" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;rotation=90;" vertex="1" parent="iface-gateway-security">
+                    <mxGeometry x="4" y="3" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="bff-web" value="&lt;b&gt;BFF WEB&lt;/b&gt;&lt;br&gt;composición de experiencia" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="access" vertex="1">
+                    <mxGeometry x="25" y="330" width="100" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-bffweb-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="bff-web">
+                    <mxGeometry x="45" y="-5" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-bffweb-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="bff-web">
+                    <mxGeometry x="95" y="30" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-bffweb" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;rotation=90;" vertex="1" parent="access">
+                    <mxGeometry x="65" y="308" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-bffweb" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;rotation=90;" vertex="1" parent="iface-bffweb">
+                    <mxGeometry x="4" y="3" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="bff-mobile" value="&lt;b&gt;BFF MÓVIL&lt;/b&gt;&lt;br&gt;offline · biometría" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="access" vertex="1">
+                    <mxGeometry x="135" y="330" width="100" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-bffmobile-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="bff-mobile">
+                    <mxGeometry x="45" y="-5" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-bffmobile-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="bff-mobile">
+                    <mxGeometry x="95" y="30" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-bffmobile" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;rotation=88;" vertex="1" parent="access">
+                    <mxGeometry x="175" y="308" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-bffmobile" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;rotation=88;" vertex="1" parent="iface-bffmobile">
+                    <mxGeometry x="4" y="3" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="api-partners" value="&lt;b&gt;API DE SOCIOS&lt;/b&gt;&lt;br&gt;contrato versionado · aislamiento" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="access" vertex="1">
+                    <mxGeometry x="25" y="440" width="210" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-partners-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="api-partners">
+                    <mxGeometry x="100" y="-5" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-partners-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="api-partners">
+                    <mxGeometry x="205" y="30" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-partners" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;rotation=85;" vertex="1" parent="access">
+                    <mxGeometry x="120" y="413" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-partners" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;rotation=85;" vertex="1" parent="iface-partners">
+                    <mxGeometry x="4" y="3" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="asr-validation" value="&lt;b&gt;VALIDACIÓN DE ENTRADAS&lt;/b&gt;&lt;br&gt;esquema · firma · timestamp&lt;br&gt;idempotencia · procedencia" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F9CB9C;strokeColor=#D79B00;fontFamily=Helvetica;fontSize=10;" parent="access" vertex="1">
+                    <mxGeometry x="40" y="560" width="210" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-validation-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="asr-validation">
+                    <mxGeometry x="-5" y="40" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-validation-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="asr-validation">
+                    <mxGeometry x="205" y="40" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-validation-events-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="asr-validation">
+                    <mxGeometry x="205" y="65" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-validation" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="access">
+                    <mxGeometry x="8" y="600" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-validation" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-validation">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="asr-observability" value="&lt;b&gt;OBSERVABILIDAD Y EXCEPCIONES&lt;/b&gt;&lt;br&gt;correlationId · métricas · trazas&lt;br&gt;alertas · manejo de fallos" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F9CB9C;strokeColor=#D79B00;fontFamily=Helvetica;fontSize=10;" parent="access" vertex="1">
+                    <mxGeometry x="25" y="735" width="185" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-observability-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="asr-observability">
+                    <mxGeometry x="180.5952380952381" y="40" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-observability" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="access">
+                    <mxGeometry x="242" y="775" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-observability" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-observability">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-auth-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="access" source="iface-auth" target="port-auth-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-gateway-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="access" source="iface-gateway" target="port-gateway-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-gateway-security-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="access" source="iface-gateway-security" target="port-gateway-security-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-bffweb-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="access" source="iface-bffweb" target="port-bffweb-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-bffmobile-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="access" source="iface-bffmobile" target="port-bffmobile-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-partners-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="access" source="iface-partners" target="port-partners-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-validation-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="access" source="iface-validation" target="port-validation-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-observability-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="access" source="iface-observability" target="port-observability-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="messaging" value="PLATAFORMA DE MENSAJERÍA" style="swimlane;html=1;rounded=0;startSize=32;fillColor=#D5E8D4;swimlaneFillColor=#F3FAF2;strokeColor=#82B366;fontFamily=Helvetica;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="110" width="240" height="930" as="geometry"/>
+                </mxCell>
+                <mxCell id="q-profile" value="&lt;b&gt;«queue» Perfil&lt;/b&gt;&lt;br&gt;PerfilActualizado" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#70AD47;fontFamily=Helvetica;fontSize=9;" parent="messaging" vertex="1">
+                    <mxGeometry x="25" y="98" width="190" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-profile-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-profile">
+                    <mxGeometry x="185" y="18" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-profile-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-profile">
+                    <mxGeometry x="185" y="43" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-q-profile" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="messaging">
+                    <mxGeometry x="218" y="88" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-q-profile" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-q-profile">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="q-payment-orders" value="&lt;b&gt;«queue» Órdenes de pago&lt;/b&gt;&lt;br&gt;PólizaEmitida · SiniestroAprobado" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#70AD47;fontFamily=Helvetica;fontSize=9;" parent="messaging" vertex="1">
+                    <mxGeometry x="25" y="190" width="175" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-orders-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-payment-orders">
+                    <mxGeometry x="170.39473684210526" y="20" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-orders-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-payment-orders">
+                    <mxGeometry x="170.39473684210526" y="50" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-q-orders" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="messaging">
+                    <mxGeometry x="218" y="210" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-q-orders" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-q-orders">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="q-parametric" value="&lt;b&gt;«queue» Paramétricos&lt;/b&gt;&lt;br&gt;EventoParamétricoValidado" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#70AD47;fontFamily=Helvetica;fontSize=9;" parent="messaging" vertex="1">
+                    <mxGeometry x="50" y="320" width="165" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-parametric-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-parametric">
+                    <mxGeometry x="-4.342105263157895" y="18" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-parametric-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-parametric">
+                    <mxGeometry x="160.6578947368421" y="43" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-q-parametric" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="messaging">
+                    <mxGeometry x="8" y="338" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-q-parametric" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-q-parametric">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="q-payment-results" value="&lt;b&gt;«queue» Resultados de pago&lt;/b&gt;&lt;br&gt;PagoConfirmado · PagoFallido" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#70AD47;fontFamily=Helvetica;fontSize=9;" parent="messaging" vertex="1">
+                    <mxGeometry x="25" y="440" width="155" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-results-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-payment-results">
+                    <mxGeometry x="150.92105263157893" y="18" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-results-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-payment-results">
+                    <mxGeometry x="150.92105263157893" y="43" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-q-results" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="messaging">
+                    <mxGeometry x="218" y="458" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-q-results" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-q-results">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="q-notifications" value="&lt;b&gt;«queue» Notificaciones&lt;/b&gt;&lt;br&gt;correo · SMS · push" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#70AD47;fontFamily=Helvetica;fontSize=9;" parent="messaging" vertex="1">
+                    <mxGeometry x="25" y="560" width="175" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-notifications-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-notifications">
+                    <mxGeometry x="170.39473684210526" y="18" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-notifications-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-notifications">
+                    <mxGeometry x="170.39473684210526" y="43" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-q-notifications" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="messaging">
+                    <mxGeometry x="218" y="578" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-q-notifications" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-q-notifications">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="q-audit" value="&lt;b&gt;«queue» Hechos auditables&lt;/b&gt;&lt;br&gt;retry · DLQ · correlación" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#70AD47;fontFamily=Helvetica;fontSize=9;" parent="messaging" vertex="1">
+                    <mxGeometry x="25" y="680" width="145" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-audit-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-audit">
+                    <mxGeometry x="141.18421052631578" y="18" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-q-audit-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="q-audit">
+                    <mxGeometry x="141.18421052631578" y="43" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-q-audit" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="messaging">
+                    <mxGeometry x="218" y="698" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-q-audit" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-q-audit">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-messaging-analytics-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="messaging">
+                    <mxGeometry x="235" y="825" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-q-profile-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="messaging" source="iface-q-profile" target="port-q-profile-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-q-orders-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="messaging" source="iface-q-orders" target="port-q-orders-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-q-parametric-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="messaging" source="iface-q-parametric" target="port-q-parametric-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-q-results-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="messaging" source="iface-q-results" target="port-q-results-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-q-notifications-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="messaging" source="iface-q-notifications" target="port-q-notifications-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-q-audit-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="messaging" source="iface-q-audit" target="port-q-audit-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="services" value="MICROSERVICIOS" style="swimlane;html=1;rounded=0;startSize=32;fillColor=#DAE8FC;swimlaneFillColor=#F5F8FD;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="810" y="110" width="510" height="930" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms-identity" value="&lt;b&gt;CONSENTIMIENTO Y KYC&lt;/b&gt;&lt;br&gt;cliente · consentimiento · verificación" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="services" vertex="1">
+                    <mxGeometry x="40" y="65" width="195" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-identity-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-identity">
+                    <mxGeometry x="-5" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-identity-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-identity">
+                    <mxGeometry x="190" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-identity" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="8" y="97" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-identity" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-identity">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="66" value="" style="edgeStyle=none;html=1;" edge="1" parent="services" source="ms-quote" target="ms-identity">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms-quote" value="&lt;b&gt;RATING Y OFERTAS&lt;/b&gt;&lt;br&gt;cotizar · evaluar · aceptar" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="services" vertex="1">
+                    <mxGeometry x="290" y="65" width="190" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-quote-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-quote">
+                    <mxGeometry x="-4.523809523809524" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-quote-events-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-quote">
+                    <mxGeometry x="-4.523809523809524" y="12" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-quote-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-quote">
+                    <mxGeometry x="185.47619047619048" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-quote" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="253" y="97" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-quote" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-quote">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-quote-events" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="253" y="77" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-quote-events" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-quote-events">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms-profiling" value="&lt;b&gt;PERSONALIZACIÓN&amp;nbsp;&lt;/b&gt;&lt;div&gt;&lt;b&gt;Y PERFIL DE RIESGO&lt;/b&gt;&lt;br&gt;señales · scoring · explicación&lt;/div&gt;" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="services" vertex="1">
+                    <mxGeometry x="50" y="200" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-profiling-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-profiling">
+                    <mxGeometry x="-3.80952380952381" y="25.6" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-profiling-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-profiling">
+                    <mxGeometry x="156.1904761904762" y="25.6" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-profiling-events-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-profiling">
+                    <mxGeometry x="156.1904761904762" y="9.600000000000001" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-profiling-cache-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-profiling">
+                    <mxGeometry x="156.1904761904762" y="41.60000000000001" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-profiling" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="8" y="222" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-profiling" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-profiling">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms-policy" value="&lt;b&gt;SUSCRIPCIÓN,&amp;nbsp;&lt;/b&gt;&lt;div&gt;&lt;b&gt;EMISIÓN Y CICLO DE VIDA&lt;/b&gt;&lt;br&gt;emitir · endosar · renovar · cancelar&lt;/div&gt;" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="services" vertex="1">
+                    <mxGeometry x="320" y="190" width="160" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-policy-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-policy">
+                    <mxGeometry x="-3.809523809523809" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-policy-events-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-policy">
+                    <mxGeometry x="-3.809523809523809" y="12" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-policy-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-policy">
+                    <mxGeometry x="156.19047619047618" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-policy-events-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-policy">
+                    <mxGeometry x="156.19047619047618" y="12" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-policy-persistence-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-policy">
+                    <mxGeometry x="156.19047619047618" y="52" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-policy" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="253" y="222" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-policy" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-policy">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-policy-events" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="253" y="202" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-policy-events" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-policy-events">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms-claims" value="&lt;b&gt;CLAIMS&lt;/b&gt;&lt;br&gt;FNOL · evidencia · evaluar · liquidar" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="services" vertex="1">
+                    <mxGeometry x="40" y="340" width="170" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-claims-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-claims">
+                    <mxGeometry x="-4.047619047619048" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-claims-events-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-claims">
+                    <mxGeometry x="-4.047619047619048" y="12" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-claims-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-claims">
+                    <mxGeometry x="165.95238095238096" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-claims-events-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-claims">
+                    <mxGeometry x="165.95238095238096" y="12" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-claims-persistence-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-claims">
+                    <mxGeometry x="165.95238095238096" y="52" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-claims" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="8" y="372" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-claims" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-claims">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-claims-events" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="8" y="352" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-claims-events" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-claims-events">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms-payments" value="&lt;b&gt;COBROS, PAGOS Y RECAUDO&lt;/b&gt;&lt;br&gt;ordenar · ejecutar · conciliar" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="services" vertex="1">
+                    <mxGeometry x="300" y="360" width="180" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-payments-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-payments">
+                    <mxGeometry x="-4.285714285714286" y="23.466666666666665" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-payments-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-payments">
+                    <mxGeometry x="175.7142857142857" y="23.466666666666665" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-payments-events-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-payments">
+                    <mxGeometry x="175.7142857142857" y="8.799999999999999" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-payments" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="253" y="372" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-payments" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-payments">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms-compliance" value="&lt;b&gt;FRAUDE, ANALÍTICA&lt;/b&gt;&lt;div&gt;&lt;b&gt;&amp;nbsp;Y AUDITORÍA&lt;/b&gt;&lt;br&gt;evaluar · escalar · registrar · reportar&lt;/div&gt;" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="services" vertex="1">
+                    <mxGeometry x="80" y="500" width="140" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-compliance-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-compliance">
+                    <mxGeometry x="-3.3333333333333335" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-compliance-events-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-compliance">
+                    <mxGeometry x="-3.3333333333333335" y="12" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-compliance-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-compliance">
+                    <mxGeometry x="136.66666666666666" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-compliance" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="8" y="532" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-compliance" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-compliance">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-compliance-events" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="8" y="512" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-compliance-events" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-compliance-events">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms-adapters" value="&lt;b&gt;ADAPTADORES EXTERNOS&lt;/b&gt;&lt;br&gt;normalizar · firmar · notificar" style="shape=component;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontFamily=Helvetica;fontSize=9;" parent="services" vertex="1">
+                    <mxGeometry x="340" y="500" width="140" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-adapters-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-adapters">
+                    <mxGeometry x="-3.333333333333333" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-adapters-events-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-adapters">
+                    <mxGeometry x="-3.333333333333333" y="12" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-adapters-security-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-adapters">
+                    <mxGeometry x="-3.333333333333333" y="52" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-adapters-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="ms-adapters">
+                    <mxGeometry x="136.66666666666666" y="32" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-adapters" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="295" y="532" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-adapters" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-adapters">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-adapters-events" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="295" y="512" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-adapters-events" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-adapters-events">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-adapters-security" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="services">
+                    <mxGeometry x="295" y="552" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-adapters-security" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-adapters-security">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="external" value="&lt;b&gt;PROVEEDORES EXTERNOS&lt;/b&gt;&lt;br&gt;Open Finance / Data · KYC/AML&lt;br&gt;pagos · firma · IoT · ACORD / reaseguro" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F9CB9C;strokeColor=#D79B00;fontFamily=Helvetica;fontSize=9;" parent="services" vertex="1">
+                    <mxGeometry x="145" y="670" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-external-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="external">
+                    <mxGeometry x="100" y="-5" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-external-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="external">
+                    <mxGeometry x="-5" y="40" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-external" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;rotation=98;" vertex="1" parent="services">
+                    <mxGeometry x="250" y="643" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-external" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;rotation=98;" vertex="1" parent="iface-external">
+                    <mxGeometry x="3" y="3" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="cert" value="CERTIFICADOS / FIRMAS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F9CB9C;strokeColor=#D79B00;fontFamily=Helvetica;fontSize=9;fontStyle=1;" parent="services" vertex="1">
+                    <mxGeometry x="145" y="790" width="220" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-cert-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="cert">
+                    <mxGeometry x="-5" y="22" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-services-audit-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="services">
+                    <mxGeometry x="-5" y="690" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-services-data-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="services">
+                    <mxGeometry x="505" y="130" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-services-observe-out" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="services">
+                    <mxGeometry x="-5" y="795" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-identity-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-identity" target="port-identity-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-quote-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-quote" target="port-quote-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-quote-events-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-quote-events" target="port-quote-events-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-profiling-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-profiling" target="port-profiling-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-policy-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-policy" target="port-policy-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-policy-events-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-policy-events" target="port-policy-events-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-claims-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-claims" target="port-claims-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-claims-events-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-claims-events" target="port-claims-events-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-payments-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-payments" target="port-payments-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-compliance-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-compliance" target="port-compliance-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-compliance-events-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-compliance-events" target="port-compliance-events-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-adapters-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-adapters" target="port-adapters-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-adapters-events-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-adapters-events" target="port-adapters-events-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-adapters-security-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-adapters-security" target="port-adapters-security-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-external-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="services" source="iface-external" target="port-external-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="data" value="DATOS" style="swimlane;html=1;rounded=0;startSize=32;fillColor=#E1D5E7;swimlaneFillColor=#FBF9FC;strokeColor=#9673A6;fontFamily=Helvetica;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1340" y="110" width="360" height="930" as="geometry"/>
+                </mxCell>
+                <mxCell id="db-operational" value="&lt;b&gt;RDS / AURORA TRANSACCIONAL&lt;/b&gt;&lt;br&gt;esquema/base aislado por dominio&lt;br&gt;Identidad · Perfiles · Cotización · Pólizas&lt;br&gt;Siniestros · Pagos · Auditoría" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontFamily=Helvetica;fontSize=10;" parent="data" vertex="1">
+                    <mxGeometry x="70" y="75" width="245" height="145" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-db-operational-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="db-operational">
+                    <mxGeometry x="-5" y="68" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-db-operational" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="data">
+                    <mxGeometry x="28" y="143" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-db-operational" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-db-operational">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="store-evidence" value="&lt;b&gt;S3 DOCUMENTOS Y EVIDENCIAS&lt;/b&gt;&lt;br&gt;URI · hash · versión · retención&lt;br&gt;firma · cadena de custodia" style="shape=folder;tabWidth=28;tabHeight=12;tabPosition=left;html=1;whiteSpace=wrap;fillColor=#E1D5E7;strokeColor=#9673A6;fontFamily=Helvetica;fontSize=10;" parent="data" vertex="1">
+                    <mxGeometry x="70" y="280" width="245" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-store-evidence-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="store-evidence">
+                    <mxGeometry x="-5" y="55" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-store-evidence" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="data">
+                    <mxGeometry x="28" y="335" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-store-evidence" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-store-evidence">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="db-audit" value="&lt;b&gt;REGISTRO DE AUDITORÍA&lt;/b&gt;&lt;br&gt;append-only · correlationId&lt;br&gt;hash encadenado" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontFamily=Helvetica;fontSize=10;" parent="data" vertex="1">
+                    <mxGeometry x="70" y="460" width="245" height="115" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-db-audit-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="db-audit">
+                    <mxGeometry x="-5" y="53" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-db-audit" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="data">
+                    <mxGeometry x="28" y="513" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-db-audit" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-db-audit">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="db-analytics" value="&lt;b&gt;MODELOS DE LECTURA / ANALÍTICA&lt;/b&gt;&lt;br&gt;proyecciones seudonimizadas&lt;br&gt;reconstruibles · opcionales" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontFamily=Helvetica;fontSize=10;" parent="data" vertex="1">
+                    <mxGeometry x="70" y="635" width="245" height="115" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-db-analytics-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="db-analytics">
+                    <mxGeometry x="-5" y="53" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-db-analytics" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="data">
+                    <mxGeometry x="28" y="688" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-db-analytics" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-db-analytics">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="cache" value="&lt;b&gt;REDIS MULTI-AZ&lt;/b&gt;&lt;br&gt;caché temporal no autoritativa" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#F2F2F2;strokeColor=#7F7F7F;fontFamily=Helvetica;fontSize=9;" parent="data" vertex="1">
+                    <mxGeometry x="70" y="810" width="270" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="port-cache-in" value="" style="shape=rectangle;html=1;fillColor=#FFFFFF;strokeColor=#000000;resizable=0;movable=1;" vertex="1" parent="cache">
+                    <mxGeometry x="-5" y="30" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="iface-cache" value="" style="shape=ellipse;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;" vertex="1" parent="data">
+                    <mxGeometry x="28" y="840" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="bar-iface-cache" value="" style="shape=rectangle;html=1;fillColor=#000000;strokeColor=#000000;resizable=0;movable=0;connectable=0;" vertex="1" parent="iface-cache">
+                    <mxGeometry x="9" y="-2" width="2" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-db-operational-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="data" source="iface-db-operational" target="port-db-operational-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-store-evidence-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="data" source="iface-store-evidence" target="port-store-evidence-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-db-audit-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="data" source="iface-db-audit" target="port-db-audit-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-db-analytics-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="data" source="iface-db-analytics" target="port-db-analytics-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-iface-cache-port" value="" style="edgeStyle=none;html=1;strokeColor=#000000;endArrow=none;" edge="1" parent="data" source="iface-cache" target="port-cache-in">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-web-auth" value="autenticar" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-actor-web-out" target="iface-auth" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-mobile-auth" value="autenticar&amp;nbsp;&lt;div&gt;/ biometría&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-actor-mobile-out" target="iface-auth" edge="1">
+                    <mxGeometry x="-0.0007" relative="1" as="geometry">
+                        <mxPoint x="250" y="220" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-partner-auth" value="credenciales / scopes" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-actor-partner-out" target="iface-auth" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="250" y="220" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-auth-gateway" value="JWT&amp;nbsp;&lt;div&gt;validado&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-auth-out" target="iface-gateway" edge="1">
+                    <mxGeometry x="0.1116" y="80" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-gateway-web" value="web" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-gateway-web" target="iface-bffweb" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-gateway-mobile" value="móvil" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-gateway-mobile" target="iface-bffmobile" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="360" y="410"/>
+                            <mxPoint x="410" y="410"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-gateway-partners" value="socios" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-gateway-partners" target="iface-partners" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="330" y="400"/>
+                            <mxPoint x="330" y="528"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-web-identity" value="cliente / consentimiento" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-bffweb-out" target="iface-identity" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="510" y="470"/>
+                            <mxPoint x="510" y="175"/>
+                            <mxPoint x="790" y="175"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-web-quote" value="cotizar / aceptar" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-bffweb-out" target="iface-quote" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="355" y="510"/>
+                            <mxPoint x="515" y="510"/>
+                            <mxPoint x="515" y="160"/>
+                            <mxPoint x="1080" y="160"/>
+                            <mxPoint x="1080" y="212"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-web-policy" value="gestionar pólizas" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-bffweb-out" target="iface-policy" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="510" y="480"/>
+                            <mxPoint x="510" y="315"/>
+                            <mxPoint x="1040" y="315"/>
+                            <mxPoint x="1040" y="310"/>
+                            <mxPoint x="1058" y="310"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-web-claims" value="gestionar siniestro" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-bffweb-out" target="iface-claims" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="355" y="520"/>
+                            <mxPoint x="505" y="520"/>
+                            <mxPoint x="505" y="490"/>
+                            <mxPoint x="790" y="490"/>
+                            <mxPoint x="790" y="487"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-mobile-identity" value="biometría / acceso" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-bffmobile-out" target="iface-identity" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="520" y="470"/>
+                            <mxPoint x="520" y="185"/>
+                            <mxPoint x="790" y="185"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-mobile-policy" value="billetera / offline" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-bffmobile-out" target="iface-policy" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="525" y="480"/>
+                            <mxPoint x="525" y="300"/>
+                            <mxPoint x="1058" y="300"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-mobile-claims" value="FNOL / evidencia" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-bffmobile-out" target="iface-claims" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="510" y="470"/>
+                            <mxPoint x="510" y="500"/>
+                            <mxPoint x="790" y="500"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-partner-quote" value="originar · acuerdo · producto" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-partners-out" target="iface-quote" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="465" y="575"/>
+                            <mxPoint x="515" y="575"/>
+                            <mxPoint x="515" y="170"/>
+                            <mxPoint x="1080" y="170"/>
+                            <mxPoint x="1080" y="212"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-partner-identity" value="consentimiento" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-partners-out" target="iface-identity" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="520" y="575"/>
+                            <mxPoint x="520" y="195"/>
+                            <mxPoint x="790" y="195"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-ops-compliance" value="gestionar casos / reportes" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-actor-ops-out" target="iface-compliance" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="480" y="830"/>
+                            <mxPoint x="480" y="870"/>
+                            <mxPoint x="800" y="870"/>
+                            <mxPoint x="800" y="647"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-quote-profile" value="obtener perfil vigente" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-quote-out" target="iface-profiling" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1290" y="212"/>
+                            <mxPoint x="1290" y="285"/>
+                            <mxPoint x="813" y="285"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-profile-consent" value="validar consentimiento" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-profiling-out" target="iface-identity" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1035" y="290"/>
+                            <mxPoint x="813" y="290"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-quote-policy" value="decidir y emitir" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-quote-out" target="iface-policy" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1290" y="212"/>
+                            <mxPoint x="1290" y="260"/>
+                            <mxPoint x="1058" y="260"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-claims-policy" value="validar cobertura" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-claims-out" target="iface-policy" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1050" y="470"/>
+                            <mxPoint x="1050" y="335"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-claims-compliance" value="evaluar fraude" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-claims-out" target="iface-compliance" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1045" y="540"/>
+                            <mxPoint x="800" y="540"/>
+                            <mxPoint x="800" y="647"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-identity-adapters" value="KYC / AML" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-identity-out" target="iface-adapters" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1050" y="240"/>
+                            <mxPoint x="1080" y="240"/>
+                            <mxPoint x="1080" y="647"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-profile-adapters" value="Open Finance&amp;nbsp;&lt;div&gt;/ Open Data&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-profiling-out" target="iface-adapters" edge="1">
+                    <mxGeometry x="-0.2565" y="20" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="1080" y="341"/>
+                            <mxPoint x="1080" y="647"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-policy-adapters" value="firma / ACORD /&lt;div&gt;&amp;nbsp;reaseguro&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-policy-out" target="iface-adapters" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1330" y="337"/>
+                            <mxPoint x="1330" y="600"/>
+                            <mxPoint x="1080" y="600"/>
+                            <mxPoint x="1080" y="647"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-payments-adapters" value="cobrar / desembolsar" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-payments-out" target="iface-adapters" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1281" y="540"/>
+                            <mxPoint x="1080" y="540"/>
+                            <mxPoint x="1080" y="647"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-adapters-external" value="protocolos externos" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-adapters-out" target="iface-external" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1300" y="647"/>
+                            <mxPoint x="1300" y="690"/>
+                            <mxPoint x="1070" y="690"/>
+                            <mxPoint x="1070" y="758"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-external-validation" value="callback / evento firmado" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-external-out" target="iface-validation" edge="1">
+                    <mxGeometry x="-0.2409" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="920" y="825"/>
+                            <mxPoint x="920" y="890"/>
+                            <mxPoint x="510" y="890"/>
+                            <mxPoint x="510" y="780"/>
+                            <mxPoint x="220" y="780"/>
+                            <mxPoint x="220" y="715"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-validation-adapters" value="callback verificado" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4F7CAC;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-validation-out" target="iface-adapters" edge="1">
+                    <mxGeometry x="0.2894" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="510" y="715"/>
+                            <mxPoint x="510" y="760"/>
+                            <mxPoint x="1050" y="760"/>
+                            <mxPoint x="1050" y="647"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-validation-parametric" value="EventoParamétricoValidado" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-validation-events-out" target="iface-q-parametric" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-cert-gateway" value="TLS / mTLS" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=3 3;strokeColor=#D79B00;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-cert-out" target="iface-gateway-security" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="910" y="927"/>
+                            <mxPoint x="910" y="960"/>
+                            <mxPoint x="510" y="960"/>
+                            <mxPoint x="510" y="345"/>
+                            <mxPoint x="480" y="345"/>
+                            <mxPoint x="480" y="288"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-cert-adapters" value="firma / no repudio" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=3 3;strokeColor=#D79B00;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-cert-out" target="iface-adapters-security" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="930" y="927"/>
+                            <mxPoint x="930" y="980"/>
+                            <mxPoint x="1250" y="980"/>
+                            <mxPoint x="1250" y="730"/>
+                            <mxPoint x="1090" y="730"/>
+                            <mxPoint x="1090" y="667"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-profile-q" value="PerfilActualizado" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-profiling-events-out" target="iface-q-profile" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1035" y="270"/>
+                            <mxPoint x="780" y="270"/>
+                            <mxPoint x="780" y="203"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-q-profile-quote" value="actualizar rating" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-q-profile-out" target="iface-quote-events" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-policy-orders" value="PólizaEmitida" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-policy-events-out" target="iface-q-orders" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1280" y="317"/>
+                            <mxPoint x="1280" y="390"/>
+                            <mxPoint x="780" y="390"/>
+                            <mxPoint x="780" y="325"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-claims-orders" value="SiniestroAprobado" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-claims-events-out" target="iface-q-orders" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1045" y="430"/>
+                            <mxPoint x="780" y="430"/>
+                            <mxPoint x="780" y="325"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-orders-payments" value="crear orden idempotente" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-q-orders-out" target="iface-payments" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="745" y="400"/>
+                            <mxPoint x="1058" y="400"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-parametric-claims" value="automatizar&lt;div&gt;&amp;nbsp;siniestro&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-q-parametric-out" target="iface-claims-events" edge="1">
+                    <mxGeometry x="0.5443" y="17" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="760" y="478"/>
+                            <mxPoint x="760" y="467"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-payments-results" value="PagoConfirmado / PagoFallido" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-payments-events-out" target="iface-q-results" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1280" y="484"/>
+                            <mxPoint x="1280" y="573"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-results-claims" value="actualizar&lt;div&gt;&amp;nbsp;liquidación&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-q-results-out" target="iface-claims-events" edge="1">
+                    <mxGeometry x="-0.8792" y="-12" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="790" y="598"/>
+                            <mxPoint x="790" y="467"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-results-policy" value="actualizar cuota" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-q-results-out" target="iface-policy-events" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-policy-notify" value="aviso de emisión" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-policy-events-out" target="iface-q-notifications" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1280" y="317"/>
+                            <mxPoint x="1280" y="410"/>
+                            <mxPoint x="780" y="410"/>
+                            <mxPoint x="780" y="693"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-results-notify" value="aviso de pago" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-payments-events-out" target="iface-q-notifications" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1280" y="484"/>
+                            <mxPoint x="1280" y="560"/>
+                            <mxPoint x="780" y="560"/>
+                            <mxPoint x="780" y="693"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-notify-adapters" value="despachar" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-q-notifications-out" target="iface-adapters-events" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1060" y="718"/>
+                            <mxPoint x="1060" y="627"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-services-audit" value="hechos&amp;nbsp;&lt;div&gt;auditables&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-services-audit-out" target="iface-q-audit" edge="1">
+                    <mxGeometry x="-0.1458" y="-13" relative="1" as="geometry">
+                        <mxPoint x="1" y="-5" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-audit-compliance" value="registrar / analizar" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 6;strokeColor=#5B7652;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-q-audit-out" target="iface-compliance-events" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="790" y="838"/>
+                            <mxPoint x="790" y="627"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-services-db" value="persistencia&amp;nbsp;&lt;div&gt;del propietario&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8064A2;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-services-data-out" target="iface-db-operational" edge="1">
+                    <mxGeometry x="0.0569" y="13" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1373" y="245"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-policy-evidence" value="documento firmado" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8064A2;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-policy-persistence-out" target="iface-store-evidence" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1350" y="357"/>
+                            <mxPoint x="1350" y="450"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-claims-evidence" value="evidencia + hash" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8064A2;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-claims-persistence-out" target="iface-store-evidence" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1050" y="507"/>
+                            <mxPoint x="1050" y="450"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-compliance-audit" value="registro append-only" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8064A2;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-compliance-out" target="iface-db-audit" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1040" y="647"/>
+                            <mxPoint x="1040" y="710"/>
+                            <mxPoint x="1373" y="710"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-messaging-analytics" value="proyecciones gobernadas" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=8 4;strokeColor=#8064A2;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-messaging-analytics-out" target="iface-db-analytics" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="820" y="940"/>
+                            <mxPoint x="820" y="1010"/>
+                            <mxPoint x="1350" y="1010"/>
+                            <mxPoint x="1350" y="803"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-profile-cache" value="perfil temporal" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#7F7F7F;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-profiling-cache-out" target="iface-cache" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1035" y="380"/>
+                            <mxPoint x="1690" y="380"/>
+                            <mxPoint x="1690" y="1010"/>
+                            <mxPoint x="1373" y="1010"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-services-observability" value="métricas · logs · trazas" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=3 3;strokeColor=#D79B00;endArrow=none;endFill=0;fontSize=8;" parent="1" source="port-services-observe-out" target="iface-observability" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="810" y="930"/>
+                            <mxPoint x="520" y="930"/>
+                            <mxPoint x="520" y="890"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

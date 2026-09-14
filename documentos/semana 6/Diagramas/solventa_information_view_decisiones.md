@@ -18,7 +18,7 @@ El diagrama se lee de izquierda a derecha y utiliza la estructura de integració
 1. **Fuentes y consumidores:** clientes, socios y proveedores externos que originan o reciben información.
 2. **Controles de entrada y fachadas:** autenticación, API Gateway, BFF Web, BFF Móvil, API de Socios y validadores de datos, eventos y callbacks.
 3. **Event Bus y colas:** canales asíncronos para familias de eventos, reintentos y DLQ.
-4. **Servicios y contextos:** capacidades que validan, transforman y son propietarias de la información de dominio.
+4. **Microservicios y workloads:** unidades desplegables que validan y transforman información, alineadas con los containers de la vista de despliegue.
 5. **Repositorios y productos de datos:** persistencia operacional aislada, documentos, registro de auditoría, analítica y caché.
 
 ## 2. Convenciones
@@ -29,7 +29,7 @@ El diagrama se lee de izquierda a derecha y utiliza la estructura de integració
 | Caja naranja | Autenticación y autorización de acceso |
 | Caja azul clara sin estereotipo | Validador de esquema, calidad, firma o procedencia |
 | Caja verde `«queue»` | Cola asíncrona; incluye reintentos y envío a DLQ |
-| Caja azul `«component»` | Servicio que procesa información; los nueve contextos son propietarios de sus datos |
+| Caja azul `«component»` | Microservicio/workload desplegado en EKS; su subtítulo identifica el container correspondiente |
 | Cilindro o carpeta morada | Almacén lógico o producto derivado de datos |
 | Cilindro gris | Caché temporal no autoritativa |
 | Rótulo `RESTRINGIDO` | Información cuya exposición puede causar daño significativo o incumplimiento |
@@ -44,7 +44,9 @@ Las flechas indican dirección de transferencia, no propiedad compartida ni acce
 
 API Gateway y los validadores aparecen porque controlan la entrada y la calidad de la información. Gateway enruta únicamente hacia BFF Web, BFF Móvil o API de Socios; estas fachadas invocan los contextos autorizados y evitan exponerlos directamente. Los detalles de VPC, EKS, pods y protocolos internos continúan perteneciendo a la vista de despliegue.
 
-El diagrama muestra los intercambios críticos para compra, emisión, siniestros y pagos. La conexión `hechos auditables` representa publicaciones de todos los servicios hacia su cola, aunque se agrupa visualmente para evitar cruces innecesarios.
+Los cuadros azules coinciden con los containers de la vista de despliegue: Consentimiento y KYC, Rating y ofertas, Suscripción/emisión/ciclo de vida, Personalización y perfil de riesgo, Claims, Cobros/pagos/recaudo, Fraude/analítica/auditoría y Adaptadores externos. BFF Web, BFF Móvil y API de Socios también son workloads, pero se muestran junto al acceso porque actúan como fachadas de canal.
+
+El diagrama muestra los intercambios críticos para compra, emisión, siniestros y pagos. La conexión `hechos auditables` representa publicaciones de todos los microservicios hacia su cola, aunque se agrupa visualmente para evitar cruces innecesarios.
 
 Las colas se diseñan por consumidor o propósito para evitar competencia accidental entre dominios. `Resultados de Pago` agrupa visualmente dos suscripciones independientes: una para Siniestros y otra para Pólizas/Cuotas. Esta agrupación reduce ruido en el diagrama, pero no representa una única cola compartida por ambos consumidores.
 
@@ -64,7 +66,7 @@ El Event Bus contiene colas, suscripciones, reintentos y DLQ. El registro de aud
 | Pagos y Recaudo | Orden, transacción, referencia del proveedor y cuota de prima | Restringido |
 | Cumplimiento y Auditoría | Casos KYC/AML/fraude y registros de auditoría | Restringido |
 
-Solo el contexto propietario crea o modifica su información. Los demás contextos reciben identificadores, versiones, instantáneas o eventos mediante contratos; nunca consultan ni actualizan directamente sus tablas.
+La vista conserva la propiedad definida por los bounded contexts, pero representa físicamente los microservicios que la implementan. Solo el microservicio del contexto propietario crea o modifica su información; los demás reciben identificadores, versiones, instantáneas o eventos mediante contratos y nunca consultan ni actualizan directamente sus tablas.
 
 La caja `Bases transaccionales` representa el patrón común de almacenamiento aislado. No es una base compartida: cada contexto mantiene su propio esquema o base y aplica sus transacciones dentro de esa frontera. Integraciones y Notificaciones procesa referencias y mensajes, pero no es propietario maestro de información de negocio.
 

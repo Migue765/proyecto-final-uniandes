@@ -1,0 +1,7 @@
+bucket       = "solventa-exp1-tfstate-969325258550-us-east-1"
+key          = "exp1/terraform.tfstate"
+region       = "us-east-1"
+profile      = "solventa-terraform-backend"
+encrypt      = true
+use_lockfile = true
+allowed_account_ids = ["969325258550"]

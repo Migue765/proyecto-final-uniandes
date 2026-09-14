@@ -17,10 +17,32 @@ if (authMode != 'aws_iam') {
     throw new IllegalArgumentException('Unsupported auth_mode')
 }
 
-String accessKey = System.getenv('AWS_ACCESS_KEY_ID')
-String secretKey = System.getenv('AWS_SECRET_ACCESS_KEY')
-String sessionToken = System.getenv('AWS_SESSION_TOKEN')
+def runtimeCredentials = props.get('solventa.runtime.aws.credentials')
+String accessKey
+String secretKey
+String sessionToken
+
+if (runtimeCredentials != null) {
+    try {
+        long expirationEpochSecond = runtimeCredentials.getExpirationEpochSecond()
+        if (expirationEpochSecond <= (System.currentTimeMillis() / 1000L) + 30L) {
+            ctx.getEngine()?.stopTest(true)
+            throw new IllegalStateException('Temporary AWS credentials expired during the test')
+        }
+        accessKey = runtimeCredentials.getAccessKeyId()
+        secretKey = runtimeCredentials.getSecretAccessKey()
+        sessionToken = runtimeCredentials.getSessionToken()
+    } catch (Exception ignored) {
+        ctx.getEngine()?.stopTest(true)
+        throw new IllegalStateException('In-memory AWS credentials are invalid')
+    }
+} else {
+    accessKey = System.getenv('AWS_ACCESS_KEY_ID')
+    secretKey = System.getenv('AWS_SECRET_ACCESS_KEY')
+    sessionToken = System.getenv('AWS_SESSION_TOKEN')
+}
 if (!accessKey || !secretKey || !sessionToken) {
+    ctx.getEngine()?.stopTest(true)
     throw new IllegalStateException('Temporary AWS credentials are required for SigV4')
 }
 

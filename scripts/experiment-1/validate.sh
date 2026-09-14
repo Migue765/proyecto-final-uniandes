@@ -17,6 +17,7 @@ done
 info "Checking JMeter XML"
 xmllint --noout "${REPO_ROOT}/load-tests/jmeter/experiment-1.jmx"
 xmllint --noout "${REPO_ROOT}/load-tests/jmeter/request-fragment.jmx"
+xmllint --noout "${REPO_ROOT}/load-tests/jmeter/gui-500rpm.jmx"
 
 info "Linting and rendering Helm chart"
 helm lint "$CHART_DIR"

@@ -31,31 +31,30 @@ El proyecto diseña, justifica y construye la arquitectura de Solventa de extrem
 
 ```
 documentos/
-  semana-2/          ← Entregables Semana 2
-    estrategia_pruebas_solventa.docx
-    diagramas/
-      diagrama_contexto.drawio
-      modelo_dominio.drawio
-      modelo_componentes.drawio
-      modelo_despliegue.drawio
+  Diagramas/                   ← Diagramas de arquitectura (C4, dominio, despliegue)
+  enunciados-proyecto-tesis.pdf
+  objetivo-semanales.pdf
+
+Experimento 1/                 ← Baseline de escalabilidad (500 RPM)
+  terraform/                    infraestructura AWS
+  services/                     servicios sintéticos (profile, quotation)
+  load-tests/                   generador y protocolo JMeter
+
+Experimento 2/                 ← Escalabilidad 500 a 50k RPM
+  infra/terraform/               infraestructura AWS
+  services/                      servicios (ingreso, pagos, profile, quotation, reclamos)
+  load-tests/                    JMeter (jmeter, jmeter-exp2)
 ```
 
-## Experimento 1 — baseline de escalabilidad
+## Accesos rapidos
 
-La implementación del baseline de 500 RPM está separada en:
-
-- [plan ejecutable](docs/experimento-1/PLAN.md);
-- [infraestructura AWS con Terraform](infra/terraform/README.md);
-- [servicios sintéticos](services/README.md);
-- [chart de EKS](deploy/helm/solventa-exp1/README.md);
-- [generador y protocolo JMeter](load-tests/README.md);
-- [runbook de ejecución](scripts/experiment-1/README.md).
-
-El código no ejecuta automáticamente recursos facturables. El stack principal
-requiere un `terraform plan` revisado y un `apply` explícito.
-
----
-
-## Tablero del proyecto
-
-[GitHub Project — Solventa Grupo 2](https://github.com/users/Migue765/projects/2)
+| Recurso | Enlace |
+| --- | --- |
+| Prototipo web | [Abrir aplicacion](https://juanes545.github.io/solventa-web/) |
+| Aplicacion movil | [Descargar APK](https://github.com/JUANES545/solventa-app/releases/latest/download/solventa.apk) |
+| Repositorio principal | [Proyecto Final Uniandes](https://github.com/Migue765/proyecto-final-uniandes) |
+| Repositorio web | [Solventa Web](https://github.com/JUANES545/solventa-web) |
+| Repositorio movil | [Solventa App](https://github.com/JUANES545/solventa-app) |
+| Tablero de trabajo | [Jira - Proyecto SOL](https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/boards/2/backlog) |
+| Pruebas exploratorias | [Inventario V3](https://uniandes-my.sharepoint.com/:x:/g/personal/ma_gomeza1_uniandes_edu_co/IQDwII5CJqksQLqjId5G72GpAZDM_5AIyVvgfZzRHT4R6uk?e=bsxn5m) |
+| Experimentos de arquitectura | [Experimentos](https://github.com/Migue765/proyecto-final-uniandes/wiki/Semana-7-Experimentos) |

@@ -1,0 +1,11 @@
+aws_region          = "us-east-1"
+aws_profile         = "solventa-lab"
+expected_account_id = "969325258550"
+
+exp1_cluster_name = "solventa-exp1"
+namespace         = "solventa-exp2"
+
+max_receive_count                = 5
+visibility_timeout_seconds       = 30
+queue_message_retention_seconds  = 345600
+dlq_message_retention_seconds    = 1209600

@@ -1,0 +1,6 @@
+results/**
+!results/.gitkeep
+jmeter/*.log
+jmeter-exp2/*.jtl
+jmeter-exp2/*.csv
+jmeter-exp2/*.log

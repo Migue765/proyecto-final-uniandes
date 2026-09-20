@@ -5,7 +5,13 @@ imagePullSecrets: []
 
 quotation:
   replicaCount: 2
-  cpuIterations: 150000
+  # Synthetic CPU cost per quotation, in SHA-256 chain iterations. Measured on
+  # 2026-09-14: ~850 ns per iteration on c7i-flex.large, so 1200 iterations cost
+  # ~1 ms of CPU. The previous value of 150000 cost ~127 ms per request, which
+  # made p95 <= 250 ms unreachable at any replica count, because a single
+  # request needs 281 ms of CPU against a 500m container limit.
+  # Keep aligned with quote_cpu_iterations in quotation-service/app/config.py.
+  cpuIterations: 1200
   image:
     repository: solventa/quotation-service
     tag: dev
@@ -35,7 +41,10 @@ quotation:
 
 profile:
   replicaCount: 2
-  cpuIterations: 150000
+  # See the note in the quotation block. Measured ~1020 ns per iteration, so 800
+  # iterations cost ~0.8 ms of CPU instead of the ~154 ms of the previous 150000.
+  # Keep aligned with profile_cpu_iterations in profile-service/app/config.py.
+  cpuIterations: 800
   image:
     repository: solventa/profile-service
     tag: dev

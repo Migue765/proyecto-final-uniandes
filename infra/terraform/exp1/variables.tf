@@ -61,13 +61,23 @@ variable "api_allowed_source_cidrs" {
   description = "Public laboratory CIDRs allowed to invoke the regional REST API. The optional Fargate runner NAT EIP is added automatically."
   type        = list(string)
 
+  # 0.0.0.0/0 is accepted here by an explicit laboratory decision taken on
+  # 2026-09-14: the source-IP allowlist stopped being a practical control while
+  # the operator's public IP keeps changing between runs. The endpoint is not
+  # anonymous even with this value, because the resource policy in edge.tf still
+  # pins invocation to the operator principal (AllowOnlyLaboratorySources) and
+  # denies every other principal (DenyUnexpectedPrincipals), and API Gateway
+  # still requires a valid SigV4 signature.
+  #
+  # Any run executed with 0.0.0.0/0 must record that the origin restriction was
+  # disabled, because it changes the security posture the experiment reports.
+  # The EKS control plane keeps its own restricted allowlist; do not widen it.
   validation {
     condition = (
       length(var.api_allowed_source_cidrs) > 0 &&
-      alltrue([for cidr in var.api_allowed_source_cidrs : can(cidrhost(cidr, 0))]) &&
-      !contains(var.api_allowed_source_cidrs, "0.0.0.0/0")
+      alltrue([for cidr in var.api_allowed_source_cidrs : can(cidrhost(cidr, 0))])
     )
-    error_message = "Provide at least one valid restricted CIDR; 0.0.0.0/0 is intentionally rejected."
+    error_message = "Provide at least one valid IPv4 CIDR."
   }
 }
 

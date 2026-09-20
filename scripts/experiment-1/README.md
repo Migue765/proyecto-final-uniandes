@@ -119,10 +119,13 @@ Nothing in this directory runs automatically.
   evidence for baseline latency, throughput, and technical errors only. It does
   not demonstrate endurance, monthly availability, long-term saturation, or
   complete HPA scale-down behavior.
-- Calibrate `QUOTE_CPU_ITERATIONS` and `PROFILE_CPU_ITERATIONS` before recording
-  evidence. The initial `150000` is a hypothesis, not a measured constant. Freeze
-  both values for all three runs; the intended signal is HPA `2 -> 3` while p95
-  remains within the experiment threshold.
+- `QUOTE_CPU_ITERATIONS` defaults to `1200` and `PROFILE_CPU_ITERATIONS` to
+  `800`, matching the service config defaults. Freeze both values for all three
+  runs. The earlier `150000` was measured on 2026-09-14 at 281 ms of CPU per
+  quotation, which put p95 <= 250 ms out of reach at any replica count; see
+  `deploy/helm/solventa-exp1/README.md` for the arithmetic. At the current values
+  a 500-RPM step does not move the HPA, so Phase A reports "500 RPM fits within
+  the initial capacity" rather than a demonstration of elasticity.
 - Database/cache credentials and temporary AWS credentials are never printed,
   logged, persisted in JTL, or committed. Application pods receive only the
   read-only runtime DB URL and the authenticated Redis URL.

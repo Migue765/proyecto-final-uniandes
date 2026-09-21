@@ -35,12 +35,12 @@ documentos/
   enunciados-proyecto-tesis.pdf
   objetivo-semanales.pdf
 
-Experimento 1/                 ← Baseline de escalabilidad (500 RPM)
+Experimento 1/                 ← Baseline de escalabilidad (500 RPM a 50k RPM)
   terraform/                    infraestructura AWS
   services/                     servicios sintéticos (profile, quotation)
   load-tests/                   generador y protocolo JMeter
 
-Experimento 2/                 ← Escalabilidad 500 a 50k RPM
+Experimento 2/                 ← Evento parametrico de 1000000 Request en 10min 
   infra/terraform/               infraestructura AWS
   services/                      servicios (ingreso, pagos, profile, quotation, reclamos)
   load-tests/                    JMeter (jmeter, jmeter-exp2)

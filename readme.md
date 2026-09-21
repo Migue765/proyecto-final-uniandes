@@ -57,4 +57,4 @@ Experimento 2/                 ← Evento parametrico de 1000000 Request en 10mi
 | Repositorio movil | [Solventa App](https://github.com/JUANES545/solventa-app) |
 | Tablero de trabajo | [Jira - Proyecto SOL](https://proyectointegradorgrupo2.atlassian.net/jira/software/projects/SOL/boards/2/backlog) |
 | Pruebas exploratorias | [Inventario V3](https://uniandes-my.sharepoint.com/:x:/g/personal/ma_gomeza1_uniandes_edu_co/IQDwII5CJqksQLqjId5G72GpAZDM_5AIyVvgfZzRHT4R6uk?e=bsxn5m) |
-| Experimentos de arquitectura | [Experimentos](https://github.com/Migue765/proyecto-final-uniandes/wiki/Semana-7-Experimentos) |
+| Experimentos de arquitectura | [Experimentos](https://github.com/Migue765/proyecto-final-uniandes/wiki/Experimentos-de-arquitectura) |
